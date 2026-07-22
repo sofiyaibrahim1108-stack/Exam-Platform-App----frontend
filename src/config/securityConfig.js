@@ -1,0 +1,11 @@
+export const SECURITY_CONFIG = {
+  MAX_VIOLATIONS: 5,
+  AUTO_SUBMIT: true,
+  ALLOW_FULLSCREEN: true,
+  ALLOW_COPY: false,
+  ALLOW_PASTE: false,
+  ALLOW_RIGHT_CLICK: false,
+  DEVTOOLS_DETECTION: true,
+  TAB_SWITCH_DETECTION: true,
+  WINDOW_BLUR_DETECTION: true,
+};

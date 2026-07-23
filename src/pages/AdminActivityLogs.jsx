@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import {
+  ShieldAlert, Trash2, Download, FileText, Search, Settings, User, Terminal, Cpu, Info, X, ChevronLeft, ChevronRight, CheckCircle2, AlertOctagon, HelpCircle
+} from 'lucide-react';
 import api from '../services/api';
 
 const MODULES = [
@@ -254,89 +257,101 @@ const AdminActivityLogs = () => {
   return (
     <div className="space-y-6 text-sm font-sans text-on-surface">
       {/* Top Banner Header */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5 bg-white shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-primary mb-1">System Activity Logs</h2>
-          <p className="text-on-surface-variant text-xs font-semibold">
-            Track immutable audit trails, security login events, administrative actions, and system transactions.
-          </p>
-        </div>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <Terminal size={12} />
+              Immutable Audit Trails
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">System Activity Logs</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Track immutable audit trails, security login events, administrative actions, and system transactions.
+            </p>
+          </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2 self-start md:self-center shrink-0">
-          <button
-            onClick={handleDeleteOldLogs}
-            className="py-2 px-3 rounded-xl border border-amber-500/20 text-amber-800 bg-amber-50 hover:bg-amber-100/60 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">auto_delete</span>
-            Delete Old Logs
-          </button>
-          <button
-            onClick={handleExportPDF}
-            className="py-2 px-3 rounded-xl border border-red-500/20 text-red-700 bg-red-50 hover:bg-red-100/60 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">picture_as_pdf</span>
-            PDF
-          </button>
-          <button
-            onClick={handleExportExcel}
-            className="py-2 px-3 rounded-xl border border-green-500/20 text-green-700 bg-green-50 hover:bg-green-100/60 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">table_view</span>
-            Excel
-          </button>
-          <button
-            onClick={handleExportCSV}
-            className="py-2 px-3 rounded-xl border border-blue-500/20 text-blue-700 bg-blue-50 hover:bg-blue-100/60 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">csv</span>
-            CSV
-          </button>
+          {/* Action Controls */}
+          <div className="flex flex-wrap items-center gap-2 self-start md:self-center shrink-0">
+            <button
+              onClick={handleDeleteOldLogs}
+              className="btn-secondary py-2 px-3 text-[11.5px] rounded-[10px] flex items-center gap-1 text-amber-700 border-amber-200 hover:bg-amber-50"
+            >
+              <Trash2 size={13} />
+              Delete Old Logs
+            </button>
+            <button
+              onClick={handleExportPDF}
+              className="btn-secondary py-2 px-3 text-[11.5px] rounded-[10px] flex items-center gap-1 text-red-700 border-red-200 hover:bg-red-50"
+            >
+              <FileText size={13} />
+              PDF
+            </button>
+            <button
+              onClick={handleExportExcel}
+              className="btn-secondary py-2 px-3 text-[11.5px] rounded-[10px] flex items-center gap-1 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+            >
+              <Download size={13} />
+              Excel
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="btn-secondary py-2 px-3 text-[11.5px] rounded-[10px] flex items-center gap-1 text-indigo-700 border-indigo-200 hover:bg-indigo-50"
+            >
+              <Download size={13} />
+              CSV
+            </button>
+          </div>
         </div>
       </div>
 
       {/* DASHBOARD SUMMARY CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Total Activities</span>
-          <span className="block font-bold text-2xl text-primary font-mono mt-1">{stats.totalActivities}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Total Activities</span>
+          <span className="block font-black text-2xl text-[#8B1E3F] font-mono mt-1">{stats.totalActivities}</span>
         </div>
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Today's Activities</span>
-          <span className="block font-bold text-2xl text-indigo-700 font-mono mt-1">{stats.todayActivities}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Today's Activities</span>
+          <span className="block font-black text-2xl text-[#4F46E5] font-mono mt-1">{stats.todayActivities}</span>
         </div>
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Failed Actions</span>
-          <span className="block font-bold text-2xl text-red-600 font-mono mt-1">{stats.failedActivities}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Failed Actions</span>
+          <span className="block font-black text-2xl text-[#DC2626] font-mono mt-1">{stats.failedActivities}</span>
         </div>
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Active Users Today</span>
-          <span className="block font-bold text-2xl text-green-700 font-mono mt-1">{stats.activeUsersToday}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Active Users Today</span>
+          <span className="block font-black text-2xl text-[#059669] font-mono mt-1">{stats.activeUsersToday}</span>
         </div>
       </div>
 
       {/* FILTERS & SEARCH TOOLBAR */}
-      <div className="glass-panel p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm space-y-3">
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end text-xs font-semibold">
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Search Term</label>
-            <input
-              type="text"
-              placeholder="Search user, action, description, IP..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
-            />
+      <div className="card-flat p-4 bg-white">
+        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-end text-xs font-semibold font-sans">
+          <div className="flex flex-col gap-1 lg:col-span-2">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Search Term</span>
+            <div className="search-bar">
+              <Search size={14} className="text-[#9CA3AF]" />
+              <input
+                type="text"
+                placeholder="Search user, action..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">User Role</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">User Role</span>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Roles --</option>
+              <option value="">All Roles</option>
               <option value="Admin">Admin</option>
               <option value="Staff">Staff</option>
               <option value="Student">Student</option>
@@ -344,78 +359,78 @@ const AdminActivityLogs = () => {
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Department</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Department</span>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Departments --</option>
+              <option value="">All Depts</option>
               {departmentsList.map((d) => (
                 <option key={d._id} value={d._id}>{d.name}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">System Module</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">System Module</span>
             <select
               value={moduleName}
               onChange={(e) => setModuleName(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Modules --</option>
+              <option value="">All Modules</option>
               {MODULES.map((m) => (
                 <option key={m} value={m}>{m}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Action Status</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Action Status</span>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Statuses --</option>
+              <option value="">All Statuses</option>
               <option value="Success">Success</option>
               <option value="Failed">Failed</option>
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Start Date</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Start Date</span>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="p-2 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="px-3 py-2 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">End Date</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">End Date</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="p-2 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="px-3 py-2 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 lg:col-span-2 lg:col-start-7">
             <button
               type="submit"
-              className="flex-1 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all flex items-center justify-center gap-1 shadow-sm"
+              className="btn-primary py-2 px-4 flex-1 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
               Search
             </button>
             <button
               type="button"
               onClick={handleClearFilters}
-              className="py-2.5 px-4 rounded-xl border border-primary/10 text-on-surface-variant hover:bg-primary/5 text-xs font-bold transition-all"
+              className="btn-secondary py-2 px-3 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
               Clear
             </button>
@@ -424,81 +439,81 @@ const AdminActivityLogs = () => {
       </div>
 
       {/* ACTIVITY LOG TABLE */}
-      <div className="glass-panel rounded-[24px] border border-primary/5 overflow-hidden bg-white shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          <div className="p-12 space-y-4 animate-pulse">
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
+            ))}
           </div>
         ) : logs.length === 0 ? (
-          <div className="p-16 text-center border-t border-primary/5">
-            <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">
-              history_toggle_off
-            </span>
-            <h4 className="text-base font-bold text-on-surface">No Activity Logs Found</h4>
-            <p className="text-on-surface-variant text-xs mt-1">
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Terminal size={24} />
+            </div>
+            <h4 className="text-base font-bold text-[#111111]">No Activity Logs Found</h4>
+            <p className="text-[#6B7280] text-xs mt-1">
               There are no audit records matching your specified filter options.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs font-semibold">
+            <table className="table">
               <thead>
-                <tr className="bg-primary/5 text-primary border-b border-primary/10 font-bold uppercase tracking-wider text-[10px]">
-                  <th className="p-4">Date & Time</th>
-                  <th className="p-4">User Name & Role</th>
-                  <th className="p-4">Department</th>
-                  <th className="p-4">Module</th>
-                  <th className="p-4">Action</th>
-                  <th className="p-4">Description</th>
-                  <th className="p-4 text-center">Status</th>
-                  <th className="p-4">IP & Browser</th>
-                  <th className="p-4 text-right">Details</th>
+                <tr>
+                  <th>Date & Time</th>
+                  <th>User Name & Role</th>
+                  <th>Department</th>
+                  <th>Module</th>
+                  <th>Action</th>
+                  <th>Description</th>
+                  <th className="text-center">Status</th>
+                  <th>IP & Browser</th>
+                  <th className="text-right">Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5">
+              <tbody>
                 {logs.map((log) => (
-                  <tr key={log._id} className="hover:bg-primary/[0.02] transition-colors">
-                    <td className="p-4 font-mono text-[10px] whitespace-nowrap">
+                  <tr key={log._id}>
+                    <td className="font-mono text-[10px] whitespace-nowrap text-[#6B7280]">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
-                    <td className="p-4">
-                      <p className="font-bold text-primary">{log.userName}</p>
-                      <p className="text-[10px] text-on-surface-variant font-mono">{log.userRole}</p>
+                    <td>
+                      <p className="font-bold text-[#8B1E3F]">{log.userName}</p>
+                      <p className="text-[10px] text-[#6B7280] font-mono">{log.userRole}</p>
                     </td>
-                    <td className="p-4 text-on-surface-variant font-mono">{log.department}</td>
-                    <td className="p-4">
-                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-bold">
+                    <td className="text-[#6B7280] font-mono">{log.department}</td>
+                    <td>
+                      <span className="badge badge-wine">
                         {log.module}
                       </span>
                     </td>
-                    <td className="p-4 font-bold text-on-surface">{log.action}</td>
-                    <td className="p-4 max-w-xs truncate text-[11px] text-on-surface-variant">
+                    <td className="font-bold text-[#111111]">{log.action}</td>
+                    <td className="max-w-xs truncate text-[11px] text-[#6B7280]">
                       {log.details}
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="text-center">
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
+                        className={`badge ${
                           log.status === 'Success'
-                            ? 'bg-green-100 text-green-800 border border-green-200'
-                            : 'bg-red-100 text-red-800 border border-red-200'
+                            ? 'badge-green'
+                            : 'badge-red'
                         }`}
                       >
                         {log.status}
                       </span>
                     </td>
-                    <td className="p-4 text-[10px] font-mono">
+                    <td className="text-[10px] font-mono text-[#6B7280]">
                       <p>{log.ipAddress}</p>
-                      <p className="text-on-surface-variant/60">{log.browser} ({log.device})</p>
+                      <p className="opacity-60">{log.browser} ({log.device})</p>
                     </td>
-                    <td className="p-4 text-right shrink-0">
+                    <td className="text-right">
                       <button
                         onClick={() => setSelectedLog(log)}
-                        className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                        className="p-1.5 text-[#8B1E3F] hover:bg-[#FDF0F4] rounded-lg transition-colors inline-flex"
                         title="View Full Detail"
                       >
-                        <span className="material-symbols-outlined text-base">info</span>
+                        <Info size={14} />
                       </button>
                     </td>
                   </tr>
@@ -511,24 +526,26 @@ const AdminActivityLogs = () => {
 
       {/* PAGINATION CONTROLS */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 text-xs font-bold pt-2">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Previous
-          </button>
-          <span className="text-on-surface-variant font-mono">
-            Page {page} of {totalPages}
+        <div className="flex justify-between items-center px-6 py-4 bg-white border-t border-primary/5 text-xs text-[#6B7280]">
+          <span className="font-mono text-xs">
+            Showing {(page - 1) * limit + 1} - {Math.min(page * limit, stats.totalActivities)} of {stats.totalActivities} events
           </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Next
-          </button>
+          <div className="flex gap-2">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Previous
+            </button>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
@@ -540,67 +557,67 @@ const AdminActivityLogs = () => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="glass-panel w-full max-w-lg bg-white rounded-[24px] p-6 space-y-4 shadow-2xl border border-primary/10"
+              className="w-full max-w-lg bg-white rounded-[24px] p-6 space-y-4 shadow-2xl border border-[rgba(139,30,63,0.12)]"
             >
-              <div className="flex justify-between items-start border-b border-primary/5 pb-3">
+              <div className="flex justify-between items-start border-b border-gray-100 pb-3">
                 <div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-bold uppercase font-mono">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#FDF0F4] text-[#8B1E3F] text-[9px] font-bold uppercase font-mono border border-[rgba(139,30,63,0.12)]">
                     {selectedLog.module} Audit Record
                   </span>
-                  <h3 className="text-base font-bold text-primary mt-1">{selectedLog.action}</h3>
+                  <h3 className="text-base font-bold text-[#111111] mt-1">{selectedLog.action}</h3>
                 </div>
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="text-on-surface-variant hover:text-primary transition-colors"
+                  className="p-1 rounded-lg text-[#6B7280] hover:bg-gray-100 hover:text-[#111111] transition-colors"
                 >
-                  <span className="material-symbols-outlined text-xl">close</span>
+                  <X size={16} />
                 </button>
               </div>
 
               <div className="space-y-3 text-xs font-semibold">
-                <div className="p-3 bg-surface-container-low rounded-xl border border-primary/5 space-y-1">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Description</span>
-                  <p className="text-on-surface leading-relaxed">{selectedLog.details}</p>
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block">Description</span>
+                  <p className="text-[#111111] leading-relaxed">{selectedLog.details}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                <div className="grid grid-cols-2 gap-3 text-[11px] font-mono">
                   <div>
-                    <span className="text-[9px] uppercase text-on-surface-variant/60 block">User Performer</span>
-                    <span className="text-primary font-bold">{selectedLog.userName} ({selectedLog.userRole})</span>
+                    <span className="text-[9px] uppercase text-[#9CA3AF] block">User Performer</span>
+                    <span className="text-[#8B1E3F] font-bold">{selectedLog.userName} ({selectedLog.userRole})</span>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase text-on-surface-variant/60 block">User Email</span>
-                    <span className="text-primary font-bold">{selectedLog.userEmail}</span>
+                    <span className="text-[9px] uppercase text-[#9CA3AF] block">User Email</span>
+                    <span className="text-[#8B1E3F] font-bold">{selectedLog.userEmail}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase text-on-surface-variant/60 block">Department</span>
-                    <span className="text-primary font-bold">{selectedLog.department}</span>
+                    <span className="text-[9px] uppercase text-[#9CA3AF] block">Department</span>
+                    <span className="text-[#8B1E3F] font-bold">{selectedLog.department}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase text-on-surface-variant/60 block">Status</span>
+                    <span className="text-[9px] uppercase text-[#9CA3AF] block">Status</span>
                     <span className={`font-bold ${selectedLog.status === 'Success' ? 'text-green-700' : 'text-red-600'}`}>
                       {selectedLog.status}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase text-on-surface-variant/60 block">IP Address</span>
-                    <span className="text-primary font-bold">{selectedLog.ipAddress}</span>
+                    <span className="text-[9px] uppercase text-[#9CA3AF] block">IP Address</span>
+                    <span className="text-[#8B1E3F] font-bold">{selectedLog.ipAddress}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase text-on-surface-variant/60 block">Browser & Device</span>
-                    <span className="text-primary font-bold">{selectedLog.browser} ({selectedLog.device})</span>
+                    <span className="text-[9px] uppercase text-[#9CA3AF] block">Browser & Device</span>
+                    <span className="text-[#8B1E3F] font-bold">{selectedLog.browser} ({selectedLog.device})</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-[9px] uppercase text-on-surface-variant/60 block">Timestamp</span>
-                    <span className="text-primary font-bold">{new Date(selectedLog.timestamp).toLocaleString()}</span>
+                    <span className="text-[9px] uppercase text-[#9CA3AF] block">Timestamp</span>
+                    <span className="text-[#8B1E3F] font-bold">{new Date(selectedLog.timestamp).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-end border-t border-primary/5">
+              <div className="pt-3 flex justify-end border-t border-gray-100">
                 <button
                   onClick={() => setSelectedLog(null)}
-                  className="py-2 px-5 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary/95"
+                  className="btn-secondary py-2 px-5 text-xs rounded-[10px]"
                 >
                   Close
                 </button>

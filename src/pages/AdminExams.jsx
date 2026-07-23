@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  ShieldAlert, CheckCircle2, AlertTriangle, Calendar, Clock, BookOpen, Search, X, Check, Eye, Trash2
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminExams = () => {
@@ -245,56 +248,70 @@ const AdminExams = () => {
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'Pending Approval':
-        return 'bg-amber-500/10 text-amber-700 border border-amber-500/15';
+        return 'badge-gray';
       case 'Approved':
-        return 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/15';
+        return 'badge-green';
       case 'Rejected':
-        return 'bg-red-500/10 text-red-700 border border-red-500/15';
+        return 'badge-red';
       case 'Published':
-        return 'bg-primary/10 text-primary border border-primary/15';
+        return 'badge-wine';
       case 'Upcoming':
-        return 'bg-blue-500/10 text-blue-700 border border-blue-500/15';
+        return 'badge-blue';
       case 'Live':
-        return 'bg-green-500/15 text-green-800 border border-green-500/35 font-bold animate-pulse';
+        return 'badge-green animate-pulse';
       case 'Completed':
-        return 'bg-gray-500/10 text-gray-700 border border-gray-500/15';
+        return 'badge-gray';
       default:
-        return 'bg-surface-container-high text-on-surface-variant';
+        return 'badge-gray';
     }
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5">
-        <h2 className="text-2xl font-bold text-primary mb-1">Administrative Exam Control</h2>
-        <p className="text-on-surface-variant text-xs font-semibold">
-          Review, approve, and schedule assessment configurations. Publish exams to students or unpublish active nodes.
-        </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <ShieldAlert size={12} />
+              Evaluation Center
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Administrative Exam Control</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Review, approve, and schedule assessment configurations. Publish exams to students or unpublish active nodes.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Filters Form Panel */}
-      <div className="glass-panel p-4 rounded-[20px] border border-primary/5 space-y-4">
+      <div className="card-flat p-4 bg-white">
         <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end text-xs">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Search Title</label>
-            <input
-              type="text"
-              placeholder="Search exam title..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none"
-            />
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Search Title</span>
+            <div className="search-bar">
+              <Search size={14} className="text-[#9CA3AF]" />
+              <input
+                type="text"
+                placeholder="Search exam title..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Filter Status</label>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Filter Status</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none font-semibold"
+              className="select"
             >
-              <option value="">-- All Statuses --</option>
+              <option value="">All Statuses</option>
               <option value="Pending Approval">Pending Approval</option>
               <option value="Approved">Approved</option>
               <option value="Rejected">Rejected</option>
@@ -304,14 +321,14 @@ const AdminExams = () => {
             </select>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Filter Subject</label>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Filter Subject</span>
             <select
               value={subjectFilter}
               onChange={(e) => setSubjectFilter(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none font-semibold"
+              className="select"
             >
-              <option value="">-- All Subjects --</option>
+              <option value="">All Subjects</option>
               {subjectsList.map((sub) => (
                 <option key={sub._id} value={sub._id}>
                   {sub.name} ({sub.code})
@@ -323,15 +340,15 @@ const AdminExams = () => {
           <div className="flex gap-2">
             <button
               type="submit"
-              className="flex-1 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all flex items-center justify-center gap-1 shadow-sm"
+              className="btn-primary py-2 px-4 flex-1 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-sm font-bold">search</span>
+              <Search size={13} />
               Search
             </button>
             <button
               type="button"
               onClick={handleResetFilters}
-              className="py-2.5 px-4 rounded-xl border border-primary/10 text-on-surface-variant hover:bg-primary/5 text-xs font-bold transition-all"
+              className="btn-secondary py-2 px-3 text-[12.5px] rounded-[10px] flex items-center gap-1.5"
             >
               Clear
             </button>
@@ -341,131 +358,127 @@ const AdminExams = () => {
 
       {/* Main Exams List Table */}
       {loading ? (
-        <div className="space-y-4 animate-pulse">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="glass-panel p-6 rounded-[20px] h-20 bg-surface-container-high"></div>
+        <div className="space-y-3 p-4 animate-pulse">
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
           ))}
         </div>
       ) : exams.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="p-16 text-center border-2 border-dashed border-primary/10 rounded-[28px] bg-primary/5 max-w-lg mx-auto"
-        >
-          <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">
-            assignment_turned_in
-          </span>
-          <h4 className="text-base font-bold text-on-surface">No Exams Listed</h4>
-          <p className="text-on-surface-variant text-xs mt-1">
+        <div className="empty-state">
+          <div className="empty-state-icon">
+            <Calendar size={24} />
+          </div>
+          <h4 className="text-base font-bold text-[#111111]">No Exams Listed</h4>
+          <p className="text-[#6B7280] text-xs mt-1">
             There are no exam papers matching your queries. Adjust filters to search.
           </p>
-        </motion.div>
+        </div>
       ) : (
-        <div className="glass-panel rounded-[24px] border border-primary/5 overflow-hidden shadow-sm">
+        <div className="table-wrap">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="table">
               <thead>
-                <tr className="bg-surface-container-low border-b border-primary/5 text-on-surface-variant/80 font-mono text-[9px] font-bold uppercase">
-                  <th className="p-4">Exam Title</th>
-                  <th className="p-4">Subject</th>
-                  <th className="p-4">Dept & Sem</th>
-                  <th className="p-4">Staff Name</th>
-                  <th className="p-4 text-center">Questions</th>
-                  <th className="p-4 text-center">Total Marks</th>
-                  <th className="p-4 text-center">Status</th>
-                  <th className="p-4 text-right">Actions</th>
+                <tr>
+                  <th>Exam Title</th>
+                  <th>Subject</th>
+                  <th>Dept & Sem</th>
+                  <th>Staff Name</th>
+                  <th className="text-center">Questions</th>
+                  <th className="text-center">Total Marks</th>
+                  <th className="text-center">Status</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {exams.map((exam) => (
-                  <tr
-                    key={exam._id}
-                    className="border-b border-primary/5 hover:bg-primary/5 transition-colors font-semibold"
-                  >
-                    <td className="p-4">
-                      <p className="text-on-surface font-bold text-xs truncate max-w-[180px]">
+                  <tr key={exam._id}>
+                    <td>
+                      <p className="font-semibold text-[#8B1E3F] truncate max-w-[180px]">
                         {exam.title}
                       </p>
                       {exam.date && (
-                        <p className="text-[9px] font-mono text-secondary mt-0.5">
+                        <p className="text-[9px] font-mono text-[#6B7280] mt-0.5">
                           Date: {new Date(exam.date).toLocaleDateString()}
                         </p>
                       )}
                     </td>
-                    <td className="p-4">
-                      <p className="text-primary">{exam.subject?.name}</p>
-                      <p className="text-[9px] font-mono text-on-surface-variant">Code: {exam.subject?.code}</p>
+                    <td>
+                      <p className="font-semibold text-[#111111]">{exam.subject?.name}</p>
+                      <p className="text-[9px] font-mono text-[#6B7280]">Code: {exam.subject?.code}</p>
                     </td>
-                    <td className="p-4 text-on-surface-variant">
-                      <p>{exam.department?.code}</p>
-                      <p className="text-[9px] font-mono">Sem: {exam.semester?.semesterNumber}</p>
+                    <td>
+                      <p className="font-semibold text-[#111111]">{exam.department?.code}</p>
+                      <p className="text-[9px] font-mono text-[#6B7280]">Sem: {exam.semester?.semesterNumber}</p>
                     </td>
-                    <td className="p-4 font-normal text-on-surface-variant">
+                    <td>
                       {exam.createdBy?.name || 'Faculty'}
                     </td>
-                    <td className="p-4 text-center font-mono font-bold">
+                    <td className="text-center font-mono font-bold text-[#111111]">
                       {exam.questions?.length || 0}
                     </td>
-                    <td className="p-4 text-center font-mono font-bold">
+                    <td className="text-center font-mono font-bold text-[#111111]">
                       {exam.totalMarks}
                     </td>
-                    <td className="p-4 text-center">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${getStatusBadgeClass(exam.status)}`}>
+                    <td className="text-center">
+                      <span className={`badge ${getStatusBadgeClass(exam.status)}`}>
                         {exam.status}
                       </span>
                     </td>
-                    <td className="p-4 text-right space-x-1.5 shrink-0 whitespace-nowrap">
-                      <button
-                        onClick={() => handleOpenDrawer(exam._id)}
-                        className="py-1.5 px-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-[10px] font-bold font-sans transition-all"
-                      >
-                        Review
-                      </button>
-
-                      {exam.status === 'Pending Approval' && (
-                        <>
-                          <button
-                            onClick={() => handleApprove(exam._id)}
-                            className="py-1.5 px-2.5 rounded-lg bg-green-600 text-white hover:bg-green-700 text-[10px] font-bold transition-all"
-                          >
-                            Approve
-                          </button>
-                          <button
-                            onClick={() => handleOpenRejectModal(exam)}
-                            className="py-1.5 px-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 text-[10px] font-bold transition-all"
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
-
-                      {exam.status === 'Approved' && (
+                    <td className="text-right whitespace-nowrap">
+                      <div className="flex justify-end gap-1.5 items-center">
                         <button
-                          onClick={() => handleOpenPublishModal(exam)}
-                          className="py-1.5 px-2.5 rounded-lg bg-secondary text-white hover:bg-secondary-container text-[10px] font-bold transition-all flex items-center gap-1 inline-flex"
+                          onClick={() => handleOpenDrawer(exam._id)}
+                          className="py-1 px-2.5 text-[11.5px] rounded-[8px] bg-gray-50 border border-gray-200 text-[#111111] hover:bg-gray-100 font-bold transition-all flex items-center gap-1"
                         >
-                          <span className="material-symbols-outlined text-[12px] font-bold">event</span>
-                          Publish
+                          <Eye size={12} />
+                          Review
                         </button>
-                      )}
 
-                      {exam.status === 'Upcoming' && (
-                        <>
+                        {exam.status === 'Pending Approval' && (
+                          <>
+                            <button
+                              onClick={() => handleApprove(exam._id)}
+                              className="py-1 px-2.5 text-[11.5px] rounded-[8px] bg-emerald-600 text-white hover:bg-emerald-700 font-bold transition-all"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleOpenRejectModal(exam)}
+                              className="py-1 px-2.5 text-[11.5px] rounded-[8px] bg-red-600 text-white hover:bg-red-700 font-bold transition-all"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+
+                        {exam.status === 'Approved' && (
                           <button
                             onClick={() => handleOpenPublishModal(exam)}
-                            className="py-1.5 px-2.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-primary/5 hover:text-primary text-[10px] font-bold transition-all inline-flex items-center gap-1"
-                            title="Reschedule"
+                            className="py-1 px-2.5 text-[11.5px] rounded-[8px] bg-[#8B1E3F] text-white hover:bg-[#A62E52] font-bold transition-all flex items-center gap-1"
                           >
-                            Reschedule
+                            <Calendar size={12} />
+                            Publish
                           </button>
-                          <button
-                            onClick={() => handleUnpublish(exam._id)}
-                            className="py-1.5 px-2.5 rounded-lg border border-red-500/20 text-error hover:bg-error/10 text-[10px] font-bold transition-all inline-flex items-center gap-1"
-                          >
-                            Unpublish
-                          </button>
-                        </>
-                      )}
+                        )}
+
+                        {exam.status === 'Upcoming' && (
+                          <>
+                            <button
+                              onClick={() => handleOpenPublishModal(exam)}
+                              className="py-1 px-2.5 text-[11.5px] rounded-[8px] bg-gray-50 border border-gray-200 text-[#111111] hover:bg-gray-100 font-bold transition-all"
+                              title="Reschedule"
+                            >
+                              Reschedule
+                            </button>
+                            <button
+                              onClick={() => handleUnpublish(exam._id)}
+                              className="py-1 px-2.5 text-[11.5px] rounded-[8px] border border-red-200 text-red-600 hover:bg-red-50 font-bold transition-all"
+                            >
+                              Unpublish
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -475,22 +488,22 @@ const AdminExams = () => {
 
           {/* Table Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-between items-center px-6 py-4 bg-surface-container-low border-t border-primary/5 text-[10px] text-on-surface-variant font-bold">
-              <span>
+            <div className="flex justify-between items-center px-6 py-4 bg-white border-t border-primary/5 text-xs text-[#6B7280]">
+              <span className="font-mono text-xs">
                 Showing {(page - 1) * limit + 1} - {Math.min(page * limit, totalExams)} of {totalExams} exams
               </span>
               <div className="flex gap-2">
                 <button
                   disabled={page === 1}
                   onClick={() => setPage(page - 1)}
-                  className="px-3 py-1.5 rounded-lg border border-primary/10 hover:bg-primary/5 disabled:opacity-40 transition-colors"
+                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
                 >
                   Previous
                 </button>
                 <button
                   disabled={page * limit >= totalExams}
                   onClick={() => setPage(page + 1)}
-                  className="px-3 py-1.5 rounded-lg border border-primary/10 hover:bg-primary/5 disabled:opacity-40 transition-colors"
+                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
                 >
                   Next
                 </button>

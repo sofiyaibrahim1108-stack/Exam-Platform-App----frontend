@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  ArrowLeft, Eye, X, BookOpen, Clock, Settings, Layers, Calendar, UserCheck, ShieldAlert, FileText, ClipboardList,Search
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminQuestionBank = () => {
@@ -220,23 +223,27 @@ const AdminQuestionBank = () => {
     return (
       <div className="space-y-6">
         {/* Detail Workspace Header Banner */}
-        <div className="glass-panel p-6 rounded-[24px] relative overflow-hidden border border-primary/5">
-          <div className="flex items-center gap-3">
+        <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+            backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+            backgroundSize: '24px 24px'
+          }} />
+          <div className="relative flex items-center gap-3">
             <button
               onClick={() => setSelectedBatch(null)}
-              className="p-2 rounded-xl border border-primary/10 hover:bg-primary/5 text-on-surface transition-all"
+              className="p-2 rounded-xl border border-primary/10 hover:bg-[#FDF0F4] hover:text-[#8B1E3F] text-on-surface transition-all"
               title="Back to Batches"
             >
-              <span className="material-symbols-outlined font-bold text-sm block">arrow_back</span>
+              <ArrowLeft size={16} />
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono font-bold text-secondary uppercase tracking-wider block">
+                <span className="text-[10px] font-mono font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-1 tracking-wider block">
                   Batch Question Bank Details (Admin Console)
                 </span>
               </div>
-              <h2 className="text-xl font-bold text-primary leading-tight">
-                {selectedBatch.subject?.name} <span className="font-mono text-sm opacity-75">({selectedBatch.subject?.code})</span>
+              <h2 className="text-xl font-bold text-[#111111] leading-tight">
+                {selectedBatch.subject?.name} <span className="font-mono text-sm text-[#6B7280]">({selectedBatch.subject?.code})</span>
               </h2>
             </div>
           </div>
@@ -244,21 +251,21 @@ const AdminQuestionBank = () => {
 
         {/* Batch Info Card */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="glass-panel p-4 rounded-2xl border border-primary/5">
-            <span className="text-[9px] text-on-surface-variant/60 font-mono font-bold uppercase block">Batch Unit(s)</span>
-            <span className="text-xs font-bold text-primary mt-1 block truncate">
+          <div className="stat-card p-4">
+            <span className="text-[9px] text-[#9CA3AF] font-mono font-bold uppercase block">Batch Unit(s)</span>
+            <span className="text-xs font-bold text-[#111111] mt-1 block truncate">
               {getBatchUnitsLabel(selectedBatch.questions)}
             </span>
           </div>
-          <div className="glass-panel p-4 rounded-2xl border border-primary/5">
-            <span className="text-[9px] text-on-surface-variant/60 font-mono font-bold uppercase block">Total Questions</span>
-            <span className="text-xs font-bold text-primary mt-1 block">
+          <div className="stat-card p-4">
+            <span className="text-[9px] text-[#9CA3AF] font-mono font-bold uppercase block">Total Questions</span>
+            <span className="text-xs font-bold text-[#111111] mt-1 block">
               {selectedBatch.questions.length} Qs
             </span>
           </div>
-          <div className="glass-panel p-4 rounded-2xl border border-primary/5">
-            <span className="text-[9px] text-on-surface-variant/60 font-mono font-bold uppercase block">Approved On</span>
-            <span className="text-xs font-bold text-primary mt-1 block">
+          <div className="stat-card p-4">
+            <span className="text-[9px] text-[#9CA3AF] font-mono font-bold uppercase block">Approved On</span>
+            <span className="text-xs font-bold text-[#111111] mt-1 block">
               {new Date(selectedBatch.approvedDate).toLocaleDateString(undefined, {
                 day: 'numeric',
                 month: 'short',
@@ -266,9 +273,9 @@ const AdminQuestionBank = () => {
               })}
             </span>
           </div>
-          <div className="glass-panel p-4 rounded-2xl border border-primary/5">
-            <span className="text-[9px] text-on-surface-variant/60 font-mono font-bold uppercase block">Approved By</span>
-            <span className="text-xs font-bold text-primary mt-1 block truncate">
+          <div className="stat-card p-4">
+            <span className="text-[9px] text-[#9CA3AF] font-mono font-bold uppercase block">Approved By</span>
+            <span className="text-xs font-bold text-[#111111] mt-1 block truncate">
               {selectedBatch.approvedBy?.name}
             </span>
           </div>
@@ -282,25 +289,25 @@ const AdminQuestionBank = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.04 }}
-              className="glass-panel p-6 rounded-[24px] border border-primary/5 hover:border-primary/10 transition-all space-y-4 relative"
+              className="card-flat p-6 rounded-[24px] space-y-4 relative"
             >
               {/* Question tags and details drawer button */}
               <div className="flex justify-between items-center flex-wrap gap-2">
                 <div className="flex items-center gap-1.5">
                   <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wide border ${
                     q.difficulty === 'Easy'
-                      ? 'bg-green-500/10 text-green-700 border-green-500/20'
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                       : q.difficulty === 'Medium'
-                      ? 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20'
-                      : 'bg-primary/10 text-primary border-primary/20'
+                      ? 'bg-amber-50 text-amber-800 border-amber-200'
+                      : 'bg-red-50 text-[#8B1E3F] border-[rgba(139,30,63,0.12)]'
                   }`}>
                     {q.difficulty}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-[9px] font-mono font-bold border">
+                  <span className="px-2 py-0.5 rounded bg-gray-50 text-[#6B7280] text-[9px] font-mono font-bold border border-gray-150">
                     ORIGIN: {q.GeneratedBy}
                   </span>
                   {q.UnitId && (
-                    <span className="px-2 py-0.5 rounded bg-secondary/10 text-secondary text-[9px] font-mono font-bold border border-secondary/10">
+                    <span className="px-2 py-0.5 rounded bg-[#FDF0F4] text-[#8B1E3F] text-[9px] font-mono font-bold border border-[rgba(139,30,63,0.12)]">
                       {getUnitNumberLabel(q.subject?._id, q.UnitId) || 'Unit mapped'}
                     </span>
                   )}
@@ -311,10 +318,10 @@ const AdminQuestionBank = () => {
                     setActiveQuestion(q);
                     setPreviewOpen(true);
                   }}
-                  className="p-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 text-primary transition-all font-bold text-xs flex items-center gap-1"
+                  className="py-1 px-2.5 text-[11.5px] rounded-[8px] bg-[#FDF0F4] text-[#8B1E3F] hover:bg-[#8B1E3F] hover:text-white font-bold transition-all flex items-center gap-1"
                   title="View Details"
                 >
-                  <span className="material-symbols-outlined text-sm font-bold block">visibility</span>
+                  <Eye size={12} />
                   <span>Preview</span>
                 </button>
               </div>
@@ -389,9 +396,9 @@ const AdminQuestionBank = () => {
                     </div>
                     <button
                       onClick={() => setPreviewOpen(false)}
-                      className="p-1 rounded-full hover:bg-primary/5 text-on-surface-variant"
+                      className="p-1 rounded-lg text-[#6B7280] hover:bg-gray-100 hover:text-[#111111]"
                     >
-                      <span className="material-symbols-outlined text-[22px]">close</span>
+                      <X size={18} />
                     </button>
                   </div>
 
@@ -489,82 +496,102 @@ const AdminQuestionBank = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5">
-        <h2 className="text-2xl font-bold text-primary mb-1">Approved Question Bank</h2>
-        <p className="text-on-surface-variant text-xs font-semibold">
-          Browse and verify approved questions structured into distinct batches representing each admin-approved submission.
-        </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <ClipboardList size={12} />
+              Validated Repository
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Approved Question Bank</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Browse and verify approved questions structured into distinct batches representing each admin-approved submission.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Filters Form Panel */}
-      <form onSubmit={handleSearchSubmit} className="glass-panel p-4 rounded-[20px] grid grid-cols-1 md:grid-cols-5 gap-3 items-center border border-primary/5">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search questions..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-8 py-2 rounded-xl bg-surface border border-primary/10 text-xs focus:outline-none focus:border-primary font-medium"
-          />
-          <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant/40 text-[18px]">search</span>
-          {search && (
-            <button
-              type="button"
-              onClick={handleResetSearch}
-              className="absolute right-3 top-2 text-on-surface-variant hover:text-primary"
-            >
-              <span className="material-symbols-outlined text-[18px]">close</span>
-            </button>
-          )}
+      <form onSubmit={handleSearchSubmit} className="card-flat p-4 bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center">
+          {/* Search */}
+          <div className="sm:col-span-2 lg:col-span-1 search-bar">
+            <Search size={14} className="text-[#9CA3AF] flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search questions..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={handleResetSearch}
+                className="text-[#9CA3AF] hover:text-[#8B1E3F]"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Department Filter */}
+          <select
+            value={deptFilter}
+            onChange={(e) => setDeptFilter(e.target.value)}
+            className="select"
+          >
+            <option value="">All Departments</option>
+            {departments.map((d) => <option key={d._id} value={d._id}>{d.name}</option>)}
+          </select>
+
+          {/* Course Filter */}
+          <select
+            value={courseFilter}
+            onChange={(e) => setCourseFilter(e.target.value)}
+            className="select"
+          >
+            <option value="">All Courses</option>
+            {courses.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
+          </select>
+
+          {/* Semester Filter */}
+          <select
+            value={semFilter}
+            onChange={(e) => setSemFilter(e.target.value)}
+            className="select"
+          >
+            <option value="">All Semesters</option>
+            {semesters.map((s) => <option key={s._id} value={s._id}>{s.name} (Sem {s.semesterNumber})</option>)}
+          </select>
+
+          {/* Subject Filter */}
+          <select
+            value={subFilter}
+            onChange={(e) => setSubFilter(e.target.value)}
+            className="select"
+          >
+            <option value="">All Subjects</option>
+            {subjects.map((sub) => (
+              <option key={sub._id} value={sub._id}>
+                {sub.name} ({sub.code})
+              </option>
+            ))}
+          </select>
         </div>
-
-        <select
-          value={deptFilter}
-          onChange={(e) => setDeptFilter(e.target.value)}
-          className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-        >
-          <option value="">Department: All</option>
-          {departments.map((d) => <option key={d._id} value={d._id}>{d.name}</option>)}
-        </select>
-
-        <select
-          value={courseFilter}
-          onChange={(e) => setCourseFilter(e.target.value)}
-          className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-        >
-          <option value="">Course: All</option>
-          {courses.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
-        </select>
-
-        <select
-          value={semFilter}
-          onChange={(e) => setSemFilter(e.target.value)}
-          className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-        >
-          <option value="">Semester: All</option>
-          {semesters.map((s) => <option key={s._id} value={s._id}>{s.name} (Sem {s.semesterNumber})</option>)}
-        </select>
-
-        <select
-          value={subFilter}
-          onChange={(e) => setSubFilter(e.target.value)}
-          className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-        >
-          <option value="">Subject: All</option>
-          {subjects.map((sub) => (
-            <option key={sub._id} value={sub._id}>
-              {sub.name} ({sub.code})
-            </option>
-          ))}
-        </select>
       </form>
 
       {/* Batches Grid Display */}
       {batches.length === 0 ? (
-        <div className="glass-panel p-16 text-center rounded-[24px] border border-primary/5">
-          <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">layers</span>
-          <h4 className="text-base font-bold text-on-surface font-sans">No Batches Found</h4>
-          <p className="text-on-surface-variant text-xs mt-1 max-w-sm mx-auto">
+        <div className="empty-state">
+          <div className="empty-state-icon">
+            <Layers size={24} />
+          </div>
+          <h4 className="text-base font-bold text-[#111111]">No Batches Found</h4>
+          <p className="text-[#6B7280] text-xs mt-1 max-w-sm">
             There are no approved question submissions matching your selected parameters in the question bank.
           </p>
         </div>
@@ -576,32 +603,32 @@ const AdminQuestionBank = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.04 }}
-              className="glass-panel p-6 rounded-[24px] border border-primary/5 hover:border-primary/20 hover:shadow-md transition-all duration-300 bg-surface flex flex-col justify-between h-56"
+              className="card-flat p-6 flex flex-col justify-between h-56 bg-white"
             >
               <div className="space-y-2">
-                <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[9px] font-mono font-bold border border-primary/10 uppercase tracking-wide">
+                <span className="px-2 py-0.5 rounded bg-[#FDF0F4] text-[#8B1E3F] text-[9px] font-mono font-bold border border-[rgba(139,30,63,0.12)] uppercase tracking-wide">
                   {batch.subject?.code}
                 </span>
-                <h3 className="text-sm font-bold text-primary line-clamp-2 leading-tight">
+                <h3 className="text-sm font-bold text-[#111111] line-clamp-2 leading-tight">
                   {batch.subject?.name}
                 </h3>
               </div>
 
               {/* Stats Block */}
-              <div className="py-2.5 border-t border-b border-primary/5 space-y-1.5 my-3 text-[10px] font-semibold text-on-surface-variant">
+              <div className="py-2 border-t border-b border-[#F3F4F6] space-y-1 my-3 text-[11px] text-[#6B7280]">
                 <div className="flex justify-between">
                   <span className="opacity-75">Unit(s):</span>
-                  <span className="text-primary font-bold truncate max-w-[170px]">
+                  <span className="text-[#8B1E3F] font-bold truncate max-w-[170px]">
                     {getBatchUnitsLabel(batch.questions)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="opacity-75">Questions:</span>
-                  <span className="text-primary font-bold">{batch.questions.length} Qs</span>
+                  <span className="text-[#8B1E3F] font-bold">{batch.questions.length} Qs</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="opacity-75">Approved Date:</span>
-                  <span className="font-mono font-bold">
+                  <span className="font-mono font-bold text-[#111111]">
                     {new Date(batch.approvedDate).toLocaleDateString(undefined, {
                       day: 'numeric',
                       month: 'short',
@@ -620,9 +647,9 @@ const AdminQuestionBank = () => {
               {/* View Questions CTA Button */}
               <button
                 onClick={() => setSelectedBatch(batch)}
-                className="w-full py-2 rounded-xl bg-primary/5 text-primary border border-primary/5 hover:bg-primary hover:text-white transition-all text-xs font-bold flex items-center justify-center gap-1.5"
+                className="btn-secondary py-2 w-full text-[12px] rounded-[10px] flex items-center justify-center gap-1.5"
               >
-                <span className="material-symbols-outlined text-sm font-bold">visibility</span>
+                <Eye size={13} />
                 View Questions
               </button>
             </motion.div>

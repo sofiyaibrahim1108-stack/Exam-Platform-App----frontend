@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  User, Mail, Phone, Shield, Camera, Lock, Eye, EyeOff, Save, Trash2, Key, Info, Terminal, Settings
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminProfile = () => {
@@ -199,10 +202,18 @@ const AdminProfile = () => {
   return (
     <div className="space-y-6 text-sm font-sans text-on-surface">
       {/* Top Banner */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5 bg-white shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-primary mb-1">Administrator Profile</h2>
-          <p className="text-on-surface-variant text-xs font-semibold">
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative">
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+            <User size={12} />
+            Identity Management
+          </div>
+          <h2 className="text-2xl font-black text-[#111111] leading-none">Administrator Profile</h2>
+          <p className="text-[13px] text-[#6B7280] mt-1.5">
             Manage your personal administrative credentials, institution preferences, security keys, and audit logs.
           </p>
         </div>
@@ -216,10 +227,10 @@ const AdminProfile = () => {
       ) : (
         <div className="space-y-6 animate-fadeIn">
           {/* PROFILE OVERVIEW CARD */}
-          <div className="glass-panel p-6 rounded-[24px] border border-primary/5 bg-white shadow-sm flex flex-col md:flex-row items-center md:items-start gap-6">
+          <div className="card-flat p-6 bg-white flex flex-col md:flex-row items-center md:items-start gap-6">
             {/* Avatar & Upload controls */}
             <div className="flex flex-col items-center space-y-3 shrink-0">
-              <div className="relative group w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 bg-primary/5 flex items-center justify-center shadow-inner">
+              <div className="relative group w-24 h-24 rounded-full overflow-hidden border border-primary/10 bg-[#FAF8F7] flex items-center justify-center shadow-inner">
                 {profile.avatar ? (
                   <img
                     src={getAvatarSrc(profile.avatar)}
@@ -227,25 +238,25 @@ const AdminProfile = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-3xl font-extrabold text-primary font-mono uppercase">
+                  <span className="text-3xl font-extrabold text-[#8B1E3F] font-mono uppercase">
                     {profile.name?.charAt(0) || 'A'}
                   </span>
                 )}
                 <label className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-[10px] font-bold">
-                  <span className="material-symbols-outlined text-xl">photo_camera</span>
+                  <Camera size={16} className="mb-1" />
                   Replace
                   <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
                 </label>
               </div>
 
               <div className="flex items-center gap-2">
-                <label className="text-[10px] font-bold text-primary hover:underline cursor-pointer">
+                <label className="text-[10px] font-bold text-[#8B1E3F] hover:underline cursor-pointer">
                   Upload Photo
                   <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
                 </label>
                 {profile.avatar && (
                   <>
-                    <span className="text-on-surface-variant/30">•</span>
+                    <span className="text-gray-300">•</span>
                     <button
                       onClick={handleRemovePhoto}
                       className="text-[10px] font-bold text-red-600 hover:underline"
@@ -261,16 +272,16 @@ const AdminProfile = () => {
             <div className="flex-1 space-y-3 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-primary/5 pb-3">
                 <div>
-                  <h3 className="text-xl font-bold text-primary">{profile.name}</h3>
-                  <p className="text-xs font-mono text-on-surface-variant font-semibold">
+                  <h3 className="text-xl font-black text-[#111111]">{profile.name}</h3>
+                  <p className="text-xs font-mono text-[#6B7280] font-semibold">
                     {profile.designation || 'Institution Admin'} | ID: {profile.employeeId || profile._id}
                   </p>
                 </div>
                 <div className="flex items-center justify-center md:justify-end gap-2">
-                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-extrabold font-mono uppercase">
+                  <span className="badge badge-wine uppercase">
                     {profile.role === 'Admin' ? 'Institution Admin' : profile.role}
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 border border-green-200 text-[10px] font-extrabold font-mono uppercase">
+                  <span className="badge badge-green uppercase">
                     {profile.status || 'Active'}
                   </span>
                 </div>
@@ -278,33 +289,33 @@ const AdminProfile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-semibold pt-1">
                 <div>
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Email Address</span>
-                  <span className="text-on-surface font-mono">{profile.email}</span>
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block mb-0.5">Email Address</span>
+                  <span className="text-[#111111] font-mono">{profile.email}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Phone Number</span>
-                  <span className="text-on-surface font-mono">{profile.phone || 'Not provided'}</span>
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block mb-0.5">Phone Number</span>
+                  <span className="text-[#111111] font-mono">{profile.phone || 'Not provided'}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Institution</span>
-                  <span className="text-on-surface">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block mb-0.5">Institution</span>
+                  <span className="text-[#111111]">
                     {profile.institution?.institutionName || 'Oxford Global University'} (
                     {profile.institution?.institutionCode || 'OGU'})
                   </span>
                 </div>
                 <div>
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Department</span>
-                  <span className="text-on-surface">{profile.department?.name || 'All Academic Departments'}</span>
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block mb-0.5">Department</span>
+                  <span className="text-[#111111]">{profile.department?.name || 'All Academic Departments'}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Last Login</span>
-                  <span className="text-on-surface font-mono">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block mb-0.5">Last Login</span>
+                  <span className="text-[#111111] font-mono">
                     {profile.security?.lastLogin ? new Date(profile.security.lastLogin).toLocaleString() : 'Just now'}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Account Created</span>
-                  <span className="text-on-surface font-mono">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block mb-0.5">Account Created</span>
+                  <span className="text-[#111111] font-mono">
                     {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}
                   </span>
                 </div>
@@ -315,35 +326,35 @@ const AdminProfile = () => {
           {/* PROFILE STATISTICS */}
           {profile.stats && (
             <div className="space-y-3">
-              <h4 className="text-xs font-mono font-bold uppercase text-primary">Institution Quick Overview Metrics</h4>
+              <h4 className="text-[10px] font-mono font-bold uppercase text-[#9CA3AF]">Institution Quick Overview Metrics</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-                <div className="p-3.5 glass-card bg-white rounded-[18px] border border-primary/5 shadow-sm text-center">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Depts</span>
-                  <span className="font-extrabold text-xl text-primary font-mono block mt-1">{profile.stats.departmentsManaged}</span>
+                <div className="stat-card p-3.5 text-center bg-white">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block font-bold">Depts</span>
+                  <span className="font-black text-xl text-[#8B1E3F] font-mono block mt-1">{profile.stats.departmentsManaged}</span>
                 </div>
-                <div className="p-3.5 glass-card bg-white rounded-[18px] border border-primary/5 shadow-sm text-center">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Courses</span>
-                  <span className="font-extrabold text-xl text-primary font-mono block mt-1">{profile.stats.courses}</span>
+                <div className="stat-card p-3.5 text-center bg-white">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block font-bold">Courses</span>
+                  <span className="font-black text-xl text-[#8B1E3F] font-mono block mt-1">{profile.stats.courses}</span>
                 </div>
-                <div className="p-3.5 glass-card bg-white rounded-[18px] border border-primary/5 shadow-sm text-center">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Subjects</span>
-                  <span className="font-extrabold text-xl text-primary font-mono block mt-1">{profile.stats.subjects}</span>
+                <div className="stat-card p-3.5 text-center bg-white">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block font-bold">Subjects</span>
+                  <span className="font-black text-xl text-[#8B1E3F] font-mono block mt-1">{profile.stats.subjects}</span>
                 </div>
-                <div className="p-3.5 glass-card bg-white rounded-[18px] border border-primary/5 shadow-sm text-center">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Staff</span>
-                  <span className="font-extrabold text-xl text-primary font-mono block mt-1">{profile.stats.staff}</span>
+                <div className="stat-card p-3.5 text-center bg-white">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block font-bold">Staff</span>
+                  <span className="font-black text-xl text-[#8B1E3F] font-mono block mt-1">{profile.stats.staff}</span>
                 </div>
-                <div className="p-3.5 glass-card bg-white rounded-[18px] border border-primary/5 shadow-sm text-center">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Students</span>
-                  <span className="font-extrabold text-xl text-primary font-mono block mt-1">{profile.stats.students}</span>
+                <div className="stat-card p-3.5 text-center bg-white">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block font-bold">Students</span>
+                  <span className="font-black text-xl text-[#8B1E3F] font-mono block mt-1">{profile.stats.students}</span>
                 </div>
-                <div className="p-3.5 glass-card bg-white rounded-[18px] border border-primary/5 shadow-sm text-center">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Exams</span>
-                  <span className="font-extrabold text-xl text-primary font-mono block mt-1">{profile.stats.examsConducted}</span>
+                <div className="stat-card p-3.5 text-center bg-white">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block font-bold">Exams</span>
+                  <span className="font-black text-xl text-[#8B1E3F] font-mono block mt-1">{profile.stats.examsConducted}</span>
                 </div>
-                <div className="p-3.5 glass-card bg-white rounded-[18px] border border-primary/5 shadow-sm text-center col-span-2 md:col-span-1">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Results</span>
-                  <span className="font-extrabold text-xl text-green-700 font-mono block mt-1">{profile.stats.publishedResults}</span>
+                <div className="stat-card p-3.5 text-center col-span-2 md:col-span-1 bg-white">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block font-bold">Results</span>
+                  <span className="font-black text-xl text-emerald-700 font-mono block mt-1">{profile.stats.publishedResults}</span>
                 </div>
               </div>
             </div>
@@ -352,61 +363,64 @@ const AdminProfile = () => {
           {/* EDIT PROFILE & CHANGE PASSWORD GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* EDIT PROFILE FORM */}
-            <div className="glass-panel p-5 rounded-[24px] border border-primary/5 bg-white shadow-sm space-y-4">
-              <h3 className="text-xs font-mono font-bold uppercase text-primary border-b border-primary/5 pb-2">
-                Edit Account Information
-              </h3>
+            <div className="card-flat p-5 bg-white space-y-4">
+              <div className="flex items-center gap-1.5 border-b border-gray-100 pb-2.5">
+                <Settings size={14} className="text-[#8B1E3F]" />
+                <h3 className="text-xs font-mono font-bold uppercase text-[#111111]">
+                  Edit Account Information
+                </h3>
+              </div>
 
-              <form onSubmit={handleUpdateProfile} className="space-y-4 text-xs font-semibold">
+              <form onSubmit={handleUpdateProfile} className="space-y-4 text-xs font-semibold font-sans">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Full Name</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Full Name</span>
                   <input
                     type="text"
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                     required
-                    className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+                    className="p-2.5 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Phone Number</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Phone Number</span>
                   <input
                     type="text"
                     value={editForm.phone}
                     onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                    className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-mono"
+                    className="p-2.5 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs font-mono text-[#111111]"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Designation</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Designation</span>
                   <input
                     type="text"
                     value={editForm.designation}
                     onChange={(e) => setEditForm({ ...editForm, designation: e.target.value })}
-                    className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+                    className="p-2.5 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
                   />
                 </div>
 
                 {/* Read Only Fields */}
                 <div className="grid grid-cols-2 gap-3 pt-1">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-mono font-bold text-on-surface-variant/50 uppercase">Email (Locked)</label>
+                    <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Email (Locked)</span>
                     <input
                       type="text"
                       disabled
                       value={profile.email}
-                      className="p-2 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-mono cursor-not-allowed text-[11px]"
+                      className="p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-gray-400 font-mono cursor-not-allowed text-[11px]"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-mono font-bold text-on-surface-variant/50 uppercase">ID (Locked)</label>
+                    <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">ID (Locked)</span>
                     <input
                       type="text"
                       disabled
                       value={profile.employeeId || profile._id}
-                      className="p-2 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 font-mono cursor-not-allowed text-[11px]"
+                      className="p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-gray-400 font-mono cursor-not-allowed text-[11px]"
                     />
                   </div>
                 </div>
@@ -415,9 +429,9 @@ const AdminProfile = () => {
                   <button
                     type="submit"
                     disabled={savingProfile}
-                    className="w-full py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all shadow-sm flex items-center justify-center gap-1.5"
+                    className="btn-primary w-full py-2.5 rounded-[12px] text-[12.5px] flex items-center justify-center gap-1.5"
                   >
-                    <span className="material-symbols-outlined text-base">save</span>
+                    <Save size={14} />
                     {savingProfile ? 'Saving Changes...' : 'Save Profile Changes'}
                   </button>
                 </div>
@@ -425,97 +439,93 @@ const AdminProfile = () => {
             </div>
 
             {/* CHANGE PASSWORD FORM */}
-            <div className="glass-panel p-5 rounded-[24px] border border-primary/5 bg-white shadow-sm space-y-4">
-              <h3 className="text-xs font-mono font-bold uppercase text-primary border-b border-primary/5 pb-2">
-                Change Password
-              </h3>
+            <div className="card-flat p-5 bg-white space-y-4">
+              <div className="flex items-center gap-1.5 border-b border-gray-100 pb-2.5">
+                <Lock size={14} className="text-[#8B1E3F]" />
+                <h3 className="text-xs font-mono font-bold uppercase text-[#111111]">
+                  Change Password
+                </h3>
+              </div>
 
-              <form onSubmit={handleChangePassword} className="space-y-4 text-xs font-semibold">
+              <form onSubmit={handleChangePassword} className="space-y-4 text-xs font-semibold font-sans">
                 <div className="flex flex-col gap-1 relative">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Current Password</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Current Password</span>
                   <div className="relative">
                     <input
                       type={showCurrentPass ? 'text' : 'password'}
                       value={passForm.currentPassword}
                       onChange={(e) => setPassForm({ ...passForm, currentPassword: e.target.value })}
                       required
-                      className="w-full p-2.5 pr-10 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-mono"
+                      className="w-full p-2.5 pr-10 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs font-mono text-[#111111]"
                     />
                     <button
                       type="button"
                       onClick={() => setShowCurrentPass(!showCurrentPass)}
-                      className="absolute right-3 top-2.5 text-on-surface-variant hover:text-primary"
+                      className="absolute right-3 top-2.5 text-[#6B7280] hover:text-[#8B1E3F]"
                     >
-                      <span className="material-symbols-outlined text-base">
-                        {showCurrentPass ? 'visibility_off' : 'visibility'}
-                      </span>
+                      {showCurrentPass ? <EyeOff size={14} /> : <Eye size={14} />}
                     </button>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1 relative">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">New Password</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">New Password</span>
                   <div className="relative">
                     <input
                       type={showNewPass ? 'text' : 'password'}
                       value={passForm.newPassword}
                       onChange={(e) => setPassForm({ ...passForm, newPassword: e.target.value })}
                       required
-                      className="w-full p-2.5 pr-10 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-mono"
+                      className="w-full p-2.5 pr-10 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs font-mono text-[#111111]"
                     />
                     <button
                       type="button"
                       onClick={() => setShowNewPass(!showNewPass)}
-                      className="absolute right-3 top-2.5 text-on-surface-variant hover:text-primary"
+                      className="absolute right-3 top-2.5 text-[#6B7280] hover:text-[#8B1E3F]"
                     >
-                      <span className="material-symbols-outlined text-base">
-                        {showNewPass ? 'visibility_off' : 'visibility'}
-                      </span>
+                      {showNewPass ? <EyeOff size={14} /> : <Eye size={14} />}
                     </button>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1 relative">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Confirm New Password</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Confirm New Password</span>
                   <div className="relative">
                     <input
                       type={showConfirmPass ? 'text' : 'password'}
                       value={passForm.confirmPassword}
                       onChange={(e) => setPassForm({ ...passForm, confirmPassword: e.target.value })}
                       required
-                      className="w-full p-2.5 pr-10 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-mono"
+                      className="w-full p-2.5 pr-10 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs font-mono text-[#111111]"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPass(!showConfirmPass)}
-                      className="absolute right-3 top-2.5 text-on-surface-variant hover:text-primary"
+                      className="absolute right-3 top-2.5 text-[#6B7280] hover:text-[#8B1E3F]"
                     >
-                      <span className="material-symbols-outlined text-base">
-                        {showConfirmPass ? 'visibility_off' : 'visibility'}
-                      </span>
+                      {showConfirmPass ? <EyeOff size={14} /> : <Eye size={14} />}
                     </button>
                   </div>
                 </div>
 
                 {/* Password Strength Validation Rules Checklist */}
-                <div className="p-3 bg-surface-container-low rounded-xl border border-primary/5 space-y-1 text-[10px] font-mono font-bold">
-                  <span className="text-on-surface-variant block uppercase text-[9px] mb-1">Validation Checklist:</span>
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1 text-[10px] font-mono font-bold">
+                  <span className="text-[#9CA3AF] block uppercase text-[9px] mb-1">Validation Checklist:</span>
                   <div className="grid grid-cols-2 gap-1">
-                    <span className={isMinLen ? 'text-green-700' : 'text-on-surface-variant/50'}>
+                    <span className={isMinLen ? 'text-green-700' : 'text-gray-300'}>
                       {isMinLen ? '✓' : '○'} Min 8 Chars
                     </span>
-                    <span className={hasUpper ? 'text-green-700' : 'text-on-surface-variant/50'}>
+                    <span className={hasUpper ? 'text-green-700' : 'text-gray-300'}>
                       {hasUpper ? '✓' : '○'} Uppercase
                     </span>
-                    <span className={hasLower ? 'text-green-700' : 'text-on-surface-variant/50'}>
+                    <span className={hasLower ? 'text-green-700' : 'text-gray-300'}>
                       {hasLower ? '✓' : '○'} Lowercase
                     </span>
-                    <span className={hasNum ? 'text-green-700' : 'text-on-surface-variant/50'}>
+                    <span className={hasNum ? 'text-green-700' : 'text-gray-300'}>
                       {hasNum ? '✓' : '○'} Number
                     </span>
                     <span
-                      className={`col-span-2 ${hasSpecial ? 'text-green-700' : 'text-on-surface-variant/50'
-                        }`}
+                      className={`col-span-2 ${hasSpecial ? 'text-green-700' : 'text-gray-300'}`}
                     >
                       {hasSpecial ? '✓' : '○'} Special Symbol (!@#$)
                     </span>
@@ -526,9 +536,9 @@ const AdminProfile = () => {
                   <button
                     type="submit"
                     disabled={savingPass}
-                    className="w-full py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all shadow-sm flex items-center justify-center gap-1.5"
+                    className="btn-primary w-full py-2.5 rounded-[12px] text-[12.5px] flex items-center justify-center gap-1.5"
                   >
-                    <span className="material-symbols-outlined text-base">lock_reset</span>
+                    <Key size={14} />
                     {savingPass ? 'Updating Password...' : 'Update Password'}
                   </button>
                 </div>
@@ -539,18 +549,21 @@ const AdminProfile = () => {
           {/* PREFERENCES & SECURITY ROW */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* PROFILE PREFERENCES */}
-            <div className="glass-panel p-5 rounded-[24px] border border-primary/5 bg-white shadow-sm space-y-4">
-              <h3 className="text-xs font-mono font-bold uppercase text-primary border-b border-primary/5 pb-2">
-                User Preferences
-              </h3>
+            <div className="card-flat p-5 bg-white space-y-4">
+              <div className="flex items-center gap-1.5 border-b border-gray-100 pb-2.5">
+                <Settings size={14} className="text-[#8B1E3F]" />
+                <h3 className="text-xs font-mono font-bold uppercase text-[#111111]">
+                  User Preferences
+                </h3>
+              </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs font-semibold">
+              <div className="grid grid-cols-2 gap-3 text-xs font-semibold font-sans">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Theme Mode</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Theme Mode</span>
                   <select
                     value={editForm.theme}
                     onChange={(e) => setEditForm({ ...editForm, theme: e.target.value })}
-                    className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+                    className="select"
                   >
                     <option value="Light">Light Theme</option>
                     <option value="Dark">Dark Mode</option>
@@ -559,11 +572,11 @@ const AdminProfile = () => {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Display Language</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Display Language</span>
                   <select
                     value={editForm.language}
                     onChange={(e) => setEditForm({ ...editForm, language: e.target.value })}
-                    className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+                    className="select"
                   >
                     <option value="English">English (US)</option>
                     <option value="Spanish">Spanish</option>
@@ -572,11 +585,11 @@ const AdminProfile = () => {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Time Zone</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Time Zone</span>
                   <select
                     value={editForm.timeZone}
                     onChange={(e) => setEditForm({ ...editForm, timeZone: e.target.value })}
-                    className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-mono"
+                    className="select font-mono"
                   >
                     <option value="UTC">UTC (Coordinated Universal Time)</option>
                     <option value="IST">IST (India Standard Time +5:30)</option>
@@ -585,11 +598,11 @@ const AdminProfile = () => {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Notification Channel</label>
+                  <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Notification Channel</span>
                   <select
                     value={editForm.notificationPreference}
                     onChange={(e) => setEditForm({ ...editForm, notificationPreference: e.target.value })}
-                    className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+                    className="select"
                   >
                     <option value="Both">Both (Email & In-App)</option>
                     <option value="Email">Email Only</option>
@@ -601,36 +614,39 @@ const AdminProfile = () => {
             </div>
 
             {/* ACCOUNT SECURITY CARD */}
-            <div className="glass-panel p-5 rounded-[24px] border border-primary/5 bg-white shadow-sm space-y-4">
-              <h3 className="text-xs font-mono font-bold uppercase text-primary border-b border-primary/5 pb-2">
-                Account Security Status
-              </h3>
+            <div className="card-flat p-5 bg-white space-y-4">
+              <div className="flex items-center gap-1.5 border-b border-gray-100 pb-2.5">
+                <Shield size={14} className="text-[#8B1E3F]" />
+                <h3 className="text-xs font-mono font-bold uppercase text-[#111111]">
+                  Account Security Status
+                </h3>
+              </div>
 
-              <div className="grid grid-cols-2 gap-3 text-xs font-semibold">
-                <div className="p-3 bg-surface-container-low rounded-xl border border-primary/5">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Last Login Timestamp</span>
-                  <span className="font-bold text-primary font-mono text-[11px] block mt-0.5">
+              <div className="grid grid-cols-2 gap-3 text-xs font-semibold font-sans">
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block">Last Login Timestamp</span>
+                  <span className="font-bold text-[#8B1E3F] font-mono text-[11px] block mt-0.5">
                     {profile.security?.lastLogin ? new Date(profile.security.lastLogin).toLocaleString() : 'Active session'}
                   </span>
                 </div>
 
-                <div className="p-3 bg-surface-container-low rounded-xl border border-primary/5">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Last Password Change</span>
-                  <span className="font-bold text-primary font-mono text-[11px] block mt-0.5">
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block">Last Password Change</span>
+                  <span className="font-bold text-[#8B1E3F] font-mono text-[11px] block mt-0.5">
                     {profile.security?.lastPasswordChanged ? new Date(profile.security.lastPasswordChanged).toLocaleDateString() : 'N/A'}
                   </span>
                 </div>
 
-                <div className="p-3 bg-surface-container-low rounded-xl border border-primary/5">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">Active Session State</span>
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block">Active Session State</span>
                   <span className="font-bold text-green-700 font-mono text-[11px] block mt-0.5 flex items-center gap-1">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
                     Active (Single Device)
                   </span>
                 </div>
 
-                <div className="p-3 bg-surface-container-low rounded-xl border border-primary/5">
-                  <span className="text-[9px] font-mono uppercase text-on-surface-variant/60 block">JWT Session Key</span>
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                  <span className="text-[9px] font-mono uppercase text-[#9CA3AF] block">JWT Session Key</span>
                   <span className="font-bold text-indigo-700 font-mono text-[11px] block mt-0.5">
                     {profile.security?.jwtStatus || 'Valid Token'}
                   </span>
@@ -640,25 +656,28 @@ const AdminProfile = () => {
           </div>
 
           {/* RECENT ACTIVITY AUDIT LOG */}
-          <div className="glass-panel p-5 rounded-[24px] border border-primary/5 bg-white shadow-sm space-y-4">
-            <h3 className="text-xs font-mono font-bold uppercase text-primary border-b border-primary/5 pb-2">
-              Recent Account Audit Logs
-            </h3>
+          <div className="card-flat p-5 bg-white space-y-4">
+            <div className="flex items-center gap-1.5 border-b border-gray-100 pb-2.5">
+              <Terminal size={14} className="text-[#8B1E3F]" />
+              <h3 className="text-xs font-mono font-bold uppercase text-[#111111]">
+                Recent Account Audit Logs
+              </h3>
+            </div>
 
             <div className="space-y-2">
               {!profile.recentActivity || profile.recentActivity.length === 0 ? (
-                <p className="text-xs text-on-surface-variant p-4 text-center">No recent audit activity recorded.</p>
+                <p className="text-xs text-[#6B7280] p-4 text-center">No recent audit activity recorded.</p>
               ) : (
                 profile.recentActivity.map((act) => (
-                  <div key={act._id} className="p-3 bg-surface-container-low/60 rounded-xl border border-primary/5 flex items-center justify-between gap-3 text-xs font-semibold">
+                  <div key={act._id} className="p-3 bg-[#FAF8F7]/50 rounded-xl border border-primary/5 flex items-center justify-between gap-3 text-xs font-semibold">
                     <div className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-primary text-base">history</span>
+                      <Terminal size={12} className="text-[#8B1E3F]" />
                       <div>
-                        <p className="text-on-surface font-bold">{act.action}</p>
-                        <p className="text-[10px] text-on-surface-variant font-mono">{act.details}</p>
+                        <p className="text-[#111111] font-bold">{act.action}</p>
+                        <p className="text-[10px] text-[#6B7280] font-mono">{act.details}</p>
                       </div>
                     </div>
-                    <span className="text-[9px] text-on-surface-variant/60 font-mono shrink-0">
+                    <span className="text-[9px] text-[#6B7280] font-mono shrink-0">
                       {new Date(act.createdAt).toLocaleString()}
                     </span>
                   </div>

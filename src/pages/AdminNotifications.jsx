@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Bell, Send, Trash2, Mail, MailWarning, Eye, EyeOff, Search, X, Check, CheckSquare, Settings, CheckCircle2, Info, ChevronLeft, ChevronRight, Calendar
+} from 'lucide-react';
 import api from '../services/api';
 
 const NOTIFICATION_TYPES = [
@@ -263,142 +266,154 @@ const AdminNotifications = () => {
   return (
     <div className="space-y-6 text-sm font-sans text-on-surface">
       {/* Dashboard Top Banner Header */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5 bg-white shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-primary mb-1">Notifications Control Center</h2>
-          <p className="text-on-surface-variant text-xs font-semibold">
-            Audit system notifications, dispatch targeted alerts, and manage institutional recipient broadcasts.
-          </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <Bell size={12} />
+              Communications Panel
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Notifications Control Center</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Audit system notifications, dispatch targeted alerts, and manage institutional recipient broadcasts.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowSendModal(true)}
+            className="btn-primary py-2.5 px-5 rounded-[12px] text-[12.5px] flex items-center gap-1.5"
+          >
+            <Send size={14} />
+            Send Notification
+          </button>
         </div>
-        <button
-          onClick={() => setShowSendModal(true)}
-          className="py-2.5 px-5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all shadow-sm shrink-0 self-start md:self-center flex items-center gap-1.5"
-        >
-          <span className="material-symbols-outlined text-base">send</span>
-          Send Notification
-        </button>
       </div>
 
       {/* SUMMARY DASHBOARD CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Total Notifications</span>
-          <span className="block font-bold text-2xl text-primary font-mono mt-1">{stats.total}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Total Notifications</span>
+          <span className="block font-black text-2xl text-[#8B1E3F] font-mono mt-1">{stats.total}</span>
         </div>
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Unread Alerts</span>
-          <span className="block font-bold text-2xl text-amber-600 font-mono mt-1">{stats.unread}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Unread Alerts</span>
+          <span className="block font-black text-2xl text-[#D97706] font-mono mt-1">{stats.unread}</span>
         </div>
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Read Audit Log</span>
-          <span className="block font-bold text-2xl text-green-700 font-mono mt-1">{stats.read}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Read Audit Log</span>
+          <span className="block font-black text-2xl text-[#059669] font-mono mt-1">{stats.read}</span>
         </div>
-        <div className="glass-card p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Today's Broadcasts</span>
-          <span className="block font-bold text-2xl text-indigo-700 font-mono mt-1">{stats.today}</span>
+        <div className="stat-card">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Today's Broadcasts</span>
+          <span className="block font-black text-2xl text-[#4F46E5] font-mono mt-1">{stats.today}</span>
         </div>
       </div>
 
       {/* FILTERS & SEARCH TOOLBAR */}
-      <div className="glass-panel p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm space-y-3">
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end text-xs font-semibold">
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Search Term</label>
-            <input
-              type="text"
-              placeholder="Search title or message..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
-            />
+      <div className="card-flat p-4 bg-white">
+        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-end text-xs font-semibold">
+          <div className="flex flex-col gap-1 lg:col-span-2">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Search Term</span>
+            <div className="search-bar">
+              <Search size={14} className="text-[#9CA3AF]" />
+              <input
+                type="text"
+                placeholder="Search title..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Notification Type</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Type</span>
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Types --</option>
+              <option value="">All Types</option>
               {NOTIFICATION_TYPES.map((t) => (
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Status</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Status</span>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Statuses --</option>
+              <option value="">All Statuses</option>
               <option value="unread">Unread Only</option>
               <option value="read">Read Only</option>
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Target Role</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Target Role</span>
             <select
               value={recipientRole}
               onChange={(e) => setRecipientRole(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Target Roles --</option>
+              <option value="">All Target Roles</option>
               <option value="Student">Students Only</option>
               <option value="Staff">Staff Only</option>
               <option value="Admin">Admins Only</option>
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Department</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Department</span>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Departments --</option>
+              <option value="">All Depts</option>
               {departmentsList.map((d) => (
                 <option key={d._id} value={d._id}>{d.name}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Start Date</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Start Date</span>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="p-2 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="px-3 py-2 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">End Date</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">End Date</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="p-2 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="px-3 py-2 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 lg:col-span-2">
             <button
               type="submit"
-              className="flex-1 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all flex items-center justify-center gap-1 shadow-sm"
+              className="btn-primary py-2 px-4 flex-1 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
               Search
             </button>
             <button
               type="button"
               onClick={handleClearFilters}
-              className="py-2.5 px-4 rounded-xl border border-primary/10 text-on-surface-variant hover:bg-primary/5 text-xs font-bold transition-all"
+              className="btn-secondary py-2 px-3 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
               Clear
             </button>
@@ -407,19 +422,19 @@ const AdminNotifications = () => {
       </div>
 
       {/* BULK ACTIONS TOOLBAR */}
-      <div className="flex items-center justify-between p-3 glass-panel rounded-[18px] border border-primary/5 bg-white shadow-sm text-xs font-semibold">
+      <div className="flex items-center justify-between p-3.5 card-flat bg-white text-xs font-semibold">
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 cursor-pointer font-bold text-primary">
+          <label className="flex items-center gap-2 cursor-pointer font-bold text-[#8B1E3F]">
             <input
               type="checkbox"
               onChange={handleSelectAll}
               checked={notifications.length > 0 && selectedIds.length === notifications.length}
-              className="w-4 h-4 accent-primary rounded cursor-pointer"
+              className="checkbox-custom"
             />
             Select All Page ({notifications.length})
           </label>
           {selectedIds.length > 0 && (
-            <span className="text-[11px] font-mono text-on-surface-variant font-bold">
+            <span className="text-[11px] font-mono text-[#6B7280] font-bold">
               ({selectedIds.length} Selected)
             </span>
           )}
@@ -429,135 +444,135 @@ const AdminNotifications = () => {
           {selectedIds.length > 0 && (
             <button
               onClick={handleDeleteSelected}
-              className="py-1.5 px-3 rounded-xl border border-red-500/20 text-red-700 bg-red-50 hover:bg-red-100/60 text-xs font-bold transition-all flex items-center gap-1"
+              className="py-1.5 px-3 rounded-[8px] border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold transition-all flex items-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-base">delete</span>
+              <Trash2 size={13} />
               Delete Selected ({selectedIds.length})
             </button>
           )}
           <button
             onClick={handleMarkAllRead}
-            className="py-1.5 px-3 rounded-xl border border-primary/10 text-primary hover:bg-primary/5 text-xs font-bold transition-all flex items-center gap-1"
+            className="py-1.5 px-3 rounded-[8px] bg-[#FDF0F4] text-[#8B1E3F] border border-[rgba(139,30,63,0.12)] hover:bg-[#8B1E3F] hover:text-white text-xs font-bold transition-all flex items-center gap-1.5"
           >
-            <span className="material-symbols-outlined text-base">done_all</span>
+            <CheckSquare size={13} />
             Mark All Read
           </button>
         </div>
       </div>
 
       {/* NOTIFICATIONS TABLE LIST */}
-      <div className="glass-panel rounded-[24px] border border-primary/5 overflow-hidden bg-white shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          <div className="p-12 space-y-4 animate-pulse">
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
+            ))}
           </div>
         ) : notifications.length === 0 ? (
-          <div className="p-16 text-center border-t border-primary/5">
-            <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">
-              notifications_off
-            </span>
-            <h4 className="text-base font-bold text-on-surface">No Notifications Found</h4>
-            <p className="text-on-surface-variant text-xs mt-1">
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Bell size={24} />
+            </div>
+            <h4 className="text-base font-bold text-[#111111]">No Notifications Found</h4>
+            <p className="text-[#6B7280] text-xs mt-1">
               There are no notifications matching your current filter choices.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs font-semibold">
+            <table className="table">
               <thead>
-                <tr className="bg-primary/5 text-primary border-b border-primary/10 font-bold uppercase tracking-wider text-[10px]">
-                  <th className="p-4 w-10"></th>
-                  <th className="p-4">Notification Title & Message</th>
-                  <th className="p-4">Type</th>
-                  <th className="p-4">Sender</th>
-                  <th className="p-4">Target Role / Dept</th>
-                  <th className="p-4 text-center">Date & Time</th>
-                  <th className="p-4 text-center">Status</th>
-                  <th className="p-4 text-right">Actions</th>
+                <tr>
+                  <th className="w-10"></th>
+                  <th>Notification Title & Message</th>
+                  <th>Type</th>
+                  <th>Sender</th>
+                  <th>Target Role / Dept</th>
+                  <th className="text-center">Date & Time</th>
+                  <th className="text-center">Status</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5">
+              <tbody>
                 {notifications.map((n) => (
                   <tr
                     key={n._id}
-                    className={`hover:bg-primary/[0.02] transition-colors ${
-                      !n.read ? 'bg-primary/[0.015]' : ''
-                    }`}
+                    className={!n.read ? 'bg-[#FAF8F7]' : ''}
                   >
-                    <td className="p-4 text-center">
+                    <td>
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(n._id)}
                         onChange={() => handleSelectOne(n._id)}
-                        className="w-4 h-4 accent-primary rounded cursor-pointer"
+                        className="checkbox-custom"
                       />
                     </td>
-                    <td className="p-4">
-                      <p className={`font-bold text-sm ${!n.read ? 'text-primary' : 'text-on-surface'}`}>
+                    <td>
+                      <p className={`font-bold text-xs ${!n.read ? 'text-[#8B1E3F]' : 'text-[#111111]'}`}>
                         {n.title}
                       </p>
-                      <p className="text-[11px] text-on-surface-variant line-clamp-1 mt-0.5">{n.message}</p>
+                      <p className="text-[11px] text-[#6B7280] line-clamp-1 mt-0.5">{n.message}</p>
                     </td>
-                    <td className="p-4">
-                      <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold">
+                    <td>
+                      <span className="badge badge-wine">
                         {n.type}
                       </span>
                     </td>
-                    <td className="p-4 text-on-surface-variant font-mono">{n.sender}</td>
-                    <td className="p-4">
-                      <p className="font-bold text-on-surface">{n.recipientRole}</p>
-                      <p className="text-[10px] text-on-surface-variant font-mono">{n.department}</p>
+                    <td className="font-mono text-[#6B7280]">{n.sender}</td>
+                    <td>
+                      <p className="font-bold text-[#111111]">{n.recipientRole}</p>
+                      <p className="text-[10px] text-[#6B7280] font-mono">{n.department}</p>
                     </td>
-                    <td className="p-4 text-center font-mono text-[10px]">
+                    <td className="text-center font-mono text-[10px] text-[#6B7280]">
                       {new Date(n.createdAt).toLocaleString()}
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="text-center">
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
+                        className={`badge ${
                           n.read
-                            ? 'bg-gray-100 text-gray-700 border border-gray-200'
-                            : 'bg-amber-100 text-amber-800 border border-amber-200'
+                            ? 'badge-gray'
+                            : 'badge-blue'
                         }`}
                       >
                         {n.read ? 'Read' : 'Unread'}
                       </span>
                     </td>
-                    <td className="p-4 text-right space-x-1.5 shrink-0">
-                      <button
-                        onClick={() => setSelectedNotification(n)}
-                        className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                        title="View Notification"
-                      >
-                        <span className="material-symbols-outlined text-base">visibility</span>
-                      </button>
-
-                      {n.read ? (
+                    <td className="text-right">
+                      <div className="flex justify-end gap-1 items-center">
                         <button
-                          onClick={() => handleMarkAsUnread(n._id)}
-                          className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
-                          title="Mark as Unread"
+                          onClick={() => setSelectedNotification(n)}
+                          className="p-1.5 text-[#8B1E3F] hover:bg-[#FDF0F4] rounded-lg transition-colors"
+                          title="View Notification"
                         >
-                          <span className="material-symbols-outlined text-base">mark_email_unread</span>
+                          <Eye size={14} />
                         </button>
-                      ) : (
-                        <button
-                          onClick={() => handleMarkAsRead(n._id)}
-                          className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                          title="Mark as Read"
-                        >
-                          <span className="material-symbols-outlined text-base">done</span>
-                        </button>
-                      )}
 
-                      <button
-                        onClick={() => handleDeleteOne(n._id)}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Delete"
-                      >
-                        <span className="material-symbols-outlined text-base">delete</span>
-                      </button>
+                        {n.read ? (
+                          <button
+                            onClick={() => handleMarkAsUnread(n._id)}
+                            className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                            title="Mark as Unread"
+                          >
+                            <Mail size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleMarkAsRead(n._id)}
+                            className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                            title="Mark as Read"
+                          >
+                            <Check size={14} />
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => handleDeleteOne(n._id)}
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -569,24 +584,26 @@ const AdminNotifications = () => {
 
       {/* PAGINATION CONTROLS */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 text-xs font-bold pt-2">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Previous
-          </button>
-          <span className="text-on-surface-variant font-mono">
-            Page {page} of {totalPages}
+        <div className="flex justify-between items-center px-6 py-4 bg-white border-t border-primary/5 text-xs text-[#6B7280]">
+          <span className="font-mono text-xs">
+            Showing {(page - 1) * limit + 1} - {Math.min(page * limit, stats.total)} of {stats.total} alerts
           </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Next
-          </button>
+          <div className="flex gap-2">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Previous
+            </button>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 

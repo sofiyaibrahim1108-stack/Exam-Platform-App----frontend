@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  BookOpen, Plus, Search, Edit2, Trash2, Eye, Award, CheckCircle, XCircle, ShieldAlert, GraduationCap, Building2, Layers
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminCourses = () => {
@@ -186,67 +189,79 @@ const AdminCourses = () => {
     <div className="space-y-6">
       
       {/* Upper Header panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-[24px] border border-primary/5">
-        <div>
-          <h2 className="text-2xl font-bold text-primary">Course Management</h2>
-          <p className="text-on-surface-variant text-xs mt-1">Configure academic courses, specify durations, credit weights, and manage semesters mappings.</p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <BookOpen size={12} />
+              Syllabus Matrix
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Course Management</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">Configure academic courses, specify durations, credit weights, and manage semester mappings.</p>
+          </div>
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="btn-primary py-2 px-4 text-[12.5px] rounded-[10px] flex items-center gap-1.5"
+          >
+            <Plus size={14} />
+            Create Course
+          </button>
         </div>
-        <button
-          onClick={() => setAddModalOpen(true)}
-          className="bg-primary text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
-        >
-          <span className="material-symbols-outlined text-[20px]">add_circle</span>
-          Create Course
-        </button>
       </div>
 
       {/* Dashboard Metrics Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
-          { title: 'Total Courses', count: stats.total, icon: 'school', color: 'text-primary' },
-          { title: 'Active Courses', count: stats.active, icon: 'check_circle', color: 'text-emerald-600' },
-          { title: 'Inactive Courses', count: stats.inactive, icon: 'cancel', color: 'text-amber-600' },
-          { title: 'UG Courses', count: stats.ug, icon: 'local_library', color: 'text-secondary' },
-          { title: 'PG Courses', count: stats.pg, icon: 'workspace_premium', color: 'text-primary' },
-        ].map((card) => (
-          <div key={card.title} className="glass-panel p-4 rounded-[20px] border border-primary/5 flex items-center justify-between shadow-sm">
-            <div>
-              <p className="text-[10px] text-on-surface-variant font-semibold leading-none mb-1.5">{card.title}</p>
-              <h3 className="text-2xl font-black font-mono text-primary leading-none">{card.count}</h3>
+          { title: 'Total Courses', count: stats.total, icon: BookOpen, color: '#8B1E3F', bg: '#FDF0F4' },
+          { title: 'Active Courses', count: stats.active, icon: CheckCircle, color: '#059669', bg: '#ECFDF5' },
+          { title: 'Inactive Courses', count: stats.inactive, icon: XCircle, color: '#D97706', bg: '#FFFBEB' },
+          { title: 'UG Courses', count: stats.ug, icon: GraduationCap, color: '#3B82F6', bg: '#EFF6FF' },
+          { title: 'PG Courses', count: stats.pg, icon: Award, color: '#8B5CF6', bg: '#F5F3FF' },
+        ].map((card) => {
+          const Icon = card.icon;
+          return (
+            <div key={card.title} className="stat-card">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold text-[#9CA3AF] uppercase text-xs">{card.title}</span>
+                <div className="w-8 h-8 rounded-[8px] flex items-center justify-center" style={{ background: card.bg, color: card.color }}>
+                  <Icon size={14} />
+                </div>
+              </div>
+              <p className="text-2xl font-black font-mono leading-none mt-1" style={{ color: card.color }}>{card.count}</p>
             </div>
-            <div className={`w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center ${card.color}`}>
-              <span className="material-symbols-outlined text-xl">{card.icon}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Filters Toolbar */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-center">
-        {/* Search */}
-        <div className="sm:col-span-2 lg:col-span-2 flex items-center bg-surface rounded-xl px-4 py-2 border border-primary/5 shadow-sm">
-          <span className="material-symbols-outlined text-on-surface-variant text-lg">search</span>
-          <input
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            placeholder="Search courses by name or code..."
-            className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50 outline-none ml-2"
-            type="text"
-          />
-        </div>
+      <div className="card-flat p-4 bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-center">
+          {/* Search */}
+          <div className="sm:col-span-2 search-bar">
+            <Search size={14} className="text-[#9CA3AF] flex-shrink-0" />
+            <input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search courses by name or code..."
+              type="text"
+            />
+          </div>
 
-        {/* Department Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Department Filter */}
           <select
             value={deptFilter}
             onChange={(e) => {
               setDeptFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Departments</option>
             {departments.map((dept) => (
@@ -255,50 +270,44 @@ const AdminCourses = () => {
               </option>
             ))}
           </select>
-        </div>
 
-        {/* Course Type Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Course Type Filter */}
           <select
             value={typeFilter}
             onChange={(e) => {
               setTypeFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Types</option>
             {courseTypes.map((type) => (
               <option key={type} value={type}>{type}</option>
             ))}
           </select>
-        </div>
 
-        {/* Status Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Statuses</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
-        </div>
 
-        {/* Sort Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Sort Filter */}
           <select
             value={sortBy}
             onChange={(e) => {
               setSortBy(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="name_asc">Name (A-Z)</option>
             <option value="name_desc">Name (Z-A)</option>
@@ -309,110 +318,100 @@ const AdminCourses = () => {
       </div>
 
       {/* Main Table Panel */}
-      <div className="glass-panel p-6 rounded-[24px] shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          // Loading Skeletons
-          <div className="space-y-4 py-4">
-            <div className="h-8 bg-surface-container-high animate-pulse rounded-lg w-full"></div>
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-16 bg-surface-container-low animate-pulse rounded-xl w-full"></div>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
             ))}
           </div>
         ) : courses.length === 0 ? (
-          // Empty State
-          <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-            <span className="material-symbols-outlined text-primary/45 text-5xl">school_disabled</span>
-            <div className="space-y-1">
-              <h3 className="text-lg font-bold text-primary">No Courses Found</h3>
-              <p className="text-on-surface-variant text-sm max-w-sm">No academic courses mapped matching your filters search constraints.</p>
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <BookOpen size={24} />
             </div>
+            <h3 className="text-base font-bold text-[#111111]">No Courses Found</h3>
+            <p className="text-[#6B7280] text-xs max-w-sm mt-1">No academic courses mapped matching your filters search constraints.</p>
           </div>
         ) : (
-          // Data Table
           <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse">
+            <table className="table">
               <thead>
-                <tr className="border-b border-primary/10 pb-4 text-xs font-mono font-semibold text-primary uppercase tracking-wider">
-                  <th className="py-4 px-3">Course Name</th>
-                  <th className="py-4 px-3">Code</th>
-                  <th className="py-4 px-3">Department</th>
-                  <th className="py-4 px-3">Type</th>
-                  <th className="py-4 px-3 text-center">Duration (Yrs)</th>
-                  <th className="py-4 px-3 text-center">Semesters</th>
-                  <th className="py-4 px-3 text-center">Credits</th>
-                  <th className="py-4 px-3 text-center">Status</th>
-                  <th className="py-4 px-3">Created</th>
-                  <th className="py-4 px-3 text-right">Actions</th>
+                <tr>
+                  <th>Course Name</th>
+                  <th>Code</th>
+                  <th>Department</th>
+                  <th>Type</th>
+                  <th className="text-center">Duration (Yrs)</th>
+                  <th className="text-center">Semesters</th>
+                  <th className="text-center">Credits</th>
+                  <th className="text-center">Status</th>
+                  <th>Created</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 text-sm">
+              <tbody>
                 {courses.map((course) => (
-                  <tr key={course._id} className="hover:bg-primary/5 transition-colors">
-                    <td className="py-4 px-3 font-semibold text-primary">{course.name}</td>
-                    <td className="py-4 px-3 font-mono text-xs text-on-surface-variant">{course.code}</td>
-                    <td className="py-4 px-3">
+                  <tr key={course._id}>
+                    <td className="font-semibold text-[#8B1E3F]">{course.name}</td>
+                    <td className="font-mono text-xs text-[#6B7280]">{course.code}</td>
+                    <td>
                       {course.department ? (
                         <div>
-                          <p className="font-semibold text-on-surface leading-tight">{course.department.name}</p>
-                          <p className="text-[10px] text-on-surface-variant font-mono leading-none mt-0.5">{course.department.code}</p>
+                          <p className="font-semibold text-[#111111] leading-tight">{course.department.name}</p>
+                          <p className="text-[10px] text-[#9CA3AF] font-mono leading-none mt-0.5">{course.department.code}</p>
                         </div>
                       ) : (
-                        <span className="text-xs text-error font-mono font-semibold uppercase">UNASSIGNED_DEPT</span>
+                        <span className="text-xs text-red-500 font-mono font-semibold uppercase">UNASSIGNED_DEPT</span>
                       )}
                     </td>
-                    <td className="py-4 px-3">
-                      <span className="font-mono text-xs font-semibold px-2 py-0.5 bg-secondary/15 text-secondary rounded-full uppercase">
+                    <td>
+                      <span className="badge badge-wine">
                         {course.courseType}
                       </span>
                     </td>
-                    <td className="py-4 px-3 text-center font-mono font-bold text-on-surface">{course.durationYears}</td>
-                    <td className="py-4 px-3 text-center font-mono font-bold text-on-surface">{course.totalSemesters}</td>
-                    <td className="py-4 px-3 text-center font-mono font-bold text-on-surface">{course.credits}</td>
-                    <td className="py-4 px-3 text-center">
+                    <td className="text-center font-mono font-bold text-[#111111]">{course.durationYears}</td>
+                    <td className="text-center font-mono font-bold text-[#111111]">{course.totalSemesters}</td>
+                    <td className="text-center font-mono font-bold text-[#111111]">{course.credits}</td>
+                    <td className="text-center">
                       <button
                         onClick={() => handleStatusToggle(course)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-                          course.status === 'Active' ? 'bg-secondary/15 text-secondary' : 'bg-error/10 text-error'
-                        } hover:scale-95 transition-transform`}
+                        className={`badge ${course.status === 'Active' ? 'badge-green' : 'badge-red'} hover:scale-95 transition-transform`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${course.status === 'Active' ? 'bg-secondary' : 'bg-error'}`}></span>
                         {course.status}
                       </button>
                     </td>
-                    <td className="py-4 px-3 font-mono text-xs text-on-surface-variant">
+                    <td className="font-mono text-xs text-[#6B7280]">
                       {new Date(course.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="py-4 px-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        {/* View Drawer */}
+                    <td className="text-right">
+                      <div className="flex justify-end gap-1">
                         <button
                           onClick={() => {
                             setSelectedCourse(course);
                             setDetailsDrawerOpen(true);
                           }}
-                          title="View Details"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors"
+                          title="View"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#8B1E3F] hover:bg-[#FDF0F4] transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">visibility</span>
+                          <Eye size={13} />
                         </button>
-                        {/* Edit details */}
                         <button
                           onClick={() => handleEditClick(course)}
-                          title="Edit Details"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-secondary transition-colors"
+                          title="Edit"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#8B1E3F] hover:bg-[#FDF0F4] transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                          <Edit2 size={13} />
                         </button>
-                        {/* Delete account */}
                         <button
                           onClick={() => {
                             setSelectedCourse(course);
                             setDeleteDialogOpen(true);
                           }}
-                          title="Delete Course"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-error transition-colors"
+                          title="Delete"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#DC2626] hover:bg-red-50 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </td>

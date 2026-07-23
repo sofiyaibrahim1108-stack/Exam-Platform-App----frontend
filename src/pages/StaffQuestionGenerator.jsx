@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Brain, Sparkles, BookOpen, FileText, Search, X, ShieldAlert, Edit3,
+  Copy, RefreshCw, Trash2, CheckCircle2, Hourglass, Plus, Layers, Send, AlertTriangle
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 
@@ -431,13 +435,14 @@ const StaffQuestionGenerator = () => {
   const syllabusCompleted = currentSubjectSyllabusStatus() === 'Completed';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 font-sans pb-10">
       {/* Header Banner */}
-      <div className="glass-panel p-6 rounded-[24px] relative overflow-hidden">
+      <div className="bg-white border border-[rgba(140,29,64,0.08)] p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[#8C1D40]/5 rounded-full blur-2xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-primary mb-1">AI Question Generator</h2>
-            <p className="text-on-surface-variant text-xs">
+            <h2 className="text-xl font-extrabold text-[#1D1D1F] mb-1">AI Question Generator</h2>
+            <p className="text-[#6B7280] text-xs">
               Generate university-level MCQ questions from finalized syllabus documents using Google Gemini 2.5 Flash.
             </p>
           </div>
@@ -445,9 +450,9 @@ const StaffQuestionGenerator = () => {
           {selectedSubjectId && syllabusCompleted && drafts.length > 0 && (
             <button
               onClick={() => setSubmitConfirmOpen(true)}
-              className="px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary-container hover:text-primary transition-all shadow-lg shadow-primary/10 flex items-center gap-2"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#8C1D40] to-[#C74B74] hover:opacity-95 text-white font-bold text-xs transition-all shadow-md shadow-[#8C1D40]/10 flex items-center gap-2 active:scale-95 animate-pulse"
             >
-              <span className="material-symbols-outlined text-sm">send_and_archive</span>
+              <Send size={13} />
               Submit All for Approval
             </button>
           )}
@@ -457,16 +462,16 @@ const StaffQuestionGenerator = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Side: Parameters Form */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="glass-panel p-6 rounded-[24px] space-y-4">
-            <h3 className="text-sm font-bold text-primary tracking-wider uppercase">Generator Settings</h3>
+          <div className="bg-white p-6 rounded-[24px] border border-[rgba(140,29,64,0.08)] shadow-xs space-y-5">
+            <h3 className="text-sm font-extrabold text-[#1D1D1F] tracking-wider uppercase border-b border-gray-100 pb-2">Generator Settings</h3>
 
             {/* Subject Selector */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Select Subject</label>
+            <div className="space-y-1.5">
+              <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block">Select Subject</label>
               <select
                 value={selectedSubjectId}
                 onChange={(e) => setSelectedSubjectId(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-surface border border-primary/10 focus:border-primary focus:outline-none text-xs font-semibold"
+                className="w-full px-4 py-2.5 rounded-xl bg-white border border-gray-200 focus:border-[#8C1D40]/30 focus:outline-none text-xs font-bold text-[#1D1D1F]"
               >
                 <option value="">-- Choose Subject --</option>
                 {assignments.map((item) => {
@@ -474,7 +479,7 @@ const StaffQuestionGenerator = () => {
                   const isComp = s?.status === 'Completed';
                   return (
                     <option key={item.subject?._id} value={item.subject?._id}>
-                      {item.subject?.name} {isComp ? '🔓' : '🔒'}
+                      {item.subject?.name} {isComp ? '🔓 Ready' : '🔒 Locked'}
                     </option>
                   );
                 })}
@@ -483,21 +488,22 @@ const StaffQuestionGenerator = () => {
 
             {/* Show status if subject selected */}
             {selectedSubjectId && (
-              <div className="text-[10px] font-semibold">
+              <div className="text-[10px] font-bold">
                 {syllabusCompleted ? (
-                  <span className="text-secondary flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">lock_open</span>
-                    Question Bank Unlocked (Syllabus finalized)
+                  <span className="text-emerald-700 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-500/10 flex items-center gap-1.5">
+                    <CheckCircle2 size={13} className="text-emerald-600 animate-pulse" />
+                    Question Bank Unlocked (Syllabus Mapped)
                   </span>
                 ) : (
-                  <div className="p-3 bg-error/5 border border-error/10 text-error rounded-xl space-y-2 mt-2">
-                    <p className="font-semibold leading-tight">
-                      Question Bank is locked. Finalize the syllabus analyzer before generating questions.
+                  <div className="p-3.5 bg-red-50 border border-red-100 text-red-800 rounded-2xl space-y-2 mt-2">
+                    <p className="font-semibold leading-relaxed text-xs">
+                      Question Bank is locked. Please finalize the syllabus analyzer before generating questions.
                     </p>
                     <button
                       onClick={() => navigate(`/staff/syllabus/${selectedSubjectId}`)}
-                      className="px-3 py-1 bg-error text-white font-bold text-[9px] rounded-lg hover:opacity-90"
+                      className="w-full py-2 bg-red-600 text-white font-bold text-[10px] rounded-xl hover:bg-red-700 active:scale-95 transition-all flex items-center justify-center gap-1"
                     >
+                      <Layers size={11} />
                       Finalize Syllabus Now
                     </button>
                   </div>
@@ -513,22 +519,22 @@ const StaffQuestionGenerator = () => {
               >
                 {/* Select Units (Multi select checklist) */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase block">Select Syllabus Unit(s)</label>
-                  <div className="max-h-[160px] overflow-y-auto border border-primary/5 rounded-xl p-2 bg-surface-container-low space-y-1">
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block">Select Syllabus Unit(s)</label>
+                  <div className="max-h-[160px] overflow-y-auto border border-gray-100 rounded-xl p-2 bg-[#FFFDFC]/40 space-y-1">
                     {subjectSyllabus.units && subjectSyllabus.units.map(unit => (
                       <label
                         key={unit._id}
                         className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors text-[11px] font-semibold ${
                           selectedUnits.includes(unit._id)
-                            ? 'bg-primary/5 text-primary'
-                            : 'hover:bg-primary/5 text-on-surface-variant'
+                            ? 'bg-[#F8ECEF] text-[#8C1D40]'
+                            : 'hover:bg-gray-50 text-[#6B7280]'
                         }`}
                       >
                         <input
                           type="checkbox"
                           checked={selectedUnits.includes(unit._id)}
                           onChange={() => handleUnitToggle(unit._id)}
-                          className="rounded border-primary/10 text-primary focus:ring-primary"
+                          className="rounded border-gray-200 text-[#8C1D40] focus:ring-[#8C1D40]"
                         />
                         <span>Unit {unit.unitNumber}: {unit.title}</span>
                       </label>
@@ -538,7 +544,7 @@ const StaffQuestionGenerator = () => {
 
                 {/* Difficulty Capsule Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase block">Difficulty Level</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block">Difficulty Level</label>
                   <div className="grid grid-cols-3 gap-2">
                     {['Easy', 'Medium', 'Hard'].map((lvl) => {
                       const isActive = difficulty === lvl;
@@ -547,14 +553,14 @@ const StaffQuestionGenerator = () => {
                           key={lvl}
                           type="button"
                           onClick={() => setDifficulty(lvl)}
-                          className={`py-2 px-3 rounded-lg border text-xs font-bold transition-all text-center ${
+                          className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all text-center ${
                             isActive
                               ? lvl === 'Easy'
-                                ? 'bg-green-500 border-green-500 text-white shadow-sm'
+                                ? 'bg-emerald-600 border-transparent text-white shadow-xs'
                                 : lvl === 'Medium'
-                                ? 'bg-yellow-500 border-yellow-500 text-white shadow-sm'
-                                : 'bg-primary border-primary text-white shadow-sm'
-                              : 'bg-surface hover:bg-primary/5 text-on-surface-variant border-primary/10'
+                                ? 'bg-amber-50 border-transparent text-white shadow-xs'
+                                : 'bg-[#8C1D40] border-transparent text-white shadow-xs'
+                              : 'bg-white hover:bg-gray-50 text-[#6B7280] border-gray-200'
                           }`}
                         >
                           {lvl}
@@ -566,7 +572,7 @@ const StaffQuestionGenerator = () => {
 
                 {/* Number of Questions Capsule */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase block">Question Count</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block">Question Count</label>
                   <div className="grid grid-cols-4 gap-1.5">
                     {[5, 10, 20, 30].map((num) => {
                       const isActive = questionCount === num;
@@ -575,10 +581,10 @@ const StaffQuestionGenerator = () => {
                           key={num}
                           type="button"
                           onClick={() => setQuestionCount(num)}
-                          className={`py-2 rounded-lg border text-xs font-bold transition-all text-center ${
+                          className={`py-2 rounded-xl border text-xs font-bold transition-all text-center ${
                             isActive
-                              ? 'bg-primary border-primary text-white shadow-sm'
-                              : 'bg-surface hover:bg-primary/5 text-on-surface-variant border-primary/10'
+                              ? 'bg-[#8C1D40] border-transparent text-white shadow-xs'
+                              : 'bg-white hover:bg-gray-50 text-[#6B7280] border-gray-200'
                           }`}
                         >
                           {num}
@@ -590,12 +596,12 @@ const StaffQuestionGenerator = () => {
 
                 {/* Question Type (MCQ Read Only) */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Question Type</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block">Question Type</label>
                   <input
                     type="text"
-                    value="MCQ (Multiple Choice Questions)"
+                    value="MCQ (Multiple Choice)"
                     readOnly
-                    className="w-full px-4 py-2.5 rounded-xl bg-surface-container border border-primary/5 text-xs font-semibold text-on-surface-variant/75 cursor-not-allowed"
+                    className="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-semibold text-[#6B7280] cursor-not-allowed"
                   />
                 </div>
 
@@ -604,16 +610,16 @@ const StaffQuestionGenerator = () => {
                   <button
                     type="button"
                     onClick={handleResetForm}
-                    className="py-2.5 rounded-xl border border-primary/10 hover:bg-primary/5 text-on-surface-variant text-xs font-bold transition-all"
+                    className="py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-[#6B7280] text-xs font-bold transition-all"
                   >
                     Reset
                   </button>
                   <button
                     type="button"
                     onClick={handleGenerateQuestions}
-                    className="py-2.5 rounded-xl bg-primary text-white hover:bg-primary/95 text-xs font-bold transition-all shadow-md shadow-primary/10 flex items-center justify-center gap-1.5"
+                    className="py-2.5 rounded-xl bg-gradient-to-r from-[#8C1D40] to-[#C74B74] hover:opacity-95 text-white text-xs font-bold transition-all shadow-md shadow-[#8C1D40]/10 flex items-center justify-center gap-1.5 active:scale-95"
                   >
-                    <span className="material-symbols-outlined text-[16px]">psychology</span>
+                    <Brain size={14} />
                     Generate AI
                   </button>
                 </div>
@@ -625,16 +631,16 @@ const StaffQuestionGenerator = () => {
         {/* Right Side: Generated Questions Drafts Console */}
         <div className="lg:col-span-8 space-y-6">
           {/* Action Tools Header */}
-          <div className="glass-panel p-4 rounded-[20px] flex flex-col md:flex-row justify-between items-center gap-3">
+          <div className="bg-white p-4 rounded-[20px] border border-[rgba(140,29,64,0.08)] flex flex-col md:flex-row justify-between items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">tune</span>
-              <h4 className="text-xs font-bold text-primary tracking-wider uppercase">Question Bank Panel</h4>
+              <Layers size={16} className="text-[#8C1D40]" />
+              <h4 className="text-xs font-extrabold text-[#1D1D1F] tracking-wider uppercase">Question Bank Panel</h4>
             </div>
 
             {selectedSubjectId && syllabusCompleted && (
               <button
+                type="button"
                 onClick={() => {
-                  // Set default manual form values from syllabus
                   if (subjectSyllabus?.units?.length > 0) {
                     setManualForm(prev => ({
                       ...prev,
@@ -644,66 +650,65 @@ const StaffQuestionGenerator = () => {
                   }
                   setManualModalOpen(true);
                 }}
-                className="px-4 py-2 rounded-xl bg-secondary/15 text-secondary border border-secondary/10 hover:bg-secondary/20 transition-all font-bold text-xs flex items-center gap-1.5 ml-auto md:ml-0"
+                className="px-4 py-2 rounded-xl bg-[#F8ECEF] text-[#8C1D40] border border-[#8C1D40]/10 hover:bg-[#F8ECEF]/80 transition-all font-bold text-xs flex items-center gap-1.5 ml-auto md:ml-0 active:scale-95"
               >
-                <span className="material-symbols-outlined text-sm font-bold">add</span>
+                <Plus size={14} className="font-bold" />
                 Create Manually
               </button>
             )}
           </div>
 
           {!selectedSubjectId ? (
-            <div className="glass-panel p-16 text-center rounded-[24px]">
-              <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">school</span>
-              <h4 className="text-base font-bold text-on-surface">Select a Subject</h4>
-              <p className="text-on-surface-variant text-xs mt-1 max-w-sm mx-auto">
+            <div className="bg-white p-16 text-center rounded-[24px] border border-[rgba(140,29,64,0.08)] shadow-xs">
+              <BookOpen size={48} className="text-gray-300 mx-auto mb-4" />
+              <h4 className="text-sm font-bold text-[#1D1D1F]">Select a Subject</h4>
+              <p className="text-[#6B7280] text-xs mt-1 max-w-sm mx-auto leading-relaxed">
                 Please pick an assigned subject from the left panel to load its finalized syllabus and manage your question bank.
               </p>
             </div>
           ) : draftsLoading ? (
-            /* Skeleton Loading Questions */
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="glass-panel p-6 rounded-[24px] space-y-4 animate-pulse">
+                <div key={i} className="bg-white border border-[rgba(140,29,64,0.08)] p-6 rounded-[24px] space-y-4 animate-pulse">
                   <div className="flex justify-between items-center">
-                    <div className="h-4 bg-surface-container-high rounded w-1/4"></div>
-                    <div className="h-4 bg-surface-container-high rounded w-16"></div>
+                    <div className="h-4 bg-gray-100 rounded w-1/4"></div>
+                    <div className="h-4 bg-gray-100 rounded w-16"></div>
                   </div>
-                  <div className="h-5 bg-surface-container-high rounded w-3/4"></div>
+                  <div className="h-5 bg-gray-100 rounded w-3/4"></div>
                   <div className="space-y-2">
-                    {[1, 2, 3, 4].map(j => <div key={j} className="h-8 bg-surface-container-high rounded w-full"></div>)}
+                    {[1, 2, 3, 4].map(j => <div key={j} className="h-8 bg-gray-100 rounded w-full"></div>)}
                   </div>
                 </div>
               ))}
             </div>
           ) : drafts.length === 0 ? (
-            <div className="glass-panel p-16 text-center rounded-[24px]">
-              <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">description</span>
-              <h4 className="text-base font-bold text-on-surface">No Questions in Drafts</h4>
-              <p className="text-on-surface-variant text-xs mt-1 max-w-sm mx-auto">
+            <div className="bg-white p-16 text-center rounded-[24px] border border-[rgba(140,29,64,0.08)] shadow-xs">
+              <FileText size={48} className="text-gray-300 mx-auto mb-4" />
+              <h4 className="text-sm font-bold text-[#1D1D1F]">No Questions in Drafts</h4>
+              <p className="text-[#6B7280] text-xs mt-1 max-w-sm mx-auto leading-relaxed">
                 No question drafts found for this subject. Select your parameters and click **Generate AI** to start, or create a question manually.
               </p>
             </div>
           ) : (
             <div className="space-y-6">
               {/* Filters & Search Row */}
-              <form onSubmit={handleSearchSubmit} className="glass-panel p-4 rounded-[20px] grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
+              <form onSubmit={handleSearchSubmit} className="bg-white p-4 rounded-[20px] border border-[rgba(140,29,64,0.08)] shadow-xs grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
                 <div className="md:col-span-2 relative">
                   <input
                     type="text"
                     placeholder="Search question texts..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-9 pr-8 py-2 rounded-xl bg-surface border border-primary/10 text-xs focus:outline-none focus:border-primary font-medium"
+                    className="w-full pl-9 pr-8 py-2.5 rounded-xl bg-white border border-[rgba(140,29,64,0.12)] text-xs font-semibold focus:outline-none focus:border-[#8C1D40]/30"
                   />
-                  <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant/40 text-[18px]">search</span>
+                  <Search size={14} className="absolute left-3.5 top-3.5 text-gray-400" />
                   {search && (
                     <button
                       type="button"
                       onClick={handleResetSearch}
-                      className="absolute right-3 top-2 text-on-surface-variant hover:text-primary"
+                      className="absolute right-3.5 top-3 text-gray-400 hover:text-[#8C1D40]"
                     >
-                      <span className="material-symbols-outlined text-[18px]">close</span>
+                      <X size={14} />
                     </button>
                   )}
                 </div>
@@ -714,7 +719,7 @@ const StaffQuestionGenerator = () => {
                     setFilterDifficulty(e.target.value);
                     setPage(1);
                   }}
-                  className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold"
+                  className="px-3 py-2.5 rounded-xl bg-white border border-[rgba(140,29,64,0.12)] text-xs font-bold text-[#1D1D1F]"
                 >
                   <option value="">Difficulty: All</option>
                   <option value="Easy">Easy</option>
@@ -728,7 +733,7 @@ const StaffQuestionGenerator = () => {
                     setFilterOrigin(e.target.value);
                     setPage(1);
                   }}
-                  className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold"
+                  className="px-3 py-2.5 rounded-xl bg-white border border-[rgba(140,29,64,0.12)] text-xs font-bold text-[#1D1D1F]"
                 >
                   <option value="">Created By: All</option>
                   <option value="AI">AI Generator</option>
@@ -747,54 +752,54 @@ const StaffQuestionGenerator = () => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className={`glass-panel p-6 rounded-[24px] border relative overflow-hidden transition-all duration-300 ${
+                      className={`bg-white p-6 rounded-[24px] border relative overflow-hidden transition-all duration-300 ${
                         q.Status === 'Pending Approval'
-                          ? 'border-secondary/15 bg-secondary/5'
-                          : 'border-primary/5 hover:border-primary/10'
+                          ? 'border-[#C74B74]/20 bg-[#F8ECEF]/10'
+                          : 'border-[rgba(140,29,64,0.08)] hover:border-[#8C1D40]/25'
                       }`}
                     >
                       {isActioning && (
-                        <div className="absolute inset-0 bg-surface/50 backdrop-blur-xs flex items-center justify-center z-10">
-                          <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin"></div>
+                        <div className="absolute inset-0 bg-white/50 backdrop-blur-xs flex items-center justify-center z-10">
+                          <div className="w-8 h-8 rounded-full border-2 border-[#8C1D40]/20 border-t-[#8C1D40] animate-spin"></div>
                         </div>
                       )}
 
                       {/* Top Badges */}
                       <div className="flex flex-wrap justify-between items-center gap-2 mb-3">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="px-2 py-0.5 rounded-md bg-primary/5 text-primary text-[9px] font-semibold border border-primary/10 uppercase font-mono">
+                          <span className="px-2 py-0.5 rounded bg-[#F8ECEF] text-[#8C1D40] text-[9px] font-bold border border-[#8C1D40]/5 uppercase font-mono">
                             {getUnitName(q.UnitId).split(':')[0]}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md bg-secondary/10 text-secondary text-[9px] font-bold border border-secondary/10 truncate max-w-[150px]">
+                          <span className="px-2 py-0.5 rounded bg-gray-50 text-[#6B7280] text-[9px] font-bold border border-gray-100 truncate max-w-[150px]">
                             {getTopicName(q.UnitId, q.TopicId)}
                           </span>
-                          <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase font-mono ${
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold border uppercase ${
                             q.Difficulty === 'Easy'
-                              ? 'bg-green-500/10 text-green-700 border-green-500/20'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-500/20'
                               : q.Difficulty === 'Medium'
-                              ? 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20'
-                              : 'bg-primary/10 text-primary border-primary/20'
+                              ? 'bg-amber-50 text-amber-700 border-amber-500/20'
+                              : 'bg-red-50 text-red-700 border-red-500/20'
                           }`}>
                             {q.Difficulty}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md bg-surface-container text-on-surface-variant text-[9px] font-semibold border border-primary/5 uppercase font-mono">
+                          <span className="px-2 py-0.5 rounded bg-gray-50 text-[#6B7280] text-[9px] font-bold border border-gray-100 uppercase font-mono">
                             By: {q.GeneratedBy}
                           </span>
                         </div>
 
-                        <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                        <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider ${
                           q.Status === 'Pending Approval'
-                            ? 'bg-secondary text-white shadow-sm shadow-secondary/10'
+                            ? 'bg-emerald-600 text-white shadow-xs'
                             : q.Status === 'Needs Revision'
-                            ? 'bg-amber-600 text-white shadow-sm shadow-amber-600/10'
-                            : 'bg-gray-100 text-gray-600 border border-gray-200'
+                            ? 'bg-amber-500 text-white shadow-xs'
+                            : 'bg-gray-100 text-gray-500 border border-gray-200'
                         }`}>
                           {q.Status}
                         </span>
                       </div>
 
                       {/* Question Text */}
-                      <h4 className="text-sm font-bold text-primary leading-snug mb-4">
+                      <h4 className="text-sm font-extrabold text-[#1D1D1F] leading-relaxed mb-4">
                         Q{(pagination.page - 1) * pagination.limit + index + 1}. {q.Question}
                       </h4>
 
@@ -808,14 +813,14 @@ const StaffQuestionGenerator = () => {
                               key={opt}
                               className={`p-2.5 rounded-xl border text-xs font-semibold flex items-start gap-3 transition-colors ${
                                 isCorrect
-                                  ? 'bg-green-500/15 border-green-500/35 text-green-800'
-                                  : 'bg-surface-container-lowest/40 border-primary/5 text-on-surface-variant/80'
+                                  ? 'bg-green-500/10 border-green-500/20 text-green-800 font-bold'
+                                  : 'bg-white border-gray-100 text-[#6B7280]'
                               }`}
                             >
-                              <span className={`w-5 h-5 rounded-full flex items-center justify-center font-bold font-mono text-[10px] mt-0.5 ${
+                              <span className={`w-5 h-5 rounded-full flex items-center justify-center font-black font-mono text-[9px] mt-0.5 ${
                                 isCorrect
                                   ? 'bg-green-500 text-white'
-                                  : 'bg-primary/10 text-primary'
+                                  : 'bg-[#8C1D40]/10 text-[#8C1D40]'
                               }`}>
                                 {opt}
                               </span>
@@ -827,62 +832,66 @@ const StaffQuestionGenerator = () => {
 
                       {/* Explanation */}
                       {q.Explanation && (
-                        <div className="p-3 bg-surface-container-low/60 rounded-xl text-[10px] font-semibold text-on-surface-variant border border-primary/5 mb-4">
-                          <span className="font-mono text-primary uppercase block font-bold mb-0.5">Explanation</span>
+                        <div className="p-3 bg-gray-50 border border-gray-100 rounded-xl text-[10px] font-semibold text-[#6B7280] leading-relaxed mb-4">
+                          <span className="font-mono text-[#8C1D40] uppercase block font-bold mb-0.5">Explanation</span>
                           {q.Explanation}
                         </div>
                       )}
 
                       {/* Revision feedback banner */}
                       {q.Status === 'Needs Revision' && (
-                        <div className="p-3 bg-yellow-500/10 border border-yellow-500/25 text-yellow-800 rounded-xl text-[10px] font-semibold flex items-start gap-2 mb-4">
-                          <span className="material-symbols-outlined text-[16px] font-bold">warning</span>
+                        <div className="p-3.5 bg-amber-50 border border-amber-100 text-amber-900 rounded-xl text-xs font-semibold flex items-start gap-2 mb-4">
+                          <AlertTriangle size={15} className="text-amber-600 mt-0.5 shrink-0" />
                           <div>
                             <span className="font-bold text-amber-800 block uppercase font-mono text-[9px]">Revision Required</span>
-                            <span className="mt-0.5 block font-medium">{q.RevisionReason || 'Please review and update question elements.'}</span>
+                            <span className="mt-0.5 block font-medium text-[11px] leading-relaxed">{q.RevisionReason || 'Please review and update question elements.'}</span>
                           </div>
                         </div>
                       )}
 
                       {/* Actions footer if draft status */}
                       {['Draft', 'Needs Revision'].includes(q.Status) && (
-                        <div className="flex justify-end gap-2 pt-3 border-t border-primary/5 mt-2">
+                        <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 mt-2">
                           <button
+                            type="button"
                             onClick={() => openEditModal(q)}
-                            className="p-1.5 hover:bg-primary/5 hover:text-primary rounded-lg text-on-surface-variant/60 transition-colors flex items-center gap-1 text-[10px] font-bold"
+                            className="px-2.5 py-1.5 hover:bg-gray-50 rounded-lg text-[#6B7280] hover:text-[#8C1D40] transition-colors flex items-center gap-1 text-[10px] font-bold"
                             title="Edit Draft"
                           >
-                            <span className="material-symbols-outlined text-[16px]">edit</span>
+                            <Edit3 size={13} />
                             Edit
                           </button>
                           
                           <button
+                            type="button"
                             onClick={() => handleDuplicateDraft(q._id)}
-                            className="p-1.5 hover:bg-primary/5 hover:text-primary rounded-lg text-on-surface-variant/60 transition-colors flex items-center gap-1 text-[10px] font-bold"
+                            className="px-2.5 py-1.5 hover:bg-gray-50 rounded-lg text-[#6B7280] hover:text-[#8C1D40] transition-colors flex items-center gap-1 text-[10px] font-bold"
                             title="Duplicate Draft"
                           >
-                            <span className="material-symbols-outlined text-[16px]">content_copy</span>
+                            <Copy size={13} />
                             Duplicate
                           </button>
 
                           <button
+                            type="button"
                             onClick={() => handleRegenerateDraft(q._id)}
-                            className="p-1.5 hover:bg-primary/5 hover:text-primary rounded-lg text-on-surface-variant/60 transition-colors flex items-center gap-1 text-[10px] font-bold"
+                            className="px-2.5 py-1.5 hover:bg-[#F8ECEF] rounded-lg text-[#6B7280] hover:text-[#8C1D40] transition-colors flex items-center gap-1 text-[10px] font-bold"
                             title="Regenerate single question using Gemini"
                           >
-                            <span className="material-symbols-outlined text-[16px]">autorenew</span>
+                            <RefreshCw size={13} />
                             Regenerate
                           </button>
 
                           <button
+                            type="button"
                             onClick={() => {
                               setSelectedQuestionId(q._id);
                               setDeleteConfirmOpen(true);
                             }}
-                            className="p-1.5 hover:bg-error/5 hover:text-error rounded-lg text-on-surface-variant/60 transition-colors flex items-center gap-1 text-[10px] font-bold"
+                            className="px-2.5 py-1.5 hover:bg-red-50 rounded-lg text-[#6B7280] hover:text-red-600 transition-colors flex items-center gap-1 text-[10px] font-bold"
                             title="Delete Draft"
                           >
-                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            <Trash2 size={13} />
                             Delete
                           </button>
                         </div>
@@ -898,17 +907,17 @@ const StaffQuestionGenerator = () => {
                   <button
                     disabled={page <= 1}
                     onClick={() => setPage(page - 1)}
-                    className="px-4 py-2 text-xs font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 text-xs font-bold bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-50 transition-colors text-[#6B7280]"
                   >
                     Previous
                   </button>
-                  <span className="text-xs font-mono font-bold text-on-surface-variant">
+                  <span className="text-xs font-mono font-bold text-[#6B7280]">
                     Page {page} of {pagination.totalPages} ({pagination.total} Questions)
                   </span>
                   <button
                     disabled={page >= pagination.totalPages}
                     onClick={() => setPage(page + 1)}
-                    className="px-4 py-2 text-xs font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 text-xs font-bold bg-white border border-gray-200 rounded-xl hover:bg-gray-50 disabled:opacity-50 transition-colors text-[#6B7280]"
                   >
                     Next
                   </button>
@@ -922,37 +931,41 @@ const StaffQuestionGenerator = () => {
       {/* GENERATING SCREEN / OVERLAY */}
       <AnimatePresence>
         {generating && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-xs">
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-surface border border-primary/10 rounded-[32px] p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center space-y-6"
+              className="bg-white border border-[rgba(140,29,64,0.08)] rounded-[32px] p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center space-y-6"
             >
               <div className="relative">
-                <div className="w-20 h-20 rounded-full border-4 border-primary/10 border-t-primary animate-spin"></div>
-                <span className="material-symbols-outlined text-4xl text-primary absolute top-5 left-5 animate-pulse">psychology</span>
+                <div className="w-20 h-20 rounded-full border-2 border-[#8C1D40]/10 border-t-[#8C1D40] animate-spin"></div>
+                <Brain size={36} className="text-[#8C1D40] absolute top-5 left-5 animate-pulse" />
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-primary">Gemini Engine Running</h3>
-                <p className="text-on-surface-variant text-xs mt-1">Generating MCQs from finalized curriculum text.</p>
+                <h3 className="text-base font-extrabold text-[#1D1D1F]">Gemini Engine Running</h3>
+                <p className="text-[#6B7280] text-xs mt-1">Generating MCQs from finalized curriculum text.</p>
               </div>
 
               {/* Dynamic Steps Loader */}
-              <div className="w-full bg-surface-container p-4 rounded-2xl text-left border border-primary/5">
-                <div className="text-[10px] font-mono font-bold text-on-surface-variant uppercase tracking-wider mb-2">Process Stack</div>
-                <div className="space-y-1.5">
+              <div className="w-full bg-gray-50 p-4 rounded-2xl text-left border border-gray-100">
+                <div className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase tracking-wider mb-2">Process Stack</div>
+                <div className="space-y-2">
                   {generationSteps.map((step, idx) => {
                     const isDone = generationStep > idx;
                     const isActive = generationStep === idx;
                     return (
-                      <div key={idx} className={`flex items-center gap-2 text-xs transition-opacity duration-300 ${
-                        isDone ? 'text-secondary font-semibold' : isActive ? 'text-primary font-bold' : 'text-on-surface-variant/45'
+                      <div key={idx} className={`flex items-center gap-2.5 text-xs transition-opacity duration-300 ${
+                        isDone ? 'text-emerald-700 font-bold' : isActive ? 'text-[#8C1D40] font-black' : 'text-gray-400'
                       }`}>
-                        <span className="material-symbols-outlined text-sm font-bold">
-                          {isDone ? 'check_circle' : isActive ? 'autorenew' : 'hourglass_empty'}
-                        </span>
+                        {isDone ? (
+                          <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                        ) : isActive ? (
+                          <RefreshCw size={13} className="text-[#8C1D40] animate-spin shrink-0" />
+                        ) : (
+                          <Hourglass size={13} className="text-gray-300 shrink-0" />
+                        )}
                         <span>{step}</span>
                       </div>
                     );
@@ -967,31 +980,32 @@ const StaffQuestionGenerator = () => {
       {/* CREATE MANUAL QUESTION MODAL */}
       <AnimatePresence>
         {manualModalOpen && subjectSyllabus && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setManualModalOpen(false)}
-              className="fixed inset-0 bg-black/45 backdrop-blur-sm"
+              className="fixed inset-0"
             ></motion.div>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface border border-primary/10 rounded-[28px] shadow-2xl p-6 w-full max-w-2xl z-10 relative overflow-hidden flex flex-col max-h-[85vh]"
+              className="bg-white border border-[rgba(140,29,64,0.10)] rounded-[28px] shadow-2xl p-6 w-full max-w-2xl z-10 relative overflow-hidden flex flex-col max-h-[85vh] text-xs font-semibold text-[#6B7280]"
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-base font-bold text-primary">Create Manual Question</h3>
-                  <p className="text-[10px] text-on-surface-variant font-semibold">Manually record draft MCQs mapping to unit topics.</p>
+                  <h3 className="text-base font-extrabold text-[#1D1D1F]">Create Manual Question</h3>
+                  <p className="text-[10px] text-[#6B7280] font-semibold">Manually record draft MCQs mapping to unit topics.</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setManualModalOpen(false)}
-                  className="p-1 rounded-full hover:bg-surface-container text-on-surface-variant"
+                  className="p-1 rounded-full hover:bg-gray-100 text-[#6B7280]"
                 >
-                  <span className="material-symbols-outlined text-[20px]">close</span>
+                  <X size={18} />
                 </button>
               </div>
 
@@ -999,7 +1013,7 @@ const StaffQuestionGenerator = () => {
                 {/* Form fields: Unit & Topic selectors */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Syllabus Unit</label>
+                    <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Syllabus Unit</label>
                     <select
                       value={manualForm.UnitId}
                       onChange={(e) => {
@@ -1011,7 +1025,7 @@ const StaffQuestionGenerator = () => {
                           TopicId: unit && unit.topics?.length > 0 ? unit.topics[0]._id : ''
                         }));
                       }}
-                      className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1D1D1F]"
                     >
                       {subjectSyllabus.units.map(u => (
                         <option key={u._id} value={u._id}>Unit {u.unitNumber}: {u.title}</option>
@@ -1020,11 +1034,11 @@ const StaffQuestionGenerator = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Topic Mapped</label>
+                    <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Topic Mapped</label>
                     <select
                       value={manualForm.TopicId}
                       onChange={(e) => setManualForm(prev => ({ ...prev, TopicId: e.target.value }))}
-                      className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1D1D1F]"
                     >
                       {(() => {
                         const unit = subjectSyllabus.units.find(u => u._id === manualForm.UnitId);
@@ -1039,11 +1053,11 @@ const StaffQuestionGenerator = () => {
 
                 {/* Difficulty Selector */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Difficulty</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Difficulty</label>
                   <select
                     value={manualForm.Difficulty}
                     onChange={(e) => setManualForm(prev => ({ ...prev, Difficulty: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1D1D1F]"
                   >
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
@@ -1053,14 +1067,14 @@ const StaffQuestionGenerator = () => {
 
                 {/* Question input */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Question Text</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Question Text</label>
                   <textarea
                     rows="2"
                     required
                     placeholder="Enter question text here..."
                     value={manualForm.Question}
                     onChange={(e) => setManualForm(prev => ({ ...prev, Question: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-xl bg-surface-container border border-primary/10 focus:outline-none focus:border-primary text-xs font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-gray-200 focus:outline-none focus:border-[#8C1D40]/30 text-xs font-medium text-[#1D1D1F]"
                   ></textarea>
                 </div>
 
@@ -1068,14 +1082,14 @@ const StaffQuestionGenerator = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {['A', 'B', 'C', 'D'].map((opt) => (
                     <div key={opt} className="space-y-1">
-                      <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Option {opt}</label>
+                      <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Option {opt}</label>
                       <input
                         type="text"
                         required
                         placeholder={`Text for Option ${opt}`}
                         value={manualForm[`Option${opt}`]}
                         onChange={(e) => setManualForm(prev => ({ ...prev, [`Option${opt}`]: e.target.value }))}
-                        className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 focus:outline-none focus:border-primary text-xs font-semibold"
+                        className="w-full px-3 py-2 bg-white border border-gray-200 focus:outline-none focus:border-[#8C1D40]/30 text-xs font-semibold text-[#1D1D1F]"
                       />
                     </div>
                   ))}
@@ -1083,11 +1097,11 @@ const StaffQuestionGenerator = () => {
 
                 {/* Correct Answer Select */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Correct Option</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Correct Option</label>
                   <select
                     value={manualForm.CorrectAnswer}
                     onChange={(e) => setManualForm(prev => ({ ...prev, CorrectAnswer: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-bold text-primary"
+                    className="w-full px-3 py-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-[#8C1D40]"
                   >
                     <option value="A">Option A</option>
                     <option value="B">Option B</option>
@@ -1098,27 +1112,27 @@ const StaffQuestionGenerator = () => {
 
                 {/* Explanation */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Academic Explanation</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Academic Explanation</label>
                   <textarea
                     rows="2"
                     placeholder="Provide explanatory context for correct selection..."
                     value={manualForm.Explanation}
                     onChange={(e) => setManualForm(prev => ({ ...prev, Explanation: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-xl bg-surface-container border border-primary/10 focus:outline-none focus:border-primary text-xs font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-gray-200 focus:outline-none focus:border-[#8C1D40]/30 text-xs font-medium text-[#1D1D1F]"
                   ></textarea>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-3 border-t border-primary/5">
+                <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => setManualModalOpen(false)}
-                    className="px-4 py-2 rounded-xl border border-primary/10 hover:bg-primary/5 text-xs font-bold transition-all"
+                    className="px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-xs font-bold transition-all text-[#6B7280]"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary/95 text-xs font-bold transition-all shadow-md shadow-primary/10"
+                    className="px-5 py-2 rounded-xl bg-[#8C1D40] text-white hover:opacity-95 text-xs font-bold transition-all shadow-xs"
                   >
                     Save Draft
                   </button>
@@ -1132,7 +1146,7 @@ const StaffQuestionGenerator = () => {
       {/* EDIT QUESTION MODAL */}
       <AnimatePresence>
         {editModalOpen && subjectSyllabus && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1141,28 +1155,29 @@ const StaffQuestionGenerator = () => {
                 setEditModalOpen(false);
                 setSelectedQuestionId(null);
               }}
-              className="fixed inset-0 bg-black/45 backdrop-blur-sm"
+              className="fixed inset-0"
             ></motion.div>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface border border-primary/10 rounded-[28px] shadow-2xl p-6 w-full max-w-2xl z-10 relative overflow-hidden flex flex-col max-h-[85vh]"
+              className="bg-white border border-[rgba(140,29,64,0.10)] rounded-[28px] shadow-2xl p-6 w-full max-w-2xl z-10 relative overflow-hidden flex flex-col max-h-[85vh] text-xs font-semibold text-[#6B7280]"
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-base font-bold text-primary">Edit Question Draft</h3>
-                  <p className="text-[10px] text-on-surface-variant font-semibold">Adjust details of draft question and save modifications.</p>
+                  <h3 className="text-base font-extrabold text-[#1D1D1F]">Edit Question Draft</h3>
+                  <p className="text-[10px] text-[#6B7280] font-semibold">Adjust details of draft question and save modifications.</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setEditModalOpen(false);
                     setSelectedQuestionId(null);
                   }}
-                  className="p-1 rounded-full hover:bg-surface-container text-on-surface-variant"
+                  className="p-1 rounded-full hover:bg-gray-100 text-[#6B7280]"
                 >
-                  <span className="material-symbols-outlined text-[20px]">close</span>
+                  <X size={18} />
                 </button>
               </div>
 
@@ -1170,7 +1185,7 @@ const StaffQuestionGenerator = () => {
                 {/* selectors */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Syllabus Unit</label>
+                    <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Syllabus Unit</label>
                     <select
                       value={editForm.UnitId}
                       onChange={(e) => {
@@ -1182,7 +1197,7 @@ const StaffQuestionGenerator = () => {
                           TopicId: unit && unit.topics?.length > 0 ? unit.topics[0]._id : ''
                         }));
                       }}
-                      className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1D1D1F]"
                     >
                       {subjectSyllabus.units.map(u => (
                         <option key={u._id} value={u._id}>Unit {u.unitNumber}: {u.title}</option>
@@ -1191,11 +1206,11 @@ const StaffQuestionGenerator = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Topic Mapped</label>
+                    <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Topic Mapped</label>
                     <select
                       value={editForm.TopicId}
                       onChange={(e) => setEditForm(prev => ({ ...prev, TopicId: e.target.value }))}
-                      className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1D1D1F]"
                     >
                       {(() => {
                         const unit = subjectSyllabus.units.find(u => u._id === editForm.UnitId);
@@ -1209,11 +1224,11 @@ const StaffQuestionGenerator = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Difficulty</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Difficulty</label>
                   <select
                     value={editForm.Difficulty}
                     onChange={(e) => setEditForm(prev => ({ ...prev, Difficulty: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-[#1D1D1F]"
                   >
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
@@ -1222,39 +1237,39 @@ const StaffQuestionGenerator = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Question Text</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Question Text</label>
                   <textarea
                     rows="2"
                     required
                     placeholder="Enter question text here..."
                     value={editForm.Question}
                     onChange={(e) => setEditForm(prev => ({ ...prev, Question: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-xl bg-surface-container border border-primary/10 focus:outline-none focus:border-primary text-xs font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-gray-200 focus:outline-none focus:border-[#8C1D40]/30 text-xs font-medium text-[#1D1D1F]"
                   ></textarea>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {['A', 'B', 'C', 'D'].map((opt) => (
                     <div key={opt} className="space-y-1">
-                      <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase font-mono">Option {opt}</label>
+                      <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Option {opt}</label>
                       <input
                         type="text"
                         required
                         placeholder={`Option ${opt} Text`}
                         value={editForm[`Option${opt}`]}
                         onChange={(e) => setEditForm(prev => ({ ...prev, [`Option${opt}`]: e.target.value }))}
-                        className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 focus:outline-none focus:border-primary text-xs font-semibold"
+                        className="w-full px-3 py-2 bg-white border border-gray-200 focus:outline-none focus:border-[#8C1D40]/30 text-xs font-semibold text-[#1D1D1F]"
                       />
                     </div>
                   ))}
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase font-mono">Correct Option</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Correct Option</label>
                   <select
                     value={editForm.CorrectAnswer}
                     onChange={(e) => setEditForm(prev => ({ ...prev, CorrectAnswer: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-bold text-primary"
+                    className="w-full px-3 py-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-[#8C1D40]"
                   >
                     <option value="A">Option A</option>
                     <option value="B">Option B</option>
@@ -1264,30 +1279,30 @@ const StaffQuestionGenerator = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Academic Explanation</label>
+                  <label className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider">Academic Explanation</label>
                   <textarea
                     rows="2"
                     placeholder="Provide explanatory context for correct selection..."
                     value={editForm.Explanation}
                     onChange={(e) => setEditForm(prev => ({ ...prev, Explanation: e.target.value }))}
-                    className="w-full px-4 py-2 rounded-xl bg-surface-container border border-primary/10 focus:outline-none focus:border-primary text-xs font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white border border-gray-200 focus:outline-none focus:border-[#8C1D40]/30 text-xs font-medium text-[#1D1D1F]"
                   ></textarea>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-3 border-t border-primary/5">
+                <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => {
                       setEditModalOpen(false);
                       setSelectedQuestionId(null);
                     }}
-                    className="px-4 py-2 rounded-xl border border-primary/10 hover:bg-primary/5 text-xs font-bold transition-all text-on-surface-variant"
+                    className="px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-xs font-bold transition-all text-[#6B7280]"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-primary text-white hover:bg-primary/95 text-xs font-bold transition-all shadow-md shadow-primary/10"
+                    className="px-5 py-2 rounded-xl bg-[#8C1D40] text-white hover:opacity-95 text-xs font-bold transition-all shadow-xs"
                   >
                     Save Changes
                   </button>
@@ -1306,25 +1321,27 @@ const StaffQuestionGenerator = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface border border-primary/10 rounded-[24px] shadow-2xl p-6 max-w-sm w-full z-10 relative overflow-hidden"
+              className="bg-white border border-gray-100 rounded-[24px] shadow-2xl p-6 max-w-sm w-full z-10 relative overflow-hidden"
             >
-              <h3 className="text-base font-bold text-primary mb-2">Delete Question Draft?</h3>
-              <p className="text-on-surface-variant text-xs mb-4">
+              <h3 className="text-sm font-extrabold text-[#1D1D1F] mb-1">Delete Question Draft?</h3>
+              <p className="text-[#6B7280] text-xs mb-4 leading-relaxed font-semibold">
                 Are you sure you want to delete this question? This action will move it to trash and cannot be undone directly.
               </p>
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-3 pt-3 border-t border-gray-105">
                 <button
+                  type="button"
                   onClick={() => {
                     setDeleteConfirmOpen(false);
                     setSelectedQuestionId(null);
                   }}
-                  className="px-4 py-2 text-xs font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 transition-colors text-on-surface-variant"
+                  className="px-4 py-2 text-xs font-bold bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-[#6B7280]"
                 >
                   Cancel
                 </button>
                 <button
+                  type="button"
                   onClick={handleDeleteDraft}
-                  className="px-4 py-2 text-xs font-bold bg-error text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="px-4 py-2 text-xs font-bold bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors"
                 >
                   Delete
                 </button>
@@ -1342,22 +1359,24 @@ const StaffQuestionGenerator = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface border border-primary/10 rounded-[24px] shadow-2xl p-6 max-w-sm w-full z-10 relative overflow-hidden"
+              className="bg-white border border-gray-100 rounded-[24px] shadow-2xl p-6 max-w-sm w-full z-10 relative overflow-hidden"
             >
-              <h3 className="text-base font-bold text-primary mb-2">Submit All for Approval?</h3>
-              <p className="text-on-surface-variant text-xs mb-4">
+              <h3 className="text-sm font-extrabold text-[#1D1D1F] mb-1">Submit All for Approval?</h3>
+              <p className="text-[#6B7280] text-xs mb-4 leading-relaxed font-semibold">
                 This will submit all draft questions for this subject to the Admin for final review. You will not be able to edit them while pending approval.
               </p>
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-3 pt-3 border-t border-gray-105">
                 <button
+                  type="button"
                   onClick={() => setSubmitConfirmOpen(false)}
-                  className="px-4 py-2 text-xs font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 transition-colors text-on-surface-variant"
+                  className="px-4 py-2 text-xs font-bold bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-[#6B7280]"
                 >
                   Cancel
                 </button>
                 <button
+                  type="button"
                   onClick={handleSubmitQuestions}
-                  className="px-4 py-2 text-xs font-bold bg-primary text-white rounded-xl hover:bg-primary/95 transition-colors"
+                  className="px-4 py-2 text-xs font-bold bg-[#8C1D40] text-white rounded-xl hover:opacity-95 transition-all shadow-xs"
                 >
                   Submit
                 </button>

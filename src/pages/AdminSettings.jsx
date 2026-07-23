@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Building2, GraduationCap, HelpCircle, Bell, Shield, CloudLightning, Info, Save, Settings, Database, Trash2
+} from 'lucide-react';
 import api from '../services/api';
 
 const TABS = [
-  { id: 'institution', label: 'Institution Settings', icon: 'account_balance' },
-  { id: 'academic', label: 'Academic Settings', icon: 'school' },
-  { id: 'examination', label: 'Examination Settings', icon: 'quiz' },
-  { id: 'notification', label: 'Notification Settings', icon: 'notifications' },
-  { id: 'security', label: 'Security Settings', icon: 'shield_lock' },
-  { id: 'backup', label: 'Backup & Restore', icon: 'cloud_sync' },
-  { id: 'system-info', label: 'System Information', icon: 'info' },
+  { id: 'institution', label: 'Institution Settings', icon: Building2 },
+  { id: 'academic', label: 'Academic Settings', icon: GraduationCap },
+  { id: 'examination', label: 'Examination Settings', icon: HelpCircle },
+  { id: 'notification', label: 'Notification Settings', icon: Bell },
+  { id: 'security', label: 'Security Settings', icon: Shield },
+  { id: 'backup', label: 'Backup & Restore', icon: Database },
+  { id: 'system-info', label: 'System Information', icon: Info },
 ];
 
 const AdminSettings = () => {
@@ -176,41 +179,55 @@ const AdminSettings = () => {
   return (
     <div className="space-y-6 text-sm font-sans text-on-surface">
       {/* Top Banner Header */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5 bg-white shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-primary mb-1">System Settings Console</h2>
-          <p className="text-on-surface-variant text-xs font-semibold">
-            Configure global institution parameters, examination rules, security controls, and system diagnostics.
-          </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <Settings size={12} />
+              Configuration Matrix
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">System Settings Console</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Configure global institution parameters, examination rules, security controls, and system diagnostics.
+            </p>
+          </div>
+          {activeTab !== 'backup' && activeTab !== 'system-info' && (
+            <button
+              onClick={handleSaveSettings}
+              disabled={saving || loading}
+              className="btn-primary py-2.5 px-6 rounded-[12px] text-[12.5px] flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <Save size={14} />
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          )}
         </div>
-        {activeTab !== 'backup' && activeTab !== 'system-info' && (
-          <button
-            onClick={handleSaveSettings}
-            disabled={saving || loading}
-            className="py-2.5 px-6 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all shadow-sm shrink-0 self-start md:self-center flex items-center gap-1.5 disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined text-base">save</span>
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-        )}
       </div>
 
       {/* Tabs Selector Bar */}
-      <div className="flex overflow-x-auto gap-2 p-1.5 glass-panel rounded-[20px] border border-primary/5 bg-white shadow-sm scrollbar-none">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-              activeTab === tab.id
-                ? 'bg-primary text-white shadow-sm'
-                : 'text-on-surface-variant hover:bg-primary/5'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex overflow-x-auto gap-2 p-1 bg-white border border-[#E5E7EB] rounded-[14px] scrollbar-none">
+        {TABS.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`py-2 px-3.5 rounded-[10px] text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+                isActive
+                  ? 'bg-[#8B1E3F] text-white shadow-sm'
+                  : 'text-[#6B7280] hover:bg-[#FAF8F7] hover:text-[#111111]'
+              }`}
+            >
+              <Icon size={14} />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Settings Form Container */}

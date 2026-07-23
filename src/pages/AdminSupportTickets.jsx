@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import {
+  Ticket, Plus, FileText, Download, Search, Settings, HelpCircle, User, Calendar, RefreshCcw, Reply, Trash2, X, MessageSquare, AlertOctagon, CheckCircle2, ChevronLeft, ChevronRight
+} from 'lucide-react';
 import api from '../services/api';
 
 const STATUS_OPTIONS = ['Open', 'In Progress', 'Waiting for User', 'Resolved', 'Closed'];
@@ -375,196 +378,208 @@ const AdminSupportTickets = () => {
 
   const getPriorityBadgeClass = (p) => {
     switch (p) {
-      case 'Critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'High': return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'Medium': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+      case 'Critical': return 'badge-red';
+      case 'High': return 'badge-red';
+      case 'Medium': return 'badge-blue';
+      default: return 'badge-gray';
     }
   };
 
   const getStatusBadgeClass = (s) => {
     switch (s) {
-      case 'Open': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'In Progress': return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'Waiting for User': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'Resolved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Closed': return 'bg-gray-100 text-gray-700 border-gray-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+      case 'Open': return 'badge-wine';
+      case 'In Progress': return 'badge-blue';
+      case 'Waiting for User': return 'badge-amber';
+      case 'Resolved': return 'badge-green';
+      case 'Closed': return 'badge-gray';
+      default: return 'badge-gray';
     }
   };
 
   return (
     <div className="space-y-6 text-sm font-sans text-on-surface">
       {/* Top Banner Header */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5 bg-white shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-primary mb-1">Support Tickets Management</h2>
-          <p className="text-on-surface-variant text-xs font-semibold">
-            Monitor help requests, manage resolution workflows, reply to candidates, and track SLA priorities.
-          </p>
-        </div>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <Ticket size={12} />
+              Support & SLA Desk
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Support Tickets Management</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Monitor help requests, manage resolution workflows, reply to candidates, and track SLA priorities.
+            </p>
+          </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2 self-start md:self-center shrink-0">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="py-2 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all shadow-sm flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">add</span>
-            Create Ticket
-          </button>
-          <button
-            onClick={handleExportPDF}
-            className="py-2 px-3 rounded-xl border border-red-500/20 text-red-700 bg-red-50 hover:bg-red-100/60 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">picture_as_pdf</span>
-            PDF
-          </button>
-          <button
-            onClick={handleExportExcel}
-            className="py-2 px-3 rounded-xl border border-green-500/20 text-green-700 bg-green-50 hover:bg-green-100/60 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">table_view</span>
-            Excel
-          </button>
-          <button
-            onClick={handleExportCSV}
-            className="py-2 px-3 rounded-xl border border-blue-500/20 text-blue-700 bg-blue-50 hover:bg-blue-100/60 text-xs font-bold transition-all flex items-center gap-1.5"
-          >
-            <span className="material-symbols-outlined text-base">csv</span>
-            CSV
-          </button>
+          {/* Action Controls */}
+          <div className="flex flex-wrap items-center gap-2 self-start md:self-center shrink-0">
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="btn-primary py-2.5 px-4 rounded-[12px] text-[12.5px] flex items-center gap-1.5"
+            >
+              <Plus size={14} />
+              Create Ticket
+            </button>
+            <button
+              onClick={handleExportPDF}
+              className="btn-secondary py-2 px-3 text-[11.5px] rounded-[10px] flex items-center gap-1 text-red-700 border-red-200 hover:bg-red-50"
+            >
+              <FileText size={13} />
+              PDF
+            </button>
+            <button
+              onClick={handleExportExcel}
+              className="btn-secondary py-2 px-3 text-[11.5px] rounded-[10px] flex items-center gap-1 text-emerald-700 border-emerald-200 hover:bg-emerald-50"
+            >
+              <Download size={13} />
+              Excel
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="btn-secondary py-2 px-3 text-[11.5px] rounded-[10px] flex items-center gap-1 text-indigo-700 border-indigo-200 hover:bg-indigo-50"
+            >
+              <Download size={13} />
+              CSV
+            </button>
+          </div>
         </div>
       </div>
 
       {/* DASHBOARD SUMMARY CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-        <div className="glass-card p-3.5 rounded-[18px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Total Tickets</span>
-          <span className="block font-bold text-xl text-primary font-mono mt-0.5">{stats.totalTickets}</span>
+        <div className="stat-card p-3.5">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Total Tickets</span>
+          <span className="block font-black text-xl text-[#8B1E3F] font-mono mt-0.5">{stats.totalTickets}</span>
         </div>
-        <div className="glass-card p-3.5 rounded-[18px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Open</span>
-          <span className="block font-bold text-xl text-emerald-700 font-mono mt-0.5">{stats.openTickets}</span>
+        <div className="stat-card p-3.5">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Open</span>
+          <span className="block font-black text-xl text-[#059669] font-mono mt-0.5">{stats.openTickets}</span>
         </div>
-        <div className="glass-card p-3.5 rounded-[18px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">In Progress</span>
-          <span className="block font-bold text-xl text-indigo-700 font-mono mt-0.5">{stats.inProgressTickets}</span>
+        <div className="stat-card p-3.5">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">In Progress</span>
+          <span className="block font-black text-xl text-[#4F46E5] font-mono mt-0.5">{stats.inProgressTickets}</span>
         </div>
-        <div className="glass-card p-3.5 rounded-[18px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Resolved</span>
-          <span className="block font-bold text-xl text-green-700 font-mono mt-0.5">{stats.resolvedTickets}</span>
+        <div className="stat-card p-3.5">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Resolved</span>
+          <span className="block font-black text-xl text-[#10B981] font-mono mt-0.5">{stats.resolvedTickets}</span>
         </div>
-        <div className="glass-card p-3.5 rounded-[18px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">Closed</span>
-          <span className="block font-bold text-xl text-gray-600 font-mono mt-0.5">{stats.closedTickets}</span>
+        <div className="stat-card p-3.5">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">Closed</span>
+          <span className="block font-black text-xl text-[#6B7280] font-mono mt-0.5">{stats.closedTickets}</span>
         </div>
-        <div className="glass-card p-3.5 rounded-[18px] border border-primary/5 bg-white shadow-sm hover:translate-y-[-2px] transition-all">
-          <span className="text-[9px] font-mono text-on-surface-variant/60 uppercase block">High / Critical</span>
-          <span className="block font-bold text-xl text-red-600 font-mono mt-0.5">{stats.highPriorityTickets}</span>
+        <div className="stat-card p-3.5">
+          <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">High / Critical</span>
+          <span className="block font-black text-xl text-[#EF4444] font-mono mt-0.5">{stats.highPriorityTickets}</span>
         </div>
       </div>
 
       {/* FILTERS & SEARCH TOOLBAR */}
-      <div className="glass-panel p-4 rounded-[20px] border border-primary/5 bg-white shadow-sm space-y-3">
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end text-xs font-semibold">
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Search Term</label>
-            <input
-              type="text"
-              placeholder="Search Ticket ID, subject, user..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
-            />
+      <div className="card-flat p-4 bg-white">
+        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-end text-xs font-semibold font-sans">
+          <div className="flex flex-col gap-1 lg:col-span-2">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Search Term</span>
+            <div className="search-bar">
+              <Search size={14} className="text-[#9CA3AF]" />
+              <input
+                type="text"
+                placeholder="Search Ticket ID, subject, user..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Status</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Status</span>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Statuses --</option>
+              <option value="">All Statuses</option>
               {STATUS_OPTIONS.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Priority</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Priority</span>
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Priorities --</option>
+              <option value="">All Priorities</option>
               {PRIORITY_OPTIONS.map((p) => (
                 <option key={p} value={p}>{p}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">User Role</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">User Role</span>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All User Roles --</option>
+              <option value="">All User Roles</option>
               <option value="Student">Student</option>
               <option value="Staff">Staff</option>
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Department</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Department</span>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs font-semibold"
+              className="select"
             >
-              <option value="">-- All Departments --</option>
+              <option value="">All Depts</option>
               {departmentsList.map((d) => (
                 <option key={d._id} value={d._id}>{d.name}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Start Date</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Start Date</span>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="p-2 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="px-3 py-2 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">End Date</label>
+          <div className="flex flex-col gap-1 lg:col-span-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">End Date</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="p-2 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="px-3 py-2 bg-white border border-primary/10 rounded-xl focus:outline-none text-xs text-[#111111]"
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 lg:col-span-2 lg:col-start-7">
             <button
               type="submit"
-              className="flex-1 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all flex items-center justify-center gap-1 shadow-sm"
+              className="btn-primary py-2 px-4 flex-1 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
               Search
             </button>
             <button
               type="button"
               onClick={handleClearFilters}
-              className="py-2.5 px-4 rounded-xl border border-primary/10 text-on-surface-variant hover:bg-primary/5 text-xs font-bold transition-all"
+              className="btn-secondary py-2 px-3 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
               Clear
             </button>
@@ -573,91 +588,93 @@ const AdminSupportTickets = () => {
       </div>
 
       {/* SUPPORT TICKETS TABLE */}
-      <div className="glass-panel rounded-[24px] border border-primary/5 overflow-hidden bg-white shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          <div className="p-12 space-y-4 animate-pulse">
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
-            <div className="h-10 bg-surface-container-high rounded-xl w-full"></div>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
+            ))}
           </div>
         ) : tickets.length === 0 ? (
-          <div className="p-16 text-center border-t border-primary/5">
-            <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">
-              confirmation_number
-            </span>
-            <h4 className="text-base font-bold text-on-surface">No Support Tickets Found</h4>
-            <p className="text-on-surface-variant text-xs mt-1">
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Ticket size={24} />
+            </div>
+            <h4 className="text-base font-bold text-[#111111]">No Support Tickets Found</h4>
+            <p className="text-[#6B7280] text-xs mt-1">
               There are no support tickets matching your current filter choices.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs font-semibold">
+            <table className="table">
               <thead>
-                <tr className="bg-primary/5 text-primary border-b border-primary/10 font-bold uppercase tracking-wider text-[10px]">
-                  <th className="p-4">Ticket ID</th>
-                  <th className="p-4">Subject & Description</th>
-                  <th className="p-4">Raised By & Role</th>
-                  <th className="p-4">Department</th>
-                  <th className="p-4">Priority</th>
-                  <th className="p-4 text-center">Status</th>
-                  <th className="p-4">Assigned To</th>
-                  <th className="p-4 text-center">Last Updated</th>
-                  <th className="p-4 text-right">Actions</th>
+                <tr>
+                  <th>Ticket ID</th>
+                  <th>Subject & Description</th>
+                  <th>Raised By & Role</th>
+                  <th>Department</th>
+                  <th>Priority</th>
+                  <th className="text-center">Status</th>
+                  <th>Assigned To</th>
+                  <th className="text-center">Last Updated</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5">
+              <tbody>
                 {tickets.map((t) => (
-                  <tr key={t._id} className="hover:bg-primary/[0.02] transition-colors">
-                    <td className="p-4 font-mono font-bold text-primary">{t.ticketId}</td>
-                    <td className="p-4">
-                      <p className="font-bold text-on-surface text-xs">{t.title}</p>
-                      <p className="text-[11px] text-on-surface-variant line-clamp-1 mt-0.5">
+                  <tr key={t._id}>
+                    <td className="font-mono font-bold text-[#8B1E3F]">{t.ticketId}</td>
+                    <td>
+                      <p className="font-bold text-[#111111] text-xs">{t.title}</p>
+                      <p className="text-[11px] text-[#6B7280] line-clamp-1 mt-0.5">
                         {t.descriptionPreview}
                       </p>
                     </td>
-                    <td className="p-4">
-                      <p className="font-bold text-primary">{t.raisedByName}</p>
-                      <p className="text-[10px] text-on-surface-variant font-mono">{t.userRole}</p>
+                    <td>
+                      <p className="font-bold text-[#8B1E3F]">{t.raisedByName}</p>
+                      <p className="text-[10px] text-[#6B7280] font-mono">{t.userRole}</p>
                     </td>
-                    <td className="p-4 text-on-surface-variant font-mono">{t.department}</td>
-                    <td className="p-4">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold border ${getPriorityBadgeClass(t.priority)}`}>
+                    <td className="font-mono text-[#6B7280]">{t.department}</td>
+                    <td>
+                      <span className={`badge ${getPriorityBadgeClass(t.priority)}`}>
                         {t.priority}
                       </span>
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="text-center">
                       <select
                         value={t.status}
                         onChange={(e) => handleStatusChange(t._id, e.target.value)}
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold border focus:outline-none cursor-pointer ${getStatusBadgeClass(t.status)}`}
+                        className={`select py-1 px-2.5 rounded-[8px] text-[10px] font-bold border cursor-pointer ${getStatusBadgeClass(t.status)}`}
                       >
                         {STATUS_OPTIONS.map((s) => (
                           <option key={s} value={s}>{s}</option>
                         ))}
                       </select>
                     </td>
-                    <td className="p-4 font-mono text-[11px] text-on-surface-variant">
+                    <td className="font-mono text-[11px] text-[#6B7280]">
                       {t.assignedToName}
                     </td>
-                    <td className="p-4 text-center font-mono text-[10px]">
+                    <td className="text-center font-mono text-[10px] text-[#6B7280]">
                       {new Date(t.updatedAt).toLocaleString()}
                     </td>
-                    <td className="p-4 text-right space-x-1 shrink-0">
-                      <button
-                        onClick={() => setSelectedTicketId(t._id)}
-                        className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                        title="View Ticket Details & Reply"
-                      >
-                        <span className="material-symbols-outlined text-base">forum</span>
-                      </button>
-                      <button
-                        onClick={() => handleDeleteTicket(t._id)}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Delete Ticket"
-                      >
-                        <span className="material-symbols-outlined text-base">delete</span>
-                      </button>
+                    <td className="text-right">
+                      <div className="flex justify-end gap-1 items-center">
+                        <button
+                          onClick={() => setSelectedTicketId(t._id)}
+                          className="p-1.5 text-[#8B1E3F] hover:bg-[#FDF0F4] rounded-lg transition-colors inline-flex"
+                          title="View Ticket Details & Reply"
+                        >
+                          <MessageSquare size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTicket(t._id)}
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex"
+                          title="Delete Ticket"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -669,24 +686,26 @@ const AdminSupportTickets = () => {
 
       {/* PAGINATION CONTROLS */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 text-xs font-bold pt-2">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Previous
-          </button>
-          <span className="text-on-surface-variant font-mono">
-            Page {page} of {totalPages}
+        <div className="flex justify-between items-center px-6 py-4 bg-white border-t border-primary/5 text-xs text-[#6B7280]">
+          <span className="font-mono text-xs">
+            Showing {(page - 1) * limit + 1} - {Math.min(page * limit, stats.totalTickets)} of {stats.totalTickets} tickets
           </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Next
-          </button>
+          <div className="flex gap-2">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Previous
+            </button>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 

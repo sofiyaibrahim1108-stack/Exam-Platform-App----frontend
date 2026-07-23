@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Core design system colors from DESIGN.md
+        // ── LEGACY DESIGN TOKENS (preserved for backward compatibility) ──
         primary: {
           DEFAULT: '#49000a',
           container: '#6b0f1a',
@@ -60,7 +60,7 @@ export default {
             highest: '#e1e3e4',
           },
         },
-        background: '#f8f9fa',
+        background: '#FAF8F7',
         'on-background': '#191c1d',
         'on-surface': '#191c1d',
         'inverse-surface': '#2e3132',
@@ -69,17 +69,46 @@ export default {
           DEFAULT: '#8a7171',
           variant: '#ddc0bf',
         },
+
+        // ── WINE PALETTE (Landing Page Design Language) ──────────────────
+        wine: {
+          DEFAULT: '#8B1E3F',
+          dark:    '#6E1732',
+          medium:  '#A62E52',
+          rose:    '#C94F7C',
+          light:   '#F2D0DA',
+          50:      '#FDF0F4',
+          100:     '#FAD9E3',
+          200:     '#F2A8BF',
+          300:     '#E87099',
+          400:     '#D94977',
+          500:     '#C94F7C',
+          600:     '#A62E52',
+          700:     '#8B1E3F',
+          800:     '#6E1732',
+          900:     '#4A0E21',
+        },
+        champagne: {
+          DEFAULT: '#F7EFEA',
+          warm:    '#FFFCFA',
+          light:   '#FAF8F7',
+        },
+        'warm-white': '#FFFCFA',
+        'light-bg':   '#FAF8F7',
       },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        display: ['"Bricolage Grotesque"', '"Plus Jakarta Sans"', 'sans-serif'],
       },
       borderRadius: {
-        sm: '0.25rem', // 4px
+        sm: '0.25rem',   // 4px
         DEFAULT: '0.5rem', // 8px
-        md: '0.75rem', // 12px
-        lg: '1rem', // 16px
-        xl: '1.5rem', // 24px
+        md: '0.75rem',   // 12px
+        lg: '1rem',      // 16px
+        xl: '1.5rem',    // 24px
+        '2xl': '2rem',   // 32px
+        '3xl': '2.5rem', // 40px
       },
       spacing: {
         base: '4px',
@@ -92,11 +121,66 @@ export default {
         gutter: '24px',
       },
       boxShadow: {
-        // ambient shadows tinted with primary Maroon
-        'bento-active': '0 10px 30px -10px rgba(107, 15, 26, 0.15)',
+        // Legacy
+        'bento-active': '0 10px 30px -10px rgba(107,15,26,0.15)',
+        // Wine shadows
+        'wine-sm':    '0 2px 8px -2px rgba(139,30,63,0.12)',
+        'wine-md':    '0 8px 24px -8px rgba(139,30,63,0.20)',
+        'wine-lg':    '0 16px 48px -12px rgba(139,30,63,0.24)',
+        'wine-glow':  '0 0 0 3px rgba(139,30,63,0.15), 0 8px 32px -8px rgba(139,30,63,0.28)',
+        'card':       '0 1px 3px rgba(139,30,63,0.06), 0 8px 24px -8px rgba(139,30,63,0.10)',
+        'card-hover': '0 4px 16px -4px rgba(139,30,63,0.18), 0 20px 48px -12px rgba(139,30,63,0.16)',
+        'navbar':     '0 1px 0 rgba(139,30,63,0.08), 0 4px 24px -4px rgba(139,30,63,0.08)',
+        'sidebar':    '4px 0 32px -4px rgba(139,30,63,0.12)',
+        'float':      '0 8px 40px -8px rgba(139,30,63,0.20)',
+        'modal':      '0 24px 80px -12px rgba(139,30,63,0.22)',
       },
       backdropBlur: {
         bento: '20px',
+        xs: '4px',
+        sm: '8px',
+      },
+      backgroundImage: {
+        'wine-gradient':      'linear-gradient(135deg, #8B1E3F 0%, #6E1732 100%)',
+        'wine-gradient-r':    'linear-gradient(135deg, #A62E52 0%, #8B1E3F 100%)',
+        'rose-gradient':      'linear-gradient(135deg, #A62E52 0%, #C94F7C 100%)',
+        'champagne-gradient': 'linear-gradient(135deg, #F7EFEA 0%, #FFFCFA 100%)',
+        'admin-hero':         'radial-gradient(ellipse at top right, rgba(201,79,124,0.07) 0%, transparent 60%), radial-gradient(ellipse at bottom left, rgba(139,30,63,0.05) 0%, transparent 60%)',
+        'sidebar-active':     'linear-gradient(90deg, rgba(139,30,63,0.12) 0%, rgba(139,30,63,0.06) 100%)',
+        'shimmer':            'linear-gradient(90deg, transparent 0%, rgba(139,30,63,0.06) 50%, transparent 100%)',
+      },
+      animation: {
+        'fade-in':       'fadeIn 0.4s ease-out',
+        'slide-up':      'slideUp 0.4s ease-out',
+        'slide-in-left': 'slideInLeft 0.3s ease-out',
+        'scale-in':      'scaleIn 0.25s ease-out',
+        'glow-pulse':    'glowPulse 2.5s ease-in-out infinite',
+        'shimmer':       'shimmer 1.8s infinite',
+        'float':         'float 6s ease-in-out infinite',
+        'counter':       'counter 1.5s ease-out',
+        'spin-slow':     'spin 4s linear infinite',
+      },
+      keyframes: {
+        fadeIn:      { from: { opacity: 0 }, to: { opacity: 1 } },
+        slideUp:     { from: { opacity: 0, transform: 'translateY(20px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+        slideInLeft: { from: { opacity: 0, transform: 'translateX(-20px)' }, to: { opacity: 1, transform: 'translateX(0)' } },
+        scaleIn:     { from: { opacity: 0, transform: 'scale(0.95)' }, to: { opacity: 1, transform: 'scale(1)' } },
+        glowPulse: {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(139,30,63,0.0)' },
+          '50%':      { boxShadow: '0 0 20px 4px rgba(139,30,63,0.18)' },
+        },
+        shimmer: {
+          '0%':   { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition:  '200% 0' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%':      { transform: 'translateY(-8px)' },
+        },
+        counter: {
+          from: { opacity: 0, transform: 'scale(0.8)' },
+          to:   { opacity: 1, transform: 'scale(1)' },
+        },
       },
     },
   },

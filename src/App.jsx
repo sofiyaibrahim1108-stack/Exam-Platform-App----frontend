@@ -38,6 +38,7 @@ import AdminStaff from './pages/AdminStaff';
 import AdminStudents from './pages/AdminStudents';
 import AdminFacultyAssignment from './pages/AdminFacultyAssignment';
 import AdminPlaceholder from './pages/AdminPlaceholder';
+import AdminAiCenter from './pages/AdminAiCenter';
 import AdminPendingSubmissions from './pages/AdminPendingSubmissions';
 import AdminQuestionBank from './pages/AdminQuestionBank';
 import AdminRejectedSubmissions from './pages/AdminRejectedSubmissions';
@@ -74,6 +75,7 @@ import StudentLive from './pages/StudentLive';
 import StudentCompleted from './pages/StudentCompleted';
 import StudentNotifications from './pages/StudentNotifications';
 import StudentProfile from './pages/StudentProfile';
+import StudentSettings from './pages/StudentSettings';
 import StudentExamInterface from './pages/StudentExamInterface';
 
 /**
@@ -165,11 +167,11 @@ const App = () => {
             <Route path="questions/pending" element={<AdminPendingSubmissions />} />
             <Route path="questions/approved" element={<AdminQuestionBank />} />
             <Route path="questions/rejected" element={<AdminRejectedSubmissions />} />
-            <Route path="ai-center" element={<AdminPlaceholder />} />
+            <Route path="ai-center" element={<AdminAiCenter />} />
             <Route path="exams" element={<AdminExams />} />
             <Route path="results" element={<AdminResults />} />
-            <Route path="analytics" element={<AdminAnalytics />} />
-            <Route path="reports" element={<AdminReports />} />
+            <Route path="analytics" element={<Navigate to="/admin/ai-center?section=analytics" replace />} />
+            <Route path="reports" element={<Navigate to="/admin/ai-center?section=reports" replace />} />
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="activity-logs" element={<AdminActivityLogs />} />
             <Route path="support-tickets" element={<AdminSupportTickets />} />
@@ -215,12 +217,13 @@ const App = () => {
                 </ProtectedRoute>
               }
             >
-              <Route path="dashboard" element={<StudentDashboard />} />
-              <Route path="upcoming" element={<StudentUpcoming />} />
-              <Route path="live" element={<StudentLive />} />
-              <Route path="completed" element={<StudentCompleted />} />
+              <Route path="dashboard"     element={<StudentDashboard />} />
+              <Route path="upcoming"      element={<StudentUpcoming />} />
+              <Route path="live"          element={<StudentLive />} />
+              <Route path="completed"     element={<StudentCompleted />} />
               <Route path="notifications" element={<StudentNotifications />} />
-              <Route path="profile" element={<StudentProfile />} />
+              <Route path="profile"       element={<StudentProfile />} />
+              <Route path="settings"      element={<StudentSettings />} />
               <Route index element={<Navigate to="dashboard" replace />} />
             </Route>
 

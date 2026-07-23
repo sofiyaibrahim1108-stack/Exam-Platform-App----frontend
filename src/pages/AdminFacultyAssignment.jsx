@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Briefcase, Users, Plus, ShieldCheck, Database, FileText, Download, Check, AlertOctagon, HelpCircle, ArrowLeft, Eye, X, Search, Settings, Calendar, Edit3, Trash2, UserPlus, BookOpen, Layers
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminFacultyAssignment = () => {
@@ -230,48 +233,63 @@ const AdminFacultyAssignment = () => {
   return (
     <div className="space-y-6">
       {/* Top Header Panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-[24px] border border-primary/5">
-        <div>
-          <h2 className="text-2xl font-bold text-primary">Faculty Assignment</h2>
-          <p className="text-on-surface-variant text-xs mt-1">
-            Assign subjects to academic staff. Control syllabus administration, AI features, and grade metrics.
-          </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <Layers size={12} />
+              Syllabus & Faculty Mapping
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Faculty Assignment</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Assign subjects to academic staff. Control syllabus administration, AI features, and grade metrics.
+            </p>
+          </div>
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="btn-primary py-2.5 px-5 rounded-[12px] text-[12.5px] flex items-center gap-1.5"
+          >
+            <UserPlus size={14} />
+            Assign Subject
+          </button>
         </div>
-        <button
-          onClick={() => setAddModalOpen(true)}
-          className="bg-primary text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
-        >
-          <span className="material-symbols-outlined text-[20px]">assignment_ind</span>
-          Assign Subject
-        </button>
       </div>
 
       {/* Metrics Banner */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { title: 'Total Assignments', count: stats.total, icon: 'assignment', color: 'text-primary' },
-          { title: 'Active Assignments', count: stats.active, icon: 'check_circle', color: 'text-emerald-600' },
-          { title: 'Inactive Assignments', count: stats.inactive, icon: 'cancel', color: 'text-amber-600' },
-          { title: 'Assigned Staff', count: stats.totalStaff, icon: 'group', color: 'text-secondary' },
-        ].map((card) => (
-          <div key={card.title} className="glass-panel p-6 rounded-[24px] border border-primary/5 flex items-center justify-between shadow-sm">
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium mb-2">{card.title}</p>
-              <h3 className="text-3xl font-black font-mono text-primary leading-none">{card.count}</h3>
+          { title: 'Total Assignments', count: stats.total, icon: Briefcase },
+          { title: 'Active Assignments', count: stats.active, icon: CheckCircle2 },
+          { title: 'Inactive Assignments', count: stats.inactive, icon: X },
+          { title: 'Assigned Staff', count: stats.totalStaff, icon: Users },
+        ].map((card) => {
+          const Icon = card.icon;
+          return (
+            <div key={card.title} className="stat-card">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">{card.title}</span>
+                  <span className="block font-black text-2xl text-[#8B1E3F] font-mono mt-1">{card.count}</span>
+                </div>
+                <div className="w-10 h-10 rounded-[10px] bg-[#FAF8F7] flex items-center justify-center text-[#8B1E3F] border border-primary/5">
+                  <Icon size={18} />
+                </div>
+              </div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-surface-container-high flex items-center justify-center">
-              <span className={`material-symbols-outlined text-2xl ${card.color}`}>{card.icon}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Filters & Control bar */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5 space-y-4 shadow-sm">
-        <div className="flex flex-col md:flex-row gap-4 items-center">
+      <div className="card-flat p-4 bg-white">
+        <div className="flex flex-col md:flex-row gap-4 items-center font-sans">
           {/* Search bar */}
-          <div className="flex items-center bg-surface-container/60 rounded-xl px-3 py-2 border border-primary/5 shadow-sm w-full md:max-w-xs">
-            <span className="material-symbols-outlined text-on-surface-variant text-base">search</span>
+          <div className="search-bar w-full md:max-w-xs">
+            <Search size={14} className="text-[#9CA3AF]" />
             <input
               type="text"
               value={search}
@@ -280,15 +298,14 @@ const AdminFacultyAssignment = () => {
                 setCurrentPage(1);
               }}
               placeholder="Search staff or subjects..."
-              className="bg-transparent border-none focus:ring-0 text-xs w-full placeholder:text-on-surface-variant/40 outline-none ml-2"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2 w-full md:justify-end">
+          <div className="flex flex-wrap gap-2 w-full md:justify-end text-xs font-semibold">
             <select
               value={deptFilter}
               onChange={(e) => { setDeptFilter(e.target.value); setCurrentPage(1); }}
-              className="bg-surface border border-primary/5 rounded-xl px-3 py-2 text-xs outline-none focus:border-primary max-w-xs"
+              className="select max-w-xs"
             >
               <option value="">All Departments</option>
               {departments.map(d => (
@@ -299,7 +316,7 @@ const AdminFacultyAssignment = () => {
             <select
               value={courseFilter}
               onChange={(e) => { setCourseFilter(e.target.value); setCurrentPage(1); }}
-              className="bg-surface border border-primary/5 rounded-xl px-3 py-2 text-xs outline-none focus:border-primary max-w-xs"
+              className="select max-w-xs"
             >
               <option value="">All Courses</option>
               {courses.map(c => (
@@ -310,7 +327,7 @@ const AdminFacultyAssignment = () => {
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-              className="bg-surface border border-primary/5 rounded-xl px-3 py-2 text-xs outline-none focus:border-primary"
+              className="select"
             >
               <option value="">All Statuses</option>
               <option value="Active">Active</option>
@@ -320,7 +337,7 @@ const AdminFacultyAssignment = () => {
             <select
               value={ayFilter}
               onChange={(e) => { setAyFilter(e.target.value); setCurrentPage(1); }}
-              className="bg-surface border border-primary/5 rounded-xl px-3 py-2 text-xs outline-none focus:border-primary"
+              className="select"
             >
               <option value="">All Academic Years</option>
               {academicYears.map(ay => (
@@ -332,89 +349,92 @@ const AdminFacultyAssignment = () => {
       </div>
 
       {/* Main Table Panel */}
-      <div className="glass-panel rounded-[24px] border border-primary/5 overflow-hidden shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          <div className="p-12 flex flex-col justify-center items-center gap-4">
-            <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-            <p className="font-mono text-[10px] text-primary tracking-widest animate-pulse">LOADING ASSIGNMENTS...</p>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
+            ))}
           </div>
         ) : assignments.length === 0 ? (
-          <div className="p-16 text-center">
-            <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">assignment_late</span>
-            <h4 className="text-base font-bold text-on-surface">No Assignments Mapped</h4>
-            <p className="text-on-surface-variant text-xs mt-1 max-w-xs mx-auto">
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Briefcase size={24} />
+            </div>
+            <h4 className="text-base font-bold text-[#111111]">No Assignments Mapped</h4>
+            <p className="text-[#6B7280] text-xs mt-1 max-w-xs mx-auto">
               We couldn't find any staff-subject mappings matching your active search filters.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="table">
               <thead>
-                <tr className="bg-surface-container-high/40 text-on-surface-variant font-mono text-[10px] font-semibold border-b border-primary/5 uppercase">
-                  <th className="px-6 py-4">Faculty Info</th>
-                  <th className="px-6 py-4">Department / Course</th>
-                  <th className="px-6 py-4">Sem / Subject</th>
-                  <th className="px-6 py-4">Academic Year</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                <tr>
+                  <th>Faculty Info</th>
+                  <th>Department / Course</th>
+                  <th>Sem / Subject</th>
+                  <th>Academic Year</th>
+                  <th>Status</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5">
+              <tbody>
                 {assignments.map((item) => (
-                  <tr key={item._id} className="hover:bg-primary/5 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-sm text-primary">{item.staff?.name || 'Unknown Staff'}</div>
-                      <div className="text-[10px] font-mono text-on-surface-variant mt-0.5">
+                  <tr key={item._id}>
+                    <td>
+                      <div className="font-bold text-[#8B1E3F]">{item.staff?.name || 'Unknown Staff'}</div>
+                      <div className="text-[10px] font-mono text-[#6B7280] mt-0.5">
                         ID: {item.staff?.employeeId || 'N/A'} | {item.staff?.email || 'N/A'}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-xs font-semibold">{item.course?.name || 'N/A'}</div>
-                      <div className="text-[10px] font-mono text-on-surface-variant mt-0.5">
+                    <td>
+                      <div className="font-semibold text-[#111111]">{item.course?.name || 'N/A'}</div>
+                      <div className="text-[10px] font-mono text-[#6B7280] mt-0.5">
                         Dept: {item.department?.code || 'N/A'} | {item.course?.code || 'N/A'}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-xs font-semibold text-primary">{item.subject?.name || 'N/A'}</div>
-                      <div className="text-[10px] font-mono text-on-surface-variant mt-0.5">
+                    <td>
+                      <div className="font-semibold text-[#8B1E3F]">{item.subject?.name || 'N/A'}</div>
+                      <div className="text-[10px] font-mono text-[#6B7280] mt-0.5">
                         Code: {item.subject?.code || 'N/A'} | Sem {item.semester?.semesterNumber || 'N/A'}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="px-2 py-0.5 bg-secondary/10 border border-secondary/15 rounded-md text-[10px] font-mono font-bold text-secondary">
+                    <td>
+                      <span className="badge badge-wine font-mono">
                         {item.academicYear}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td>
                       <button
                         onClick={() => handleStatusToggle(item)}
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase transition-all ${
+                        className={`badge cursor-pointer active:scale-95 transition-all ${
                           item.status === 'Active'
-                            ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 hover:bg-emerald-500/20'
-                            : 'bg-amber-500/10 text-amber-600 border border-amber-500/20 hover:bg-amber-500/20'
+                            ? 'badge-green hover:bg-emerald-100'
+                            : 'badge-amber hover:bg-amber-100'
                         }`}
                       >
                         {item.status}
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
+                    <td className="text-right">
+                      <div className="flex justify-end gap-1.5 items-center">
                         <button
                           onClick={() => handleEditClick(item)}
-                          className="w-8 h-8 rounded-lg hover:bg-primary/10 text-primary flex items-center justify-center transition-colors"
+                          className="p-1.5 text-[#8B1E3F] hover:bg-[#FDF0F4] rounded-lg transition-colors inline-flex"
                           title="Edit Details"
                         >
-                          <span className="material-symbols-outlined text-lg">edit</span>
+                          <Edit3 size={14} />
                         </button>
                         <button
                           onClick={() => {
                             setSelectedAssignment(item);
                             setDeleteDialogOpen(true);
                           }}
-                          className="w-8 h-8 rounded-lg hover:bg-error/10 text-error flex items-center justify-center transition-colors"
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex"
                           title="Remove Assignment"
                         >
-                          <span className="material-symbols-outlined text-lg">delete</span>
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -422,31 +442,6 @@ const AdminFacultyAssignment = () => {
                 ))}
               </tbody>
             </table>
-
-            {/* Pagination footer */}
-            {pagination.totalPages > 1 && (
-              <div className="flex justify-between items-center px-6 py-4 border-t border-primary/5">
-                <span className="text-[10px] font-mono font-medium text-on-surface-variant uppercase">
-                  Page {pagination.page} of {pagination.totalPages} ({pagination.total} records)
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((p) => p - 1)}
-                    className="px-3 py-1.5 rounded-lg border border-primary/5 hover:bg-primary/5 text-xs font-semibold disabled:opacity-40 transition-colors"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    disabled={currentPage === pagination.totalPages}
-                    onClick={() => setCurrentPage((p) => p + 1)}
-                    className="px-3 py-1.5 rounded-lg border border-primary/5 hover:bg-primary/5 text-xs font-semibold disabled:opacity-40 transition-colors"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -460,26 +455,36 @@ const AdminFacultyAssignment = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setAddModalOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/45 backdrop-blur-xs"
             ></motion.div>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-surface rounded-[28px] border border-primary/10 shadow-2xl p-6 w-full max-w-lg z-10 relative overflow-hidden"
+              className="bg-white rounded-[24px] border border-primary/10 shadow-2xl p-6 w-full max-w-lg z-10 relative overflow-hidden font-sans text-xs text-[#111111]"
             >
-              <h3 className="text-xl font-bold text-primary mb-2">Assign Subject</h3>
-              <p className="text-on-surface-variant text-xs mb-6">Create a link between academic staff and a particular subject.</p>
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="text-base font-black text-[#111111]">Assign Subject</h3>
+                  <p className="text-[#6B7280] text-[11px] mt-0.5">Create a link between academic staff and a particular subject.</p>
+                </div>
+                <button
+                  onClick={() => setAddModalOpen(false)}
+                  className="p-1 text-[#9CA3AF] hover:text-[#111111] transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
 
-              <form onSubmit={handleSubmitAdd(onAddSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
+              <form onSubmit={handleSubmitAdd(onAddSubmit)} className="space-y-4 mt-4 font-sans">
+                <div className="grid grid-cols-1 gap-3.5">
                   {/* Staff Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Academic Staff Member *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Academic Staff Member *</span>
                     <select
                       {...registerAdd('staff', { required: 'Staff Member is required' })}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                      className="select w-full"
                     >
                       <option value="">Select Staff...</option>
                       {staffList.map((st) => (
@@ -488,12 +493,12 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsAdd.staff && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsAdd.staff.message}</span>}
+                    {errorsAdd.staff && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsAdd.staff.message}</span>}
                   </div>
 
                   {/* Department Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Department *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Department *</span>
                     <select
                       {...registerAdd('department', { required: 'Department is required' })}
                       onChange={(e) => {
@@ -504,7 +509,7 @@ const AdminFacultyAssignment = () => {
                         setValueAdd('semester', '');
                         setValueAdd('subject', '');
                       }}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                      className="select w-full"
                     >
                       <option value="">Select Department...</option>
                       {departments.map((dept) => (
@@ -513,12 +518,12 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsAdd.department && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsAdd.department.message}</span>}
+                    {errorsAdd.department && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsAdd.department.message}</span>}
                   </div>
 
                   {/* Course Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Course *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Course *</span>
                     <select
                       {...registerAdd('course', { required: 'Course is required' })}
                       disabled={!addSelectedDept}
@@ -528,7 +533,7 @@ const AdminFacultyAssignment = () => {
                         setValueAdd('semester', '');
                         setValueAdd('subject', '');
                       }}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer disabled:opacity-50"
+                      className="select w-full disabled:opacity-50"
                     >
                       <option value="">Select Course...</option>
                       {addFilteredCourses.map((c) => (
@@ -537,12 +542,12 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsAdd.course && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsAdd.course.message}</span>}
+                    {errorsAdd.course && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsAdd.course.message}</span>}
                   </div>
 
                   {/* Semester Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Semester *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Semester *</span>
                     <select
                       {...registerAdd('semester', { required: 'Semester is required' })}
                       disabled={!addSelectedCourse}
@@ -550,7 +555,7 @@ const AdminFacultyAssignment = () => {
                         setAddSelectedSem(e.target.value);
                         setValueAdd('subject', '');
                       }}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer disabled:opacity-50"
+                      className="select w-full disabled:opacity-50"
                     >
                       <option value="">Select Semester...</option>
                       {addFilteredSemesters.map((s) => (
@@ -559,16 +564,16 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsAdd.semester && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsAdd.semester.message}</span>}
+                    {errorsAdd.semester && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsAdd.semester.message}</span>}
                   </div>
 
                   {/* Subject Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Subject *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Subject *</span>
                     <select
                       {...registerAdd('subject', { required: 'Subject is required' })}
                       disabled={!addSelectedSem}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer disabled:opacity-50"
+                      className="select w-full disabled:opacity-50"
                     >
                       <option value="">Select Subject...</option>
                       {addFilteredSubjects.map((sub) => (
@@ -577,32 +582,32 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsAdd.subject && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsAdd.subject.message}</span>}
+                    {errorsAdd.subject && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsAdd.subject.message}</span>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     {/* Academic Year */}
                     <div>
-                      <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Academic Year *</label>
+                      <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Academic Year *</span>
                       <select
                         {...registerAdd('academicYear', { required: 'Academic Year is required' })}
-                        className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                        className="select w-full"
                       >
                         <option value="">Select AY...</option>
                         {academicYears.map((ay) => (
                           <option key={ay} value={ay}>{ay}</option>
                         ))}
                       </select>
-                      {errorsAdd.academicYear && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsAdd.academicYear.message}</span>}
+                      {errorsAdd.academicYear && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsAdd.academicYear.message}</span>}
                     </div>
 
                     {/* Status */}
                     <div>
-                      <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Initial Status</label>
+                      <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Initial Status</span>
                       <select
                         {...registerAdd('status')}
                         defaultValue="Active"
-                        className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                        className="select w-full"
                       >
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
@@ -611,17 +616,17 @@ const AdminFacultyAssignment = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3 justify-end pt-4 mt-4 border-t border-primary/5">
+                <div className="flex gap-2.5 justify-end pt-4 mt-4 border-t border-primary/5">
                   <button
                     type="button"
                     onClick={() => setAddModalOpen(false)}
-                    className="px-4 py-2 text-xs font-semibold hover:bg-surface-container-high rounded-xl transition-colors text-on-surface-variant"
+                    className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 text-xs font-semibold bg-primary text-white hover:bg-primary-container rounded-xl transition-all shadow-lg shadow-primary/10"
+                    className="btn-primary px-5 py-2 rounded-lg text-xs"
                   >
                     Assign
                   </button>
@@ -641,26 +646,36 @@ const AdminFacultyAssignment = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setEditModalOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/45 backdrop-blur-xs"
             ></motion.div>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-surface rounded-[28px] border border-primary/10 shadow-2xl p-6 w-full max-w-lg z-10 relative overflow-hidden"
+              className="bg-white rounded-[24px] border border-primary/10 shadow-2xl p-6 w-full max-w-lg z-10 relative overflow-hidden font-sans text-xs text-[#111111]"
             >
-              <h3 className="text-xl font-bold text-primary mb-2">Edit Assignment</h3>
-              <p className="text-on-surface-variant text-xs mb-6">Modify active staff or subject mapping links.</p>
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="text-base font-black text-[#111111]">Edit Assignment</h3>
+                  <p className="text-[#6B7280] text-[11px] mt-0.5">Modify active staff or subject mapping links.</p>
+                </div>
+                <button
+                  onClick={() => setEditModalOpen(false)}
+                  className="p-1 text-[#9CA3AF] hover:text-[#111111] transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
 
-              <form onSubmit={handleSubmitEdit(onEditSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
+              <form onSubmit={handleSubmitEdit(onEditSubmit)} className="space-y-4 mt-4 font-sans">
+                <div className="grid grid-cols-1 gap-3.5">
                   {/* Staff Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Academic Staff Member *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Academic Staff Member *</span>
                     <select
                       {...registerEdit('staff', { required: 'Staff Member is required' })}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                      className="select w-full"
                     >
                       <option value="">Select Staff...</option>
                       {staffList.map((st) => (
@@ -669,12 +684,12 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsEdit.staff && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsEdit.staff.message}</span>}
+                    {errorsEdit.staff && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsEdit.staff.message}</span>}
                   </div>
 
                   {/* Department Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Department *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Department *</span>
                     <select
                       {...registerEdit('department', { required: 'Department is required' })}
                       onChange={(e) => {
@@ -685,7 +700,7 @@ const AdminFacultyAssignment = () => {
                         setValueEdit('semester', '');
                         setValueEdit('subject', '');
                       }}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                      className="select w-full"
                     >
                       <option value="">Select Department...</option>
                       {departments.map((dept) => (
@@ -694,12 +709,12 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsEdit.department && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsEdit.department.message}</span>}
+                    {errorsEdit.department && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsEdit.department.message}</span>}
                   </div>
 
                   {/* Course Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Course *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Course *</span>
                     <select
                       {...registerEdit('course', { required: 'Course is required' })}
                       disabled={!editSelectedDept}
@@ -709,7 +724,7 @@ const AdminFacultyAssignment = () => {
                         setValueEdit('semester', '');
                         setValueEdit('subject', '');
                       }}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer disabled:opacity-50"
+                      className="select w-full disabled:opacity-50"
                     >
                       <option value="">Select Course...</option>
                       {editFilteredCourses.map((c) => (
@@ -718,12 +733,12 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsEdit.course && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsEdit.course.message}</span>}
+                    {errorsEdit.course && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsEdit.course.message}</span>}
                   </div>
 
                   {/* Semester Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Semester *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Semester *</span>
                     <select
                       {...registerEdit('semester', { required: 'Semester is required' })}
                       disabled={!editSelectedCourse}
@@ -731,7 +746,7 @@ const AdminFacultyAssignment = () => {
                         setEditSelectedSem(e.target.value);
                         setValueEdit('subject', '');
                       }}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer disabled:opacity-50"
+                      className="select w-full disabled:opacity-50"
                     >
                       <option value="">Select Semester...</option>
                       {editFilteredSemesters.map((s) => (
@@ -740,16 +755,16 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsEdit.semester && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsEdit.semester.message}</span>}
+                    {errorsEdit.semester && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsEdit.semester.message}</span>}
                   </div>
 
                   {/* Subject Select */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Subject *</label>
+                    <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Subject *</span>
                     <select
                       {...registerEdit('subject', { required: 'Subject is required' })}
                       disabled={!editSelectedSem}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer disabled:opacity-50"
+                      className="select w-full disabled:opacity-50"
                     >
                       <option value="">Select Subject...</option>
                       {editFilteredSubjects.map((sub) => (
@@ -758,31 +773,31 @@ const AdminFacultyAssignment = () => {
                         </option>
                       ))}
                     </select>
-                    {errorsEdit.subject && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsEdit.subject.message}</span>}
+                    {errorsEdit.subject && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsEdit.subject.message}</span>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     {/* Academic Year */}
                     <div>
-                      <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Academic Year *</label>
+                      <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Academic Year *</span>
                       <select
                         {...registerEdit('academicYear', { required: 'Academic Year is required' })}
-                        className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                        className="select w-full"
                       >
                         <option value="">Select AY...</option>
                         {academicYears.map((ay) => (
                           <option key={ay} value={ay}>{ay}</option>
                         ))}
                       </select>
-                      {errorsEdit.academicYear && <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsEdit.academicYear.message}</span>}
+                      {errorsEdit.academicYear && <span className="text-red-500 text-[10px] font-mono mt-0.5 block">{errorsEdit.academicYear.message}</span>}
                     </div>
 
                     {/* Status */}
                     <div>
-                      <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Status</label>
+                      <span className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Status</span>
                       <select
                         {...registerEdit('status')}
-                        className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 text-sm focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                        className="select w-full"
                       >
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
@@ -791,17 +806,17 @@ const AdminFacultyAssignment = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3 justify-end pt-4 mt-4 border-t border-primary/5">
+                <div className="flex gap-2.5 justify-end pt-4 mt-4 border-t border-primary/5">
                   <button
                     type="button"
                     onClick={() => setEditModalOpen(false)}
-                    className="px-4 py-2 text-xs font-semibold hover:bg-surface-container-high rounded-xl transition-colors text-on-surface-variant"
+                    className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 text-xs font-semibold bg-primary text-white hover:bg-primary-container rounded-xl transition-all shadow-lg shadow-primary/10"
+                    className="btn-primary px-5 py-2 rounded-lg text-xs"
                   >
                     Save Changes
                   </button>
@@ -821,34 +836,33 @@ const AdminFacultyAssignment = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDeleteDialogOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/45 backdrop-blur-xs"
             ></motion.div>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface rounded-[24px] border border-primary/10 shadow-2xl p-6 w-full max-w-sm z-10 relative overflow-hidden"
+              className="bg-white rounded-[24px] border border-primary/10 shadow-2xl p-6 w-full max-w-sm z-10 relative overflow-hidden font-sans text-xs text-[#111111]"
             >
-              <div className="flex items-center gap-3 text-error mb-4">
-                <span className="material-symbols-outlined text-3xl">warning</span>
-                <h3 className="text-base font-bold">Remove Assignment</h3>
+              <div className="flex items-center gap-2 mb-3">
+                <AlertOctagon size={20} className="text-red-600" />
+                <h3 className="text-sm font-black text-[#111111]">Remove Assignment</h3>
               </div>
-              <p className="text-on-surface-variant text-xs mb-6">
+              <p className="text-[#6B7280] text-xs leading-relaxed mb-6">
                 Are you sure you want to remove the subject assignment for{' '}
-                <strong className="text-primary">{selectedAssignment?.staff?.name}</strong>? This action will disable their portals
-                capabilities for <strong className="text-primary">{selectedAssignment?.subject?.name}</strong>.
+                <strong className="text-[#8B1E3F] font-bold">{selectedAssignment?.staff?.name}</strong>? This action will disable their portal capabilities for <strong className="text-[#8B1E3F] font-bold">{selectedAssignment?.subject?.name}</strong>.
               </p>
-              <div className="flex gap-3 justify-end pt-4 border-t border-primary/5">
+              <div className="flex gap-2 justify-end pt-4 border-t border-primary/5">
                 <button
                   onClick={() => setDeleteDialogOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold hover:bg-surface-container-high rounded-xl transition-colors text-on-surface-variant"
+                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all text-[#6B7280]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteConfirm}
-                  className="px-5 py-2 text-xs font-semibold bg-error text-white hover:bg-error/80 rounded-xl transition-all"
+                  className="px-5 py-2 text-xs font-bold rounded-lg bg-red-600 hover:bg-red-700 active:scale-95 transition-all text-white"
                 >
                   Remove
                 </button>

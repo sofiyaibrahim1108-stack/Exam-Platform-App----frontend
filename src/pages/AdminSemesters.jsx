@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Calendar, Plus, Search, Edit2, Trash2, Eye, Award, CheckCircle, XCircle, ShieldAlert, GraduationCap, Building2, Layers, Clock
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminSemesters = () => {
@@ -190,59 +193,71 @@ const AdminSemesters = () => {
     <div className="space-y-6">
       
       {/* Upper Header panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-[24px] border border-primary/5">
-        <div>
-          <h2 className="text-2xl font-bold text-primary">Semester Management</h2>
-          <p className="text-on-surface-variant text-xs mt-1">Configure academic terms, duration boundaries, and link courses to subjects.</p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <Calendar size={12} />
+              Term Schedule
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Semester Management</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">Configure academic terms, duration boundaries, and link courses to subjects.</p>
+          </div>
+          <button
+            onClick={() => setAddModalOpen(true)}
+            className="btn-primary py-2 px-4 text-[12.5px] rounded-[10px] flex items-center gap-1.5"
+          >
+            <Plus size={14} />
+            Create Semester
+          </button>
         </div>
-        <button
-          onClick={() => setAddModalOpen(true)}
-          className="bg-primary text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
-        >
-          <span className="material-symbols-outlined text-[20px]">calendar_today</span>
-          Create Semester
-        </button>
       </div>
 
       {/* Dashboard Metrics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { title: 'Total Semesters', count: stats.total, icon: 'date_range', color: 'text-primary' },
-          { title: 'Active Semesters', count: stats.active, icon: 'check_circle', color: 'text-emerald-600' },
-          { title: 'Inactive Semesters', count: stats.inactive, icon: 'cancel', color: 'text-amber-600' },
-          { title: 'Current Semester', count: stats.current, icon: 'hourglass_empty', color: 'text-secondary' },
-        ].map((card) => (
-          <div key={card.title} className="glass-panel p-6 rounded-[24px] border border-primary/5 flex items-center justify-between shadow-sm">
-            <div>
-              <p className="text-xs text-on-surface-variant font-medium leading-none mb-2">{card.title}</p>
-              <h3 className="text-3xl font-black font-mono text-primary leading-none">{card.count}</h3>
+          { title: 'Total Semesters', count: stats.total, icon: Calendar, color: '#8B1E3F', bg: '#FDF0F4' },
+          { title: 'Active Semesters', count: stats.active, icon: CheckCircle, color: '#059669', bg: '#ECFDF5' },
+          { title: 'Inactive Semesters', count: stats.inactive, icon: XCircle, color: '#D97706', bg: '#FFFBEB' },
+          { title: 'Current Semester', count: stats.current, icon: Clock, color: '#3B82F6', bg: '#EFF6FF' },
+        ].map((card) => {
+          const Icon = card.icon;
+          return (
+            <div key={card.title} className="stat-card">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold text-[#9CA3AF] uppercase text-xs">{card.title}</span>
+                <div className="w-8 h-8 rounded-[8px] flex items-center justify-center" style={{ background: card.bg, color: card.color }}>
+                  <Icon size={14} />
+                </div>
+              </div>
+              <p className="text-2xl font-black font-mono leading-none mt-1" style={{ color: card.color }}>{card.count}</p>
             </div>
-            <div className={`w-12 h-12 rounded-2xl bg-surface-container-high flex items-center justify-center ${card.color}`}>
-              <span className="material-symbols-outlined text-2xl">{card.icon}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Filters Toolbar */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-        {/* Search */}
-        <div className="sm:col-span-2 lg:col-span-1 flex items-center bg-surface rounded-xl px-4 py-2 border border-primary/5 shadow-sm">
-          <span className="material-symbols-outlined text-on-surface-variant text-lg">search</span>
-          <input
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            placeholder="Search semesters..."
-            className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50 outline-none ml-2"
-            type="text"
-          />
-        </div>
+      <div className="card-flat p-4 bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center">
+          {/* Search */}
+          <div className="sm:col-span-2 lg:col-span-1 search-bar">
+            <Search size={14} className="text-[#9CA3AF] flex-shrink-0" />
+            <input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search semesters..."
+              type="text"
+            />
+          </div>
 
-        {/* Department Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Department Filter */}
           <select
             value={deptFilter}
             onChange={(e) => {
@@ -250,7 +265,7 @@ const AdminSemesters = () => {
               setCourseFilter('');
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Departments</option>
             {departments.map((dept) => (
@@ -259,17 +274,15 @@ const AdminSemesters = () => {
               </option>
             ))}
           </select>
-        </div>
 
-        {/* Course Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Course Filter */}
           <select
             value={courseFilter}
             onChange={(e) => {
               setCourseFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Courses</option>
             {courses
@@ -280,33 +293,29 @@ const AdminSemesters = () => {
                 </option>
               ))}
           </select>
-        </div>
 
-        {/* Status Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Statuses</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
-        </div>
 
-        {/* Sort Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Sort Filter */}
           <select
             value={sortBy}
             onChange={(e) => {
               setSortBy(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="name_asc">Name (A-Z)</option>
             <option value="name_desc">Name (Z-A)</option>
@@ -317,115 +326,105 @@ const AdminSemesters = () => {
       </div>
 
       {/* Main Table Panel */}
-      <div className="glass-panel p-6 rounded-[24px] shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          // Loading Skeletons
-          <div className="space-y-4 py-4">
-            <div className="h-8 bg-surface-container-high animate-pulse rounded-lg w-full"></div>
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-16 bg-surface-container-low animate-pulse rounded-xl w-full"></div>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
             ))}
           </div>
         ) : semesters.length === 0 ? (
-          // Empty State
-          <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-            <span className="material-symbols-outlined text-primary/45 text-5xl">event_busy</span>
-            <div className="space-y-1">
-              <h3 className="text-lg font-bold text-primary">No Semesters Found</h3>
-              <p className="text-on-surface-variant text-sm max-w-sm">No academic semesters mapped matching your search criteria.</p>
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Calendar size={24} />
             </div>
+            <h3 className="text-base font-bold text-[#111111]">No Semesters Found</h3>
+            <p className="text-[#6B7280] text-xs max-w-sm mt-1">No academic semesters mapped matching your search criteria.</p>
           </div>
         ) : (
-          // Data Table
           <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse">
+            <table className="table">
               <thead>
-                <tr className="border-b border-primary/10 pb-4 text-xs font-mono font-semibold text-primary uppercase tracking-wider">
-                  <th className="py-4 px-3">Semester Name</th>
-                  <th className="py-4 px-3 text-center">Number</th>
-                  <th className="py-4 px-3">Department</th>
-                  <th className="py-4 px-3">Course</th>
-                  <th className="py-4 px-3 text-center">Academic Year</th>
-                  <th className="py-4 px-3 text-center">Subjects</th>
-                  <th className="py-4 px-3 text-center">Students</th>
+                <tr>
+                  <th>Semester Name</th>
+                  <th className="text-center">Number</th>
+                  <th>Department</th>
+                  <th>Course</th>
+                  <th className="text-center">Academic Year</th>
+                  <th className="text-center">Subjects</th>
+                  <th className="text-center">Students</th>
                   <th className="py-4 px-3 text-center">Status</th>
                   <th className="py-4 px-3">Created</th>
                   <th className="py-4 px-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 text-sm">
+              <tbody>
                 {semesters.map((sem) => (
-                  <tr key={sem._id} className="hover:bg-primary/5 transition-colors">
-                    <td className="py-4 px-3 font-semibold text-primary">{sem.name}</td>
-                    <td className="py-4 px-3 text-center font-mono text-xs text-on-surface-variant">{sem.semesterNumber}</td>
-                    <td className="py-4 px-3">
+                  <tr key={sem._id}>
+                    <td className="font-semibold text-[#8B1E3F]">{sem.name}</td>
+                    <td className="text-center font-mono font-semibold text-[#111111]">{sem.semesterNumber}</td>
+                    <td>
                       {sem.department ? (
                         <div>
-                          <p className="font-semibold text-on-surface leading-tight">{sem.department.name}</p>
-                          <p className="text-[10px] text-on-surface-variant font-mono leading-none mt-0.5">{sem.department.code}</p>
+                          <p className="font-semibold text-[#111111] leading-tight">{sem.department.name}</p>
+                          <p className="text-[10px] text-[#9CA3AF] font-mono leading-none mt-0.5">{sem.department.code}</p>
                         </div>
                       ) : (
-                        <span className="text-xs text-error font-mono font-semibold">UNASSIGNED_DEPT</span>
+                        <span className="text-xs text-red-500 font-mono font-semibold">UNASSIGNED_DEPT</span>
                       )}
                     </td>
-                    <td className="py-4 px-3">
+                    <td>
                       {sem.course ? (
                         <div>
-                          <p className="font-semibold text-on-surface leading-tight">{sem.course.name}</p>
-                          <p className="text-[10px] text-on-surface-variant font-mono leading-none mt-0.5">{sem.course.code}</p>
+                          <p className="font-semibold text-[#111111] leading-tight">{sem.course.name}</p>
+                          <p className="text-[10px] text-[#9CA3AF] font-mono leading-none mt-0.5">{sem.course.code}</p>
                         </div>
                       ) : (
-                        <span className="text-xs text-error font-mono font-semibold">UNASSIGNED_COURSE</span>
+                        <span className="text-xs text-red-500 font-mono font-semibold">UNASSIGNED_COURSE</span>
                       )}
                     </td>
-                    <td className="py-4 px-3 text-center font-mono text-on-surface">{sem.academicYear}</td>
-                    <td className="py-4 px-3 text-center font-mono font-bold text-on-surface">{sem.subjectsCount}</td>
-                    <td className="py-4 px-3 text-center font-mono font-bold text-on-surface">{sem.studentsCount}</td>
-                    <td className="py-4 px-3 text-center">
+                    <td className="text-center font-mono text-[#111111]">{sem.academicYear}</td>
+                    <td className="text-center font-mono font-bold text-[#111111]">{sem.subjectsCount}</td>
+                    <td className="text-center font-mono font-bold text-[#111111]">{sem.studentsCount}</td>
+                    <td className="text-center">
                       <button
                         onClick={() => handleStatusToggle(sem)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-                          sem.status === 'Active' ? 'bg-secondary/15 text-secondary' : 'bg-error/10 text-error'
-                        } hover:scale-95 transition-transform`}
+                        className={`badge ${sem.status === 'Active' ? 'badge-green' : 'badge-red'} hover:scale-95 transition-transform`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${sem.status === 'Active' ? 'bg-secondary' : 'bg-error'}`}></span>
                         {sem.status}
                       </button>
                     </td>
-                    <td className="py-4 px-3 font-mono text-xs text-on-surface-variant">
+                    <td className="font-mono text-xs text-[#6B7280]">
                       {new Date(sem.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="py-4 px-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        {/* View Drawer */}
+                    <td className="text-right">
+                      <div className="flex justify-end gap-1">
                         <button
                           onClick={() => {
                             setSelectedSem(sem);
                             setDetailsDrawerOpen(true);
                           }}
-                          title="View Details"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors"
+                          title="View"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#8B1E3F] hover:bg-[#FDF0F4] transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">visibility</span>
+                          <Eye size={13} />
                         </button>
-                        {/* Edit details */}
                         <button
                           onClick={() => handleEditClick(sem)}
-                          title="Edit Details"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-secondary transition-colors"
+                          title="Edit"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#8B1E3F] hover:bg-[#FDF0F4] transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                          <Edit2 size={13} />
                         </button>
-                        {/* Delete account */}
                         <button
                           onClick={() => {
                             setSelectedSem(sem);
                             setDeleteDialogOpen(true);
                           }}
-                          title="Delete Semester"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-error transition-colors"
+                          title="Delete"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#DC2626] hover:bg-red-50 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </td>

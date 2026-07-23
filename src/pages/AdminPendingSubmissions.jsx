@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Database, HelpCircle, CheckCircle2, CornerUpLeft, Plus, FileText, Download, Check, AlertOctagon, ArrowLeft, Eye, X, Search
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminPendingSubmissions = () => {
@@ -187,37 +190,58 @@ const AdminPendingSubmissions = () => {
   };
 
   // Reusable stat card widget
-  const renderStatCard = (title, count, icon, color) => (
-    <div className="glass-panel p-5 rounded-[24px] border border-primary/5 flex items-center justify-between shadow-xs">
-      <div>
-        <p className="text-[10px] font-mono font-bold text-on-surface-variant/75 uppercase tracking-wider">{title}</p>
-        <h4 className={`text-2xl font-black mt-1 ${color}`}>{count}</h4>
+  const renderStatCard = (title, count, icon, color) => {
+    let IconComponent = Database;
+    if (icon === 'gavel') IconComponent = AlertOctagon;
+    if (icon === 'task_alt') IconComponent = CheckCircle2;
+    if (icon === 'cancel') IconComponent = X;
+    if (icon === 'assignment_return') IconComponent = CornerUpLeft;
+    if (icon === 'database') IconComponent = Database;
+
+    return (
+      <div className="stat-card">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">{title}</span>
+            <span className="block font-black text-2xl text-[#111111] font-mono mt-1">{count}</span>
+          </div>
+          <div className="w-10 h-10 rounded-[10px] bg-[#FAF8F7] flex items-center justify-center text-[#8B1E3F] border border-primary/5">
+            <IconComponent size={18} />
+          </div>
+        </div>
       </div>
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-primary/5 ${color}`}>
-        <span className="material-symbols-outlined text-[24px]">{icon}</span>
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="glass-panel p-6 rounded-[24px]">
-        <h2 className="text-2xl font-bold text-primary mb-1">Batch Approval Worklist</h2>
-        <p className="text-on-surface-variant text-xs">
-          Review entire batches of MCQ questions submitted by Faculty staff. Verify, approve, reject, or return the whole submission in one click.
-        </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative">
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+            <Database size={12} />
+            Quality Control Queue
+          </div>
+          <h2 className="text-2xl font-black text-[#111111] leading-none">Batch Approval Worklist</h2>
+          <p className="text-[13px] text-[#6B7280] mt-1.5">
+            Review entire batches of MCQ questions submitted by Faculty staff. Verify, approve, reject, or return the whole submission in one click.
+          </p>
+        </div>
       </div>
 
       {/* Dashboard Stats Row */}
       {statsLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 animate-pulse">
           {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="h-24 bg-surface-container-high rounded-[24px]"></div>
+            <div key={i} className="h-20 bg-gray-200 rounded-[16px]"></div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {renderStatCard('Pending Submissions', stats.pendingCount, 'gavel', 'text-amber-600')}
           {renderStatCard('Approved Today', stats.approvedToday, 'task_alt', 'text-emerald-600')}
           {renderStatCard('Rejected Today', stats.rejectedToday, 'cancel', 'text-error')}
@@ -227,86 +251,103 @@ const AdminPendingSubmissions = () => {
       )}
 
       {/* Filters Form Panel */}
-      <div className="glass-panel p-6 rounded-[24px] space-y-4">
-        <h3 className="text-xs font-mono font-black text-primary uppercase tracking-wider">Advanced Search</h3>
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="card-flat p-5 bg-white">
+        <h3 className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-3">Advanced Search</h3>
+        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end text-xs font-semibold font-sans">
           
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search Subject or Submission ID..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-surface border border-primary/10 text-xs focus:outline-none focus:border-primary font-medium"
-            />
-            <span className="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant/40 text-[18px]">search</span>
+          <div className="flex flex-col gap-1 lg:col-span-2">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Search Subject</span>
+            <div className="search-bar">
+              <Search size={14} className="text-[#9CA3AF]" />
+              <input
+                type="text"
+                placeholder="Search Subject or ID..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
 
-          <select
-            value={deptFilter}
-            onChange={(e) => { setDeptFilter(e.target.value); setCourseFilter(''); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-          >
-            <option value="">Department: All</option>
-            {departments.map(d => <option key={d._id} value={d._id}>{d.code} - {d.name}</option>)}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Department</span>
+            <select
+              value={deptFilter}
+              onChange={(e) => { setDeptFilter(e.target.value); setCourseFilter(''); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
+              className="select"
+            >
+              <option value="">All Departments</option>
+              {departments.map(d => <option key={d._id} value={d._id}>{d.code} - {d.name}</option>)}
+            </select>
+          </div>
 
-          <select
-            value={courseFilter}
-            onChange={(e) => { setCourseFilter(e.target.value); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-            disabled={!deptFilter}
-          >
-            <option value="">Course: All</option>
-            {courses.filter(c => c.department?._id === deptFilter || c.department === deptFilter).map(c => (
-              <option key={c._id} value={c._id}>{c.code} - {c.name}</option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Course</span>
+            <select
+              value={courseFilter}
+              onChange={(e) => { setCourseFilter(e.target.value); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
+              className="select"
+              disabled={!deptFilter}
+            >
+              <option value="">All Courses</option>
+              {courses.filter(c => c.department?._id === deptFilter || c.department === deptFilter).map(c => (
+                <option key={c._id} value={c._id}>{c.code} - {c.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            value={semFilter}
-            onChange={(e) => { setSemFilter(e.target.value); setSubFilter(''); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-            disabled={!courseFilter}
-          >
-            <option value="">Semester: All</option>
-            {semesters.filter(s => s.course?._id === courseFilter || s.course === courseFilter).map(s => (
-              <option key={s._id} value={s._id}>Semester {s.semesterNumber} - {s.name}</option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Semester</span>
+            <select
+              value={semFilter}
+              onChange={(e) => { setSemFilter(e.target.value); setSubFilter(''); setCurrentPage(1); }}
+              className="select"
+              disabled={!courseFilter}
+            >
+              <option value="">All Semesters</option>
+              {semesters.filter(s => s.course?._id === courseFilter || s.course === courseFilter).map(s => (
+                <option key={s._id} value={s._id}>Sem {s.semesterNumber} - {s.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            value={subFilter}
-            onChange={(e) => { setSubFilter(e.target.value); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-            disabled={!semFilter}
-          >
-            <option value="">Subject: All</option>
-            {subjects.filter(sub => sub.semester?._id === semFilter || sub.semester === semFilter).map(sub => (
-              <option key={sub._id} value={sub._id}>{sub.code} - {sub.name}</option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Subject</span>
+            <select
+              value={subFilter}
+              onChange={(e) => { setSubFilter(e.target.value); setCurrentPage(1); }}
+              className="select"
+              disabled={!semFilter}
+            >
+              <option value="">All Subjects</option>
+              {subjects.filter(sub => sub.semester?._id === semFilter || sub.semester === semFilter).map(sub => (
+                <option key={sub._id} value={sub._id}>{sub.code} - {sub.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            value={submittedFilter}
-            onChange={(e) => { setSubmittedFilter(e.target.value); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-          >
-            <option value="">Submitted By: All</option>
-            {staffList.map(st => <option key={st._id} value={st._id}>{st.name}</option>)}
-          </select>
+          <div className="flex flex-col gap-1 lg:col-span-2">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Submitted By</span>
+            <select
+              value={submittedFilter}
+              onChange={(e) => { setSubmittedFilter(e.target.value); setCurrentPage(1); }}
+              className="select"
+            >
+              <option value="">All Faculty Staff</option>
+              {staffList.map(st => <option key={st._id} value={st._id}>{st.name}</option>)}
+            </select>
+          </div>
 
-          <div className="sm:col-span-2 flex justify-end gap-3 pt-2">
+          <div className="flex gap-2 lg:col-span-2 lg:col-start-5">
             <button
               type="button"
               onClick={handleResetFilters}
-              className="px-4 py-2 border border-primary/10 text-on-surface-variant hover:bg-primary/5 font-bold text-xs rounded-xl transition-all"
+              className="btn-secondary py-2 px-3 flex-1 text-[12.5px] rounded-[10px]"
             >
               Clear Filters
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-primary text-white hover:bg-primary/95 font-bold text-xs rounded-xl transition-all shadow-md shadow-primary/10"
+              className="btn-primary py-2 px-4 flex-1 text-[12.5px] rounded-[10px] whitespace-nowrap"
             >
               Search Submissions
             </button>
@@ -315,66 +356,69 @@ const AdminPendingSubmissions = () => {
       </div>
 
       {/* Main Pending Submissions Table */}
-      {loading ? (
-        <div className="glass-panel p-6 rounded-[24px] space-y-4 animate-pulse">
-          <div className="h-6 bg-surface-container-high rounded w-1/4"></div>
-          {[1, 2, 3].map(i => <div key={i} className="h-10 bg-surface-container-high rounded w-full"></div>)}
-        </div>
-      ) : submissions.length === 0 ? (
-        <div className="glass-panel p-16 text-center rounded-[24px]">
-          <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">gavel</span>
-          <h4 className="text-base font-bold text-on-surface">No Pending Batches</h4>
-          <p className="text-on-surface-variant text-xs mt-1 max-w-sm mx-auto">
-            All submitted question batches have been processed. The pending queue is clean.
-          </p>
-        </div>
-      ) : (
-        <div className="glass-panel rounded-[24px] overflow-hidden border border-primary/5">
+      <div className="table-wrap">
+        {loading ? (
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
+            ))}
+          </div>
+        ) : submissions.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Database size={24} />
+            </div>
+            <h4 className="text-base font-bold text-[#111111]">No Pending Batches</h4>
+            <p className="text-[#6B7280] text-xs mt-1 max-w-sm mx-auto">
+              All submitted question batches have been processed. The pending queue is clean.
+            </p>
+          </div>
+        ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="table">
               <thead>
-                <tr className="bg-primary/5 border-b border-primary/10 text-[10px] font-mono font-bold text-primary uppercase tracking-wider">
-                  <th className="px-6 py-4">Submission ID</th>
-                  <th className="px-6 py-4">Subject</th>
-                  <th className="px-6 py-4">Academic details</th>
-                  <th className="px-6 py-4">Questions</th>
-                  <th className="px-6 py-4">Submitted By</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Action</th>
+                <tr>
+                  <th>Submission ID</th>
+                  <th>Subject</th>
+                  <th>Academic details</th>
+                  <th>Questions</th>
+                  <th>Submitted By</th>
+                  <th>Date</th>
+                  <th className="text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 font-medium">
-                {submissions.map((sub, idx) => (
-                  <tr key={sub._id} className="hover:bg-primary/5/30 transition-colors">
-                    <td className="px-6 py-4 font-mono font-bold text-primary">
+              <tbody>
+                {submissions.map((sub) => (
+                  <tr key={sub._id}>
+                    <td className="font-mono font-bold text-[#8B1E3F]">
                       {sub._id.slice(-6).toUpperCase()}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-primary">{sub.Subject?.name}</div>
-                      <div className="text-[10px] text-on-surface-variant/60 font-mono mt-0.5 uppercase">{sub.Subject?.code}</div>
+                    <td>
+                      <div className="font-bold text-[#111111]">{sub.Subject?.name}</div>
+                      <div className="text-[10px] text-[#6B7280] font-mono mt-0.5 uppercase">{sub.Subject?.code}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div>{sub.CourseId?.name}</div>
-                      <div className="text-[10px] text-on-surface-variant/60 font-mono uppercase mt-0.5">
+                    <td>
+                      <div className="text-[#111111]">{sub.CourseId?.name}</div>
+                      <div className="text-[10px] text-[#6B7280] font-mono uppercase mt-0.5">
                         {sub.DepartmentId?.code} (Semester {sub.SemesterId?.semesterNumber})
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-bold text-primary">
+                    <td className="font-bold text-[#8B1E3F]">
                       {sub.TotalQuestions} MCQs
                     </td>
-                    <td className="px-6 py-4">
-                      <div>{sub.SubmittedBy?.name}</div>
-                      <div className="text-[10px] text-on-surface-variant/60 mt-0.5">{sub.SubmittedBy?.email}</div>
+                    <td>
+                      <div className="text-[#111111] font-bold">{sub.SubmittedBy?.name}</div>
+                      <div className="text-[10px] text-[#6B7280] mt-0.5">{sub.SubmittedBy?.email}</div>
                     </td>
-                    <td className="px-6 py-4 font-mono">
+                    <td className="font-mono text-[#6B7280]">
                       {new Date(sub.SubmittedDate).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="text-right">
                       <button
                         onClick={() => handleOpenSubmission(sub._id)}
-                        className="px-3.5 py-1.5 rounded-lg bg-primary text-white font-bold hover:bg-primary-container hover:text-primary transition-all text-[10px] flex items-center gap-1 shadow-sm shadow-primary/5"
+                        className="btn-primary py-1.5 px-3 rounded-[8px] text-[10.5px] inline-flex items-center gap-1"
                       >
-                        <span className="material-symbols-outlined text-xs">visibility</span>
+                        <Eye size={12} />
                         Review Batch
                       </button>
                     </td>
@@ -383,36 +427,38 @@ const AdminPendingSubmissions = () => {
               </tbody>
             </table>
           </div>
+        )}
+      </div>
 
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-primary/5 bg-primary/5/10 flex justify-between items-center text-xs">
-              <button
-                disabled={currentPage <= 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                className="px-4 py-2 font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-50 transition-colors"
-              >
-                Previous
-              </button>
-              <span className="font-mono font-bold text-on-surface-variant">
-                Page {currentPage} of {pagination.totalPages} ({pagination.total} Batches)
-              </span>
-              <button
-                disabled={currentPage >= pagination.totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className="px-4 py-2 font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-50 transition-colors"
-              >
-                Next
-              </button>
-            </div>
-          )}
+      {/* Pagination */}
+      {!loading && submissions.length > 0 && pagination.totalPages > 1 && (
+        <div className="flex justify-between items-center px-6 py-4 bg-white border-t border-primary/5 text-xs text-[#6B7280]">
+          <span className="font-mono text-xs">
+            Showing {(currentPage - 1) * pagination.limit + 1} - {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} batches
+          </span>
+          <div className="flex gap-2">
+            <button
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Previous
+            </button>
+            <button
+              disabled={currentPage >= pagination.totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
       {/* BATCH REVIEW SLIDE-OVER DRAWER */}
       <AnimatePresence>
         {previewOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="fixed inset-0 z-50 flex justify-end font-sans">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -428,12 +474,12 @@ const AdminPendingSubmissions = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-2xl bg-surface h-full shadow-2xl border-l border-primary/10 p-6 flex flex-col justify-between z-10"
+              className="relative w-full max-w-2xl bg-white h-full shadow-2xl border-l border-primary/10 p-6 flex flex-col justify-between z-10 font-sans text-xs text-[#111111]"
             >
               {detailsLoading ? (
                 <div className="flex-1 flex flex-col justify-center items-center">
-                  <div className="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-                  <span className="text-xs text-on-surface-variant mt-3 font-semibold">Retrieving batch questions...</span>
+                  <div className="w-10 h-10 border-2 border-primary/10 border-t-primary rounded-full animate-spin"></div>
+                  <span className="text-xs text-[#6B7280] mt-3 font-semibold">Retrieving batch questions...</span>
                 </div>
               ) : activeSubmissionDetails ? (
                 <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -441,16 +487,16 @@ const AdminPendingSubmissions = () => {
                   {/* Drawer Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-primary/15 border border-primary/20 text-primary text-[9px] font-bold uppercase tracking-wider font-mono">
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] text-[#8B1E3F] text-[9px] font-bold uppercase tracking-wider font-mono">
                         SUBMISSION ID: {activeSubmissionDetails.submission._id.slice(-8).toUpperCase()}
                       </span>
-                      <h3 className="text-base font-bold text-primary mt-1.5">Review Batch Submission</h3>
+                      <h3 className="text-base font-black text-[#111111] mt-1.5">Review Batch Submission</h3>
                     </div>
                     <button
                       onClick={() => setPreviewOpen(false)}
-                      className="p-1 rounded-full hover:bg-primary/5 text-on-surface-variant"
+                      className="p-1 rounded-full hover:bg-gray-100 text-[#6B7280]"
                     >
-                      <span className="material-symbols-outlined text-[22px]">close</span>
+                      <X size={18} />
                     </button>
                   </div>
 
@@ -458,28 +504,28 @@ const AdminPendingSubmissions = () => {
                   <div className="flex-1 overflow-y-auto space-y-5 pr-2 mb-6" style={{ scrollbarWidth: 'thin' }}>
                     
                     {/* Batch Metadata Header */}
-                    <div className="grid grid-cols-2 gap-3 text-[10px] font-semibold text-on-surface-variant bg-surface-container-low p-4 rounded-xl border border-primary/5">
+                    <div className="grid grid-cols-2 gap-3 text-[11px] font-semibold text-[#6B7280] bg-[#FAF8F7] p-4 rounded-xl border border-primary/5">
                       <div>
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Subject Context</span>
-                        <span className="text-primary truncate block font-bold">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Subject Context</span>
+                        <span className="text-[#8B1E3F] truncate block font-bold">
                           {activeSubmissionDetails.submission.Subject?.name || 'Subject Mapped'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Course / Semester</span>
-                        <span className="truncate block font-bold text-on-surface">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Course / Semester</span>
+                        <span className="truncate block font-bold text-[#111111]">
                           {activeSubmissionDetails.submission.CourseId?.name || 'Course Mapped'} (Sem {activeSubmissionDetails.submission.SemesterId?.semesterNumber})
                         </span>
                       </div>
                       <div className="pt-2 border-t border-primary/5">
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Submitted By</span>
-                        <span className="block font-bold truncate">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Submitted By</span>
+                        <span className="block font-bold truncate text-[#111111]">
                           {activeSubmissionDetails.submission.SubmittedBy?.name} ({new Date(activeSubmissionDetails.submission.SubmittedDate).toLocaleDateString()})
                         </span>
                       </div>
                       <div className="pt-2 border-t border-primary/5">
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Total Questions</span>
-                        <span className="block font-black text-primary truncate">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Total Questions</span>
+                        <span className="block font-black text-[#8B1E3F] truncate">
                           {activeSubmissionDetails.questions.length} MCQ Questions
                         </span>
                       </div>
@@ -487,20 +533,20 @@ const AdminPendingSubmissions = () => {
 
                     {/* Questions Loop */}
                     <div className="space-y-4">
-                      <h4 className="text-xs font-mono font-black text-primary uppercase tracking-wider">Submitted Question Items</h4>
+                      <h4 className="text-[10px] font-mono font-black text-[#9CA3AF] uppercase tracking-wider">Submitted Question Items</h4>
                       {activeSubmissionDetails.questions.map((q, idx) => (
-                        <div key={q._id} className="p-4 bg-surface-container-lowest border border-primary/10 rounded-2xl space-y-3.5">
+                        <div key={q._id} className="p-4 bg-[#FAF8F7]/50 border border-primary/10 rounded-2xl space-y-3.5">
                           
-                          <div className="flex justify-between items-center text-[9px] font-bold text-on-surface-variant font-mono">
-                            <span className="px-2 py-0.5 rounded bg-primary/5 border border-primary/10 text-primary">
+                          <div className="flex justify-between items-center text-[9px] font-bold text-[#6B7280] font-mono">
+                            <span className="px-2 py-0.5 rounded bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] text-[#8B1E3F]">
                               Q{idx + 1} • DIFFICULTY: {q.Difficulty || q.difficulty}
                             </span>
-                            <span className="px-2 py-0.5 rounded bg-surface-container border uppercase">
+                            <span className="px-2 py-0.5 rounded bg-white border border-gray-100 uppercase">
                               By: {q.GeneratedBy || (q.metadata?.isAiGenerated ? 'AI' : 'Staff')}
                             </span>
                           </div>
 
-                          <div className="text-xs font-bold text-primary leading-relaxed">
+                          <div className="text-xs font-bold text-[#8B1E3F] leading-relaxed">
                             {q.Question || q.text}
                           </div>
 
@@ -513,8 +559,8 @@ const AdminPendingSubmissions = () => {
                                   key={opt}
                                   className={`p-2.5 rounded-xl border text-[11px] font-semibold flex items-start gap-2.5 transition-colors ${
                                     isCorrect
-                                      ? 'bg-green-500/15 border-green-500/30 text-green-800'
-                                      : 'bg-surface border-primary/5 text-on-surface-variant/80'
+                                      ? 'bg-green-500/10 border-green-500/20 text-green-800 font-bold'
+                                      : 'bg-white border-primary/5 text-[#6B7280]'
                                   }`}
                                 >
                                   <span className={`w-4 h-4 rounded-full flex items-center justify-center font-black font-mono text-[9px] mt-0.5 ${
@@ -530,17 +576,17 @@ const AdminPendingSubmissions = () => {
 
                           {/* Explanation */}
                           {(q.Explanation || q.explanation) && (
-                            <div className="p-3 bg-surface border border-primary/5 rounded-xl text-[10px] font-semibold text-on-surface-variant leading-relaxed">
-                              <span className="font-mono text-[9px] text-primary uppercase block font-bold mb-0.5">Explanation</span>
+                            <div className="p-3 bg-white border border-primary/5 rounded-xl text-[10px] font-semibold text-[#6B7280] leading-relaxed">
+                              <span className="font-mono text-[9px] text-[#8B1E3F] uppercase block font-bold mb-0.5">Explanation</span>
                               {q.Explanation || q.explanation}
                             </div>
                           )}
 
                           <div className="flex gap-2 pt-1">
-                            <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-[9px] font-semibold border">
+                            <span className="px-2 py-0.5 rounded bg-white text-[#6B7280] text-[9px] font-semibold border">
                               Unit {q.UnitId || 'N/A'}
                             </span>
-                            <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-[9px] font-semibold border truncate max-w-[150px]">
+                            <span className="px-2 py-0.5 rounded bg-white text-[#6B7280] text-[9px] font-semibold border truncate max-w-[150px]">
                               Topic {q.TopicId || 'N/A'}
                             </span>
                           </div>
@@ -552,31 +598,31 @@ const AdminPendingSubmissions = () => {
                   </div>
 
                   {/* Actions Footer */}
-                  <div className="flex gap-3 pt-4 border-t border-primary/10 bg-surface">
+                  <div className="flex gap-2.5 pt-4 border-t border-primary/5 bg-white">
                     <button
                       type="button"
                       onClick={() => setActionModal('sendback')}
-                      className="flex-1 py-2.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-700 hover:bg-yellow-500/20 font-bold text-xs transition-all flex items-center justify-center gap-1"
+                      className="flex-1 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 font-bold text-xs transition-all flex items-center justify-center gap-1"
                     >
-                      <span className="material-symbols-outlined text-[16px] font-bold">assignment_return</span>
+                      <CornerUpLeft size={14} />
                       Return Batch
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setActionModal('reject')}
-                      className="flex-1 py-2.5 rounded-xl bg-error/10 border border-error/15 text-error hover:bg-error/20 font-bold text-xs transition-all flex items-center justify-center gap-1"
+                      className="flex-1 py-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 hover:bg-red-100 font-bold text-xs transition-all flex items-center justify-center gap-1"
                     >
-                      <span className="material-symbols-outlined text-[16px] font-bold">cancel</span>
+                      <X size={14} />
                       Reject Batch
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setActionModal('approve')}
-                      className="flex-[2] py-2.5 rounded-xl bg-primary text-white hover:bg-primary/95 font-bold text-xs transition-all shadow-lg shadow-primary/10 flex items-center justify-center gap-1.5"
+                      className="flex-[2] btn-primary py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5"
                     >
-                      <span className="material-symbols-outlined text-[16px] font-bold">task_alt</span>
+                      <CheckCircle2 size={14} />
                       Approve Batch
                     </button>
                   </div>
@@ -591,21 +637,21 @@ const AdminPendingSubmissions = () => {
       {/* CONFIRMATION DIALOG MODAL (APPROVE/REJECT/SENDBACK) */}
       <AnimatePresence>
         {actionModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs font-sans text-xs">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-surface border border-primary/10 rounded-[28px] shadow-2xl p-6 max-w-md w-full relative z-10 overflow-hidden"
+              className="bg-white border border-primary/10 rounded-[24px] shadow-2xl p-6 max-w-md w-full relative z-10 overflow-hidden text-[#111111]"
             >
-              <h3 className="text-base font-bold text-primary mb-1">
+              <h3 className="text-sm font-black text-[#111111] mb-1">
                 {actionModal === 'approve'
                   ? 'Confirm Batch Approval'
                   : actionModal === 'reject'
                   ? 'Reject Batch Submission'
                   : 'Return Batch for Revision'}
               </h3>
-              <p className="text-on-surface-variant text-xs leading-normal mb-4">
+              <p className="text-[#6B7280] text-xs leading-relaxed mb-4">
                 {actionModal === 'approve'
                   ? 'This will approve the entire submission batch and immediately move ALL questions into the central Question Bank database in one click.'
                   : actionModal === 'reject'
@@ -616,15 +662,15 @@ const AdminPendingSubmissions = () => {
               <form onSubmit={handleReviewAction} className="space-y-4">
                 {actionModal !== 'approve' && (
                   <div className="space-y-1">
-                    <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">
+                    <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">
                       Action Feedback Reason
-                    </label>
+                    </span>
                     {actionModal === 'reject' ? (
                       <select
                         value={actionReason}
                         onChange={(e) => setActionReason(e.target.value)}
                         required
-                        className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold text-on-surface-variant"
+                        className="select w-full"
                       >
                         <option value="">-- Select Rejection Reason --</option>
                         <option value="Poor Question Quality">Poor Question Quality</option>
@@ -638,7 +684,7 @@ const AdminPendingSubmissions = () => {
                         value={actionReason}
                         onChange={(e) => setActionReason(e.target.value)}
                         required
-                        className="w-full px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs font-semibold text-on-surface-variant"
+                        className="select w-full"
                       >
                         <option value="">-- Select Revision Action --</option>
                         <option value="Improve Explanations">Improve Explanations</option>
@@ -655,29 +701,29 @@ const AdminPendingSubmissions = () => {
                         placeholder="Provide details..."
                         value={actionReason === 'Other' ? '' : actionReason}
                         onChange={(e) => setActionReason(e.target.value)}
-                        className="w-full mt-2 px-3 py-2 rounded-xl bg-surface-container border border-primary/10 text-xs focus:outline-none focus:border-primary font-medium"
+                        className="w-full mt-2 p-2 bg-white border border-primary/10 rounded-xl focus:outline-none focus:border-primary font-medium"
                       ></textarea>
                     )}
                   </div>
                 )}
 
-                <div className="flex justify-end gap-3 pt-3 border-t border-primary/5">
+                <div className="flex justify-end gap-2.5 pt-3 border-t border-primary/5">
                   <button
                     type="button"
                     onClick={() => { setActionModal(null); setActionReason(''); }}
-                    className="px-4 py-2 rounded-xl border border-primary/10 hover:bg-primary/5 text-xs font-bold transition-all"
+                    className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all text-[#6B7280]"
                     disabled={submittingAction}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className={`px-5 py-2 rounded-xl text-white font-bold text-xs transition-all flex items-center gap-1 shadow-md shadow-primary/5 ${
+                    className={`px-5 py-2 rounded-lg font-bold text-xs transition-all text-white active:scale-95 ${
                       actionModal === 'approve'
-                        ? 'bg-primary hover:bg-primary/95'
+                        ? 'btn-primary'
                         : actionModal === 'reject'
-                        ? 'bg-error hover:opacity-90'
-                        : 'bg-yellow-600 hover:bg-yellow-700'
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : 'bg-amber-600 hover:bg-amber-700'
                     }`}
                     disabled={submittingAction}
                   >

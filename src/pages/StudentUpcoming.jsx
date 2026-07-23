@@ -1,263 +1,306 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Calendar, Clock, MapPin, User, BookOpen, Lock, ChevronRight,
+  Search, Filter, X, Layers, AlertCircle
+} from 'lucide-react';
 import api from '../services/api';
 
+/* ── Countdown hook (live, per-exam) ─────────────────────────────── */
+const useCountdown = (targetDate) => {
+  const calc = () => {
+    const diff = new Date(targetDate) - new Date();
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, done: true };
+    return {
+      days:    Math.floor(diff / 86400000),
+      hours:   Math.floor((diff % 86400000) / 3600000),
+      minutes: Math.floor((diff % 3600000) / 60000),
+      seconds: Math.floor((diff % 60000) / 1000),
+      done: false,
+    };
+  };
+  const [time, setTime] = useState(calc);
+  useEffect(() => {
+    const iv = setInterval(() => setTime(calc()), 1000);
+    return () => clearInterval(iv);
+  }, [targetDate]);
+  return time;
+};
+
+/* ── Single Exam Card ─────────────────────────────────────────────── */
+const ExamCard = ({ exam }) => {
+  const cd = useCountdown(exam.startTime);
+  const faculty = exam.faculty?.name || exam.createdBy?.name || '—';
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+      className="bg-white rounded-[20px] border border-[rgba(122,0,31,0.09)] shadow-[0_4px_24px_rgba(122,0,31,0.06)] hover:shadow-[0_8px_32px_rgba(122,0,31,0.10)] hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
+    >
+      {/* Card Header */}
+      <div className="px-5 pt-5 pb-4 border-b border-[rgba(122,0,31,0.07)] flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-[rgba(122,0,31,0.08)] text-[#7A001F]">
+              {exam.type || 'Exam'}
+            </span>
+            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+              Upcoming
+            </span>
+          </div>
+          <h3 className="text-[14px] font-bold text-[#1D1D1F] leading-snug truncate">{exam.title}</h3>
+          <p className="text-[11px] text-[#6B7280] mt-0.5 line-clamp-2">
+            {exam.description || 'Assessment scheduled for this subject.'}
+          </p>
+        </div>
+        <Lock size={16} className="text-[#D1D5DB] shrink-0 mt-1" />
+      </div>
+
+      {/* Countdown */}
+      <div className="px-5 py-4 bg-[rgba(122,0,31,0.03)]">
+        <p className="text-[9px] font-semibold uppercase tracking-widest text-[#9CA3AF] mb-2">Starts In</p>
+        {cd.done ? (
+          <p className="text-[11px] font-bold text-[#7A001F]">Starting soon…</p>
+        ) : (
+          <div className="flex items-center gap-2">
+            {[
+              { label: 'D', val: cd.days },
+              { label: 'H', val: cd.hours },
+              { label: 'M', val: cd.minutes },
+              { label: 'S', val: cd.seconds },
+            ].map(({ label, val }) => (
+              <div key={label} className="flex flex-col items-center">
+                <span className="text-[15px] font-bold text-[#7A001F] tabular-nums w-8 text-center">
+                  {String(val).padStart(2, '0')}
+                </span>
+                <span className="text-[8px] text-[#9CA3AF] font-medium">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Details Grid */}
+      <div className="px-5 py-3 grid grid-cols-2 gap-x-4 gap-y-3 text-[11px]">
+        <div className="flex items-start gap-1.5">
+          <BookOpen size={12} className="text-[#9CA3AF] mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[9px] text-[#9CA3AF] uppercase font-semibold tracking-wider">Subject</p>
+            <p className="font-semibold text-[#1D1D1F] truncate">{exam.subject?.name || '—'}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-1.5">
+          <User size={12} className="text-[#9CA3AF] mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[9px] text-[#9CA3AF] uppercase font-semibold tracking-wider">Faculty</p>
+            <p className="font-semibold text-[#1D1D1F] truncate">{faculty}</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-1.5">
+          <Calendar size={12} className="text-[#9CA3AF] mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[9px] text-[#9CA3AF] uppercase font-semibold tracking-wider">Date</p>
+            <p className="font-semibold text-[#1D1D1F]">
+              {new Date(exam.startTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-start gap-1.5">
+          <Clock size={12} className="text-[#9CA3AF] mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[9px] text-[#9CA3AF] uppercase font-semibold tracking-wider">Time</p>
+            <p className="font-semibold text-[#1D1D1F]">
+              {new Date(exam.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-start gap-1.5">
+          <Clock size={12} className="text-[#9CA3AF] mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[9px] text-[#9CA3AF] uppercase font-semibold tracking-wider">Duration</p>
+            <p className="font-semibold text-[#1D1D1F]">{exam.durationMinutes} min</p>
+          </div>
+        </div>
+        <div className="flex items-start gap-1.5">
+          <Layers size={12} className="text-[#9CA3AF] mt-0.5 shrink-0" />
+          <div>
+            <p className="text-[9px] text-[#9CA3AF] uppercase font-semibold tracking-wider">Marks</p>
+            <p className="font-semibold text-[#1D1D1F]">{exam.totalMarks}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Instructions pill */}
+      {exam.instructions && (
+        <div className="mx-5 mb-3 px-3 py-2 rounded-xl bg-[rgba(122,0,31,0.04)] border border-[rgba(122,0,31,0.08)]">
+          <div className="flex items-start gap-2">
+            <AlertCircle size={11} className="text-[#7A001F] mt-0.5 shrink-0" />
+            <p className="text-[10px] text-[#6B7280] line-clamp-2">{exam.instructions}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Footer locked button */}
+      <div className="px-5 pb-5 mt-auto">
+        <button
+          disabled
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-[12px] text-[12px] font-semibold text-[#9CA3AF] bg-[#F9FAFB] border border-[rgba(122,0,31,0.07)] cursor-not-allowed"
+        >
+          <Lock size={13} />
+          Locked — Not Started Yet
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+
+/* ── Main Page ────────────────────────────────────────────────────── */
 const StudentUpcoming = () => {
   const [exams, setExams] = useState([]);
+  const [allExams, setAllExams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [subjectFilter, setSubjectFilter] = useState('');
   const [subjectsList, setSubjectsList] = useState([]);
-
-  // Pagination states
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(6);
+  const LIMIT = 6;
 
-  const fetchUpcomingExams = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await api.get('/exams/student');
-      if (response.data && response.data.success) {
+      const res = await api.get('/exams/student');
+      if (res.data?.success) {
         const now = new Date();
-        // Filter upcoming exams client-side based on times
-        const upcomingList = (response.data.data || []).filter((exam) => {
-          return now < new Date(exam.startTime);
-        });
+        const upcoming = (res.data.data || []).filter((e) => now < new Date(e.startTime));
 
-        // Filter by subject
-        let filtered = upcomingList;
-        if (subjectFilter) {
-          filtered = filtered.filter((exam) => exam.subject?._id === subjectFilter);
-        }
-
-        // Filter by search
-        if (search) {
-          filtered = filtered.filter((exam) =>
-            exam.title.toLowerCase().includes(search.toLowerCase())
-          );
-        }
-
-        // Extrapolate subjects for filtering dropdown list
-        const uniqueSubjects = [];
+        // Subjects for filter
         const seen = new Set();
-        (response.data.data || []).forEach((e) => {
-          if (e.subject && !seen.has(e.subject._id)) {
-            seen.add(e.subject._id);
-            uniqueSubjects.push(e.subject);
-          }
+        const subs = [];
+        upcoming.forEach((e) => {
+          if (e.subject && !seen.has(e.subject._id)) { seen.add(e.subject._id); subs.push(e.subject); }
         });
-        setSubjectsList(uniqueSubjects);
-
-        // Paginate list manually
-        setTotalPages(Math.ceil(filtered.length / limit) || 1);
-        const startIndex = (page - 1) * limit;
-        const paginatedList = filtered.slice(startIndex, startIndex + limit);
-        setExams(paginatedList);
+        setSubjectsList(subs);
+        setAllExams(upcoming);
       }
-    } catch (error) {
-      console.error('Failed to load upcoming exams.', error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    fetchUpcomingExams();
-  }, [subjectFilter, page]);
+  useEffect(() => { fetchData(); }, []);
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    setPage(1);
-    fetchUpcomingExams();
-  };
+  // Filter & paginate in memory
+  const filtered = allExams.filter((e) => {
+    const matchSearch = !search || e.title.toLowerCase().includes(search.toLowerCase());
+    const matchSubject = !subjectFilter || e.subject?._id === subjectFilter;
+    return matchSearch && matchSubject;
+  });
 
-  const handleClearFilters = () => {
-    setSearch('');
-    setSubjectFilter('');
-    setPage(1);
-    setTimeout(() => fetchUpcomingExams(), 50);
-  };
+  const totalPages = Math.max(1, Math.ceil(filtered.length / LIMIT));
+  const paginated = filtered.slice((page - 1) * LIMIT, page * LIMIT);
+
+  const SkeletonCard = () => (
+    <div className="bg-white rounded-[20px] border border-[rgba(122,0,31,0.07)] shadow-sm h-72 animate-pulse" />
+  );
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5">
-        <h2 className="text-2xl font-bold text-primary mb-1">Upcoming Examinations</h2>
-        <p className="text-on-surface-variant text-xs font-semibold">
-          Check your scheduled assessment timeline. These papers remain locked until the designated Start Time.
-        </p>
+      {/* Page Header */}
+      <div className="bg-white rounded-[20px] border border-[rgba(122,0,31,0.09)] shadow-[0_4px_24px_rgba(122,0,31,0.05)] p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-[#1D1D1F]">Upcoming Examinations</h1>
+            <p className="text-[12px] text-[#6B7280] mt-1">
+              Your scheduled assessments — they unlock automatically at start time.
+            </p>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            <span className="text-[11px] font-semibold text-blue-700">{filtered.length} Upcoming</span>
+          </div>
+        </div>
       </div>
 
-      {/* Filters Board */}
-      <div className="glass-panel p-4 rounded-[20px] border border-primary/5 space-y-4">
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end text-xs">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Search Exams</label>
+      {/* Filters */}
+      <div className="bg-white rounded-[20px] border border-[rgba(122,0,31,0.09)] shadow-[0_4px_24px_rgba(122,0,31,0.05)] p-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
             <input
               type="text"
-              placeholder="Search by title..."
+              placeholder="Search by exam title…"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none font-semibold text-xs"
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              className="w-full pl-9 pr-4 py-2.5 rounded-[12px] text-[13px] bg-[#F9FAFB] border border-[rgba(122,0,31,0.08)] focus:outline-none focus:border-[rgba(122,0,31,0.25)] focus:ring-2 focus:ring-[rgba(122,0,31,0.08)] text-[#1D1D1F] transition-all"
             />
           </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Filter Subject</label>
+          <div className="relative">
+            <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
             <select
               value={subjectFilter}
-              onChange={(e) => {
-                setSubjectFilter(e.target.value);
-                setPage(1);
-              }}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none font-semibold text-xs"
+              onChange={(e) => { setSubjectFilter(e.target.value); setPage(1); }}
+              className="pl-9 pr-4 py-2.5 rounded-[12px] text-[13px] bg-[#F9FAFB] border border-[rgba(122,0,31,0.08)] focus:outline-none focus:border-[rgba(122,0,31,0.25)] text-[#1D1D1F] min-w-[160px] transition-all appearance-none"
             >
-              <option value="">-- All Enrolled Subjects --</option>
-              {subjectsList.map((sub) => (
-                <option key={sub._id} value={sub._id}>
-                  {sub.name} ({sub.code})
-                </option>
+              <option value="">All Subjects</option>
+              {subjectsList.map((s) => (
+                <option key={s._id} value={s._id}>{s.name}</option>
               ))}
             </select>
           </div>
-
-          <div className="flex gap-2">
+          {(search || subjectFilter) && (
             <button
-              type="submit"
-              className="flex-1 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/95 text-xs transition-all flex items-center justify-center gap-1 shadow-sm"
+              onClick={() => { setSearch(''); setSubjectFilter(''); setPage(1); }}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-[12px] text-[12px] font-semibold text-[#6B7280] bg-[#F9FAFB] border border-[rgba(122,0,31,0.08)] hover:bg-[rgba(122,0,31,0.04)] transition-colors"
             >
-              <span className="material-symbols-outlined text-sm font-bold">search</span>
-              Search
+              <X size={13} /> Clear
             </button>
-            <button
-              type="button"
-              onClick={handleClearFilters}
-              className="py-2.5 px-4 rounded-xl border border-primary/10 text-on-surface-variant hover:bg-primary/5 text-xs font-bold transition-all"
-            >
-              Clear
-            </button>
-          </div>
-        </form>
+          )}
+        </div>
       </div>
 
-      {/* Main Grid Content */}
+      {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-48 bg-surface-container-high rounded-[24px] animate-pulse"></div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {[1,2,3,4,5,6].map((i) => <SkeletonCard key={i} />)}
         </div>
-      ) : exams.length === 0 ? (
+      ) : paginated.length === 0 ? (
         <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
+          initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-16 text-center border-2 border-dashed border-primary/10 rounded-[28px] bg-primary/5 max-w-lg mx-auto"
+          className="py-20 text-center"
         >
-          <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4 animate-pulse">
-            schedule
-          </span>
-          <h4 className="text-base font-bold text-on-surface">No Upcoming Exams</h4>
-          <p className="text-on-surface-variant text-xs mt-1">
-            You do not have any upcoming scheduled assessments matching the search criteria.
-          </p>
+          <div className="w-16 h-16 rounded-full bg-[rgba(122,0,31,0.06)] flex items-center justify-center mx-auto mb-4">
+            <Calendar size={28} className="text-[#C4B5B8]" />
+          </div>
+          <h3 className="text-[15px] font-bold text-[#1D1D1F]">No Upcoming Exams</h3>
+          <p className="text-[12px] text-[#9CA3AF] mt-1">No scheduled assessments match your current filters.</p>
         </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {exams.map((exam) => (
-            <motion.div
-              key={exam._id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="glass-panel p-6 rounded-[24px] border border-primary/5 shadow-sm hover:translate-y-[-2px] transition-all duration-300 flex flex-col justify-between"
-            >
-              <div className="space-y-4">
-                <div className="flex justify-between items-start">
-                  <span className="px-2 py-0.5 bg-primary/10 border border-primary/15 rounded-md text-[9px] font-mono font-bold text-primary uppercase">
-                    {exam.type}
-                  </span>
-                  <span className="px-2.5 py-0.5 bg-blue-500/10 text-blue-700 border border-blue-500/15 rounded-full text-[9px] font-bold">
-                    Upcoming
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="text-base font-bold text-primary leading-snug">{exam.title}</h3>
-                  <p className="text-[10px] text-on-surface-variant mt-1 line-clamp-2">
-                    {exam.description || 'No description provided.'}
-                  </p>
-                </div>
-
-                {/* Exam Parameters details grid */}
-                <div className="grid grid-cols-2 gap-3 text-[10px] font-semibold text-on-surface-variant border-t border-primary/5 pt-3.5 bg-surface-container-lowest/30 p-3 rounded-xl">
-                  <div>
-                    <span className="text-[8px] text-on-surface-variant/50 uppercase font-mono block">Subject</span>
-                    <span className="block font-bold text-primary truncate">
-                      {exam.subject?.name} ({exam.subject?.code})
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[8px] text-on-surface-variant/50 uppercase font-mono block">Duration & Marks</span>
-                    <span className="block font-bold">
-                      {exam.durationMinutes} Mins / {exam.totalMarks} Marks
-                    </span>
-                  </div>
-                  <div className="pt-2 border-t border-primary/5">
-                    <span className="text-[8px] text-on-surface-variant/50 uppercase font-mono block">Dept & Course</span>
-                    <span className="block truncate">
-                      {exam.department?.code} / {exam.course?.code}
-                    </span>
-                  </div>
-                  <div className="pt-2 border-t border-primary/5">
-                    <span className="text-[8px] text-on-surface-variant/50 uppercase font-mono block">Sem & Year</span>
-                    <span className="block font-mono">
-                      Sem {exam.semester?.semesterNumber} / AY {exam.academicYear}
-                    </span>
-                  </div>
-                  <div className="pt-2 border-t border-primary/5 col-span-2">
-                    <span className="text-[8px] text-on-surface-variant/50 uppercase font-mono block">Scheduled Window</span>
-                    <span className="block font-mono font-bold text-primary">
-                      {new Date(exam.date).toLocaleDateString()} at {new Date(exam.startTime).toLocaleTimeString()} - {new Date(exam.endTime).toLocaleTimeString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Locked Button */}
-              <div className="pt-4 mt-6 border-t border-primary/5">
-                <button
-                  disabled
-                  className="w-full py-2.5 rounded-xl bg-surface-container-high text-on-surface-variant/45 font-bold text-xs cursor-not-allowed border border-primary/5 flex items-center justify-center gap-1.5"
-                >
-                  <span className="material-symbols-outlined text-sm">lock</span>
-                  Exam Not Started
-                </button>
-              </div>
-            </motion.div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          {paginated.map((exam) => <ExamCard key={exam._id} exam={exam} />)}
         </div>
       )}
 
-      {/* Pagination controls */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 text-xs font-bold pt-4">
+        <div className="flex justify-center items-center gap-3 pt-2">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Previous
-          </button>
-          <span className="text-on-surface-variant font-mono">
-            Page {page} of {totalPages}
+            className="px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#6B7280] bg-white border border-[rgba(122,0,31,0.09)] hover:bg-[rgba(122,0,31,0.04)] disabled:opacity-40 transition-colors"
+          >Previous</button>
+          <span className="text-[12px] font-medium text-[#9CA3AF]">
+            {page} / {totalPages}
           </span>
           <button
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Next
-          </button>
+            className="px-4 py-2 rounded-[10px] text-[12px] font-semibold text-[#6B7280] bg-white border border-[rgba(122,0,31,0.09)] hover:bg-[rgba(122,0,31,0.04)] disabled:opacity-40 transition-colors"
+          >Next</button>
         </div>
       )}
     </div>

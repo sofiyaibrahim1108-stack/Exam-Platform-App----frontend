@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Database, HelpCircle, CheckCircle2, CornerUpLeft, Plus, FileText, Download, Check, AlertOctagon, ArrowLeft, Eye, X, Search
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminRejectedSubmissions = () => {
@@ -124,37 +127,58 @@ const AdminRejectedSubmissions = () => {
   };
 
   // Reusable stat card widget
-  const renderStatCard = (title, count, icon, color) => (
-    <div className="glass-panel p-5 rounded-[24px] border border-primary/5 flex items-center justify-between shadow-xs">
-      <div>
-        <p className="text-[10px] font-mono font-bold text-on-surface-variant/75 uppercase tracking-wider">{title}</p>
-        <h4 className={`text-2xl font-black mt-1 ${color}`}>{count}</h4>
+  const renderStatCard = (title, count, icon, color) => {
+    let IconComponent = Database;
+    if (icon === 'gavel') IconComponent = AlertOctagon;
+    if (icon === 'task_alt') IconComponent = CheckCircle2;
+    if (icon === 'cancel') IconComponent = X;
+    if (icon === 'assignment_return') IconComponent = CornerUpLeft;
+    if (icon === 'database') IconComponent = Database;
+
+    return (
+      <div className="stat-card">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block font-bold">{title}</span>
+            <span className="block font-black text-2xl text-[#111111] font-mono mt-1">{count}</span>
+          </div>
+          <div className="w-10 h-10 rounded-[10px] bg-[#FAF8F7] flex items-center justify-center text-[#8B1E3F] border border-primary/5">
+            <IconComponent size={18} />
+          </div>
+        </div>
       </div>
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-primary/5 ${color}`}>
-        <span className="material-symbols-outlined text-[24px]">{icon}</span>
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="glass-panel p-6 rounded-[24px]">
-        <h2 className="text-2xl font-bold text-primary mb-1">Rejected Submissions Log</h2>
-        <p className="text-on-surface-variant text-xs">
-          Historical records of all rejected question batches, including rejection feedback details and academic scopes.
-        </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative">
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+            <AlertOctagon size={12} />
+            Rejections History Archive
+          </div>
+          <h2 className="text-2xl font-black text-[#111111] leading-none">Rejected Submissions Log</h2>
+          <p className="text-[13px] text-[#6B7280] mt-1.5">
+            Historical records of all rejected question batches, including rejection feedback details and academic scopes.
+          </p>
+        </div>
       </div>
 
       {/* Dashboard Stats Row */}
       {statsLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 animate-pulse">
           {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="h-24 bg-surface-container-high rounded-[24px]"></div>
+            <div key={i} className="h-20 bg-gray-200 rounded-[16px]"></div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {renderStatCard('Pending Submissions', stats.pendingCount, 'gavel', 'text-amber-600')}
           {renderStatCard('Approved Today', stats.approvedToday, 'task_alt', 'text-emerald-600')}
           {renderStatCard('Rejected Submissions', stats.rejectedToday, 'cancel', 'text-error')}
@@ -164,75 +188,90 @@ const AdminRejectedSubmissions = () => {
       )}
 
       {/* Filters Form Panel */}
-      <div className="glass-panel p-6 rounded-[24px] space-y-4">
-        <h3 className="text-xs font-mono font-black text-primary uppercase tracking-wider">Advanced Rejections Filters</h3>
-        <form onSubmit={(e) => { e.preventDefault(); fetchRejectedData(); }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="card-flat p-5 bg-white">
+        <h3 className="text-[10px] font-mono font-bold text-[#9CA3AF] uppercase block mb-3">Advanced Rejections Filters</h3>
+        <form onSubmit={(e) => { e.preventDefault(); fetchRejectedData(); }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end text-xs font-semibold font-sans">
           
-          <select
-            value={deptFilter}
-            onChange={(e) => { setDeptFilter(e.target.value); setCourseFilter(''); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-          >
-            <option value="">Department: All</option>
-            {departments.map(d => <option key={d._id} value={d._id}>{d.code} - {d.name}</option>)}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Department</span>
+            <select
+              value={deptFilter}
+              onChange={(e) => { setDeptFilter(e.target.value); setCourseFilter(''); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
+              className="select"
+            >
+              <option value="">All Departments</option>
+              {departments.map(d => <option key={d._id} value={d._id}>{d.code} - {d.name}</option>)}
+            </select>
+          </div>
 
-          <select
-            value={courseFilter}
-            onChange={(e) => { setCourseFilter(e.target.value); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-            disabled={!deptFilter}
-          >
-            <option value="">Course: All</option>
-            {courses.filter(c => c.department?._id === deptFilter || c.department === deptFilter).map(c => (
-              <option key={c._id} value={c._id}>{c.code} - {c.name}</option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Course</span>
+            <select
+              value={courseFilter}
+              onChange={(e) => { setCourseFilter(e.target.value); setSemFilter(''); setSubFilter(''); setCurrentPage(1); }}
+              className="select"
+              disabled={!deptFilter}
+            >
+              <option value="">All Courses</option>
+              {courses.filter(c => c.department?._id === deptFilter || c.department === deptFilter).map(c => (
+                <option key={c._id} value={c._id}>{c.code} - {c.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            value={semFilter}
-            onChange={(e) => { setSemFilter(e.target.value); setSubFilter(''); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-            disabled={!courseFilter}
-          >
-            <option value="">Semester: All</option>
-            {semesters.filter(s => s.course?._id === courseFilter || s.course === courseFilter).map(s => (
-              <option key={s._id} value={s._id}>Semester {s.semesterNumber} - {s.name}</option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Semester</span>
+            <select
+              value={semFilter}
+              onChange={(e) => { setSemFilter(e.target.value); setSubFilter(''); setCurrentPage(1); }}
+              className="select"
+              disabled={!courseFilter}
+            >
+              <option value="">All Semesters</option>
+              {semesters.filter(s => s.course?._id === courseFilter || s.course === courseFilter).map(s => (
+                <option key={s._id} value={s._id}>Sem {s.semesterNumber} - {s.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            value={subFilter}
-            onChange={(e) => { setSubFilter(e.target.value); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-            disabled={!semFilter}
-          >
-            <option value="">Subject: All</option>
-            {subjects.filter(sub => sub.semester?._id === semFilter || sub.semester === semFilter).map(sub => (
-              <option key={sub._id} value={sub._id}>{sub.code} - {sub.name}</option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Subject</span>
+            <select
+              value={subFilter}
+              onChange={(e) => { setSubFilter(e.target.value); setCurrentPage(1); }}
+              className="select"
+              disabled={!semFilter}
+            >
+              <option value="">All Subjects</option>
+              {subjects.filter(sub => sub.semester?._id === semFilter || sub.semester === semFilter).map(sub => (
+                <option key={sub._id} value={sub._id}>{sub.code} - {sub.name}</option>
+              ))}
+            </select>
+          </div>
 
-          <select
-            value={submittedFilter}
-            onChange={(e) => { setSubmittedFilter(e.target.value); setCurrentPage(1); }}
-            className="px-3 py-2 rounded-xl bg-surface border border-primary/10 text-xs font-semibold text-on-surface-variant"
-          >
-            <option value="">Submitted By: All</option>
-            {staffList.map(st => <option key={st._id} value={st._id}>{st.name}</option>)}
-          </select>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Submitted By</span>
+            <select
+              value={submittedFilter}
+              onChange={(e) => { setSubmittedFilter(e.target.value); setCurrentPage(1); }}
+              className="select"
+            >
+              <option value="">All Faculty Staff</option>
+              {staffList.map(st => <option key={st._id} value={st._id}>{st.name}</option>)}
+            </select>
+          </div>
 
-          <div className="sm:col-span-2 lg:col-span-3 flex justify-end gap-3 pt-2">
+          <div className="flex gap-2 lg:col-span-2 lg:col-start-4">
             <button
               type="button"
               onClick={handleResetFilters}
-              className="px-4 py-2 border border-primary/10 text-on-surface-variant hover:bg-primary/5 font-bold text-xs rounded-xl transition-all"
+              className="btn-secondary py-2 px-3 flex-1 text-[12.5px] rounded-[10px]"
             >
               Clear Filters
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-primary text-white hover:bg-primary/95 font-bold text-xs rounded-xl transition-all shadow-md shadow-primary/10"
+              className="btn-primary py-2 px-4 flex-1 text-[12.5px] rounded-[10px] whitespace-nowrap"
             >
               Filter Rejections
             </button>
@@ -241,66 +280,70 @@ const AdminRejectedSubmissions = () => {
       </div>
 
       {/* Main Rejected Submissions Table */}
-      {loading ? (
-        <div className="glass-panel p-6 rounded-[24px] space-y-4 animate-pulse">
-          <div className="h-6 bg-surface-container-high rounded w-1/4"></div>
-          {[1, 2, 3].map(i => <div key={i} className="h-10 bg-surface-container-high rounded w-full"></div>)}
-        </div>
-      ) : submissions.length === 0 ? (
-        <div className="glass-panel p-16 text-center rounded-[24px]">
-          <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">cancel</span>
-          <h4 className="text-base font-bold text-on-surface">No Rejected Submissions</h4>
-          <p className="text-on-surface-variant text-xs mt-1 max-w-sm mx-auto">
-            No rejected submission logs found.
-          </p>
-        </div>
-      ) : (
-        <div className="glass-panel rounded-[24px] overflow-hidden border border-primary/5">
+      <div className="table-wrap">
+        {loading ? (
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
+            ))}
+          </div>
+        ) : submissions.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <X size={24} />
+            </div>
+            <h4 className="text-base font-bold text-[#111111]">No Rejected Submissions</h4>
+            <p className="text-[#6B7280] text-xs mt-1 max-w-sm mx-auto">
+              No rejected submission logs found.
+            </p>
+          </div>
+        ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="table">
               <thead>
-                <tr className="bg-primary/5 border-b border-primary/10 text-[10px] font-mono font-bold text-primary uppercase tracking-wider">
-                  <th className="px-6 py-4">Submission ID</th>
-                  <th className="px-6 py-4">Subject</th>
-                  <th className="px-6 py-4">Rejection Reason</th>
-                  <th className="px-6 py-4">Submitted By</th>
-                  <th className="px-6 py-4">Rejected By</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4">Action</th>
+                <tr>
+                  <th>Submission ID</th>
+                  <th>Subject</th>
+                  <th>Rejection Reason</th>
+                  <th>Submitted By</th>
+                  <th>Rejected By</th>
+                  <th>Date</th>
+                  <th className="text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 font-medium">
-                {submissions.map((sub, idx) => (
-                  <tr key={sub._id} className="hover:bg-primary/5/30 transition-colors">
-                    <td className="px-6 py-4 font-mono font-bold text-primary">
+              <tbody>
+                {submissions.map((sub) => (
+                  <tr key={sub._id}>
+                    <td className="font-mono font-bold text-[#8B1E3F]">
                       {sub._id.slice(-6).toUpperCase()}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-primary">{sub.Subject?.name}</div>
-                      <div className="text-[10px] text-on-surface-variant/60 font-mono mt-0.5 uppercase">{sub.Subject?.code}</div>
+                    <td>
+                      <div className="font-bold text-[#111111]">{sub.Subject?.name}</div>
+                      <div className="text-[10px] text-[#6B7280] font-mono mt-0.5 uppercase">{sub.Subject?.code}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="px-3 py-1.5 rounded-lg bg-error/10 border border-error/15 text-error font-bold text-[10px] inline-block max-w-[150px] truncate" title={sub.RejectedReason}>
+                    <td>
+                      <span className="badge badge-red inline-block max-w-[150px] truncate" title={sub.RejectedReason}>
                         {sub.RejectedReason || 'No Reason Stated'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div>{sub.SubmittedBy?.name}</div>
-                      <div className="text-[10px] text-on-surface-variant/60 mt-0.5">{sub.SubmittedBy?.email}</div>
+                    <td>
+                      <div className="text-[#111111] font-bold">{sub.SubmittedBy?.name}</div>
+                      <div className="text-[10px] text-[#6B7280] mt-0.5">{sub.SubmittedBy?.email}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div>{sub.ApprovedBy?.name || 'Administrator'}</div>
+                    <td>
+                      <div className="text-[#111111] font-bold">{sub.ApprovedBy?.name || 'Administrator'}</div>
                     </td>
-                    <td className="px-6 py-4 font-mono">
+                    <td className="font-mono text-[#6B7280]">
                       {new Date(sub.updatedAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="text-right">
                       <button
                         onClick={() => handleOpenSubmission(sub._id)}
-                        className="p-1.5 rounded bg-primary/10 text-primary hover:bg-primary/20 transition-all"
+                        className="btn-primary py-1.5 px-3 rounded-[8px] text-[10.5px] inline-flex items-center gap-1"
                         title="View Submission Details"
                       >
-                        <span className="material-symbols-outlined text-[16px] font-bold">visibility</span>
+                        <Eye size={12} />
+                        Review Batch
                       </button>
                     </td>
                   </tr>
@@ -308,36 +351,38 @@ const AdminRejectedSubmissions = () => {
               </tbody>
             </table>
           </div>
+        )}
+      </div>
 
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-primary/5 bg-primary/5/10 flex justify-between items-center text-xs">
-              <button
-                disabled={currentPage <= 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                className="px-4 py-2 font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-50 transition-colors"
-              >
-                Previous
-              </button>
-              <span className="font-mono font-bold text-on-surface-variant">
-                Page {currentPage} of {pagination.totalPages} ({pagination.total} Batches)
-              </span>
-              <button
-                disabled={currentPage >= pagination.totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className="px-4 py-2 font-bold bg-surface border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-50 transition-colors"
-              >
-                Next
-              </button>
-            </div>
-          )}
+      {/* Pagination */}
+      {!loading && submissions.length > 0 && pagination.totalPages > 1 && (
+        <div className="flex justify-between items-center px-6 py-4 bg-white border-t border-primary/5 text-xs text-[#6B7280]">
+          <span className="font-mono text-xs">
+            Showing {(currentPage - 1) * pagination.limit + 1} - {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} batches
+          </span>
+          <div className="flex gap-2">
+            <button
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Previous
+            </button>
+            <button
+              disabled={currentPage >= pagination.totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
       {/* BATCH PREVIEW DRAWER */}
       <AnimatePresence>
         {previewOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="fixed inset-0 z-50 flex justify-end font-sans">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -353,12 +398,12 @@ const AdminRejectedSubmissions = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-2xl bg-surface h-full shadow-2xl border-l border-primary/10 p-6 flex flex-col justify-between z-10"
+              className="relative w-full max-w-2xl bg-white h-full shadow-2xl border-l border-primary/10 p-6 flex flex-col justify-between z-10 font-sans text-xs text-[#111111]"
             >
               {detailsLoading ? (
                 <div className="flex-1 flex flex-col justify-center items-center">
-                  <div className="w-10 h-10 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
-                  <span className="text-xs text-on-surface-variant mt-3 font-semibold">Retrieving batch questions...</span>
+                  <div className="w-10 h-10 border-2 border-primary/10 border-t-primary rounded-full animate-spin"></div>
+                  <span className="text-xs text-[#6B7280] mt-3 font-semibold">Retrieving batch questions...</span>
                 </div>
               ) : activeSubmissionDetails ? (
                 <div className="flex-1 flex flex-col h-full overflow-hidden">
@@ -366,16 +411,16 @@ const AdminRejectedSubmissions = () => {
                   {/* Drawer Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <span className="px-2.5 py-0.5 rounded-full bg-error/10 border border-error/15 text-error text-[9px] font-bold uppercase tracking-wider font-mono">
+                      <span className="px-2.5 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-700 text-[9px] font-bold uppercase tracking-wider font-mono">
                         SUBMISSION ID: {activeSubmissionDetails.submission._id.slice(-8).toUpperCase()}
                       </span>
-                      <h3 className="text-base font-bold text-primary mt-1.5">Rejected Batch Details</h3>
+                      <h3 className="text-base font-black text-[#111111] mt-1.5">Rejected Batch Details</h3>
                     </div>
                     <button
                       onClick={() => setPreviewOpen(false)}
-                      className="p-1 rounded-full hover:bg-primary/5 text-on-surface-variant"
+                      className="p-1 rounded-full hover:bg-gray-100 text-[#6B7280]"
                     >
-                      <span className="material-symbols-outlined text-[22px]">close</span>
+                      <X size={18} />
                     </button>
                   </div>
 
@@ -383,39 +428,39 @@ const AdminRejectedSubmissions = () => {
                   <div className="flex-1 overflow-y-auto space-y-5 pr-2 mb-6" style={{ scrollbarWidth: 'thin' }}>
                     
                     {/* Rejection Reason feedback box */}
-                    <div className="p-4 bg-error/5 border border-error/10 text-error rounded-xl flex items-start gap-3">
-                      <span className="material-symbols-outlined text-[20px] font-bold">cancel</span>
+                    <div className="p-4 bg-red-50 border border-red-100 text-red-800 rounded-xl flex items-start gap-3">
+                      <AlertOctagon size={16} className="text-red-600 mt-0.5 shrink-0" />
                       <div>
-                        <div className="text-xs font-bold font-mono uppercase">Rejection Reason</div>
-                        <div className="text-xs mt-0.5 font-medium leading-relaxed">
+                        <div className="text-xs font-bold font-mono uppercase text-red-700">Rejection Reason</div>
+                        <div className="text-xs mt-0.5 font-medium leading-relaxed text-red-950">
                           {activeSubmissionDetails.submission.RejectedReason || 'No Reason Specified.'}
                         </div>
                       </div>
                     </div>
 
                     {/* Batch Metadata Header */}
-                    <div className="grid grid-cols-2 gap-3 text-[10px] font-semibold text-on-surface-variant bg-surface-container-low p-4 rounded-xl border border-primary/5">
+                    <div className="grid grid-cols-2 gap-3 text-[11px] font-semibold text-[#6B7280] bg-[#FAF8F7] p-4 rounded-xl border border-primary/5">
                       <div>
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Subject Context</span>
-                        <span className="text-primary truncate block font-bold">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Subject Context</span>
+                        <span className="text-[#8B1E3F] truncate block font-bold">
                           {activeSubmissionDetails.submission.Subject?.name || 'Subject Mapped'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Course / Semester</span>
-                        <span className="truncate block font-bold text-on-surface">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Course / Semester</span>
+                        <span className="truncate block font-bold text-[#111111]">
                           {activeSubmissionDetails.submission.CourseId?.name || 'Course Mapped'} (Sem {activeSubmissionDetails.submission.SemesterId?.semesterNumber})
                         </span>
                       </div>
                       <div className="pt-2 border-t border-primary/5">
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Submitted By</span>
-                        <span className="block font-bold truncate">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Submitted By</span>
+                        <span className="block font-bold truncate text-[#111111]">
                           {activeSubmissionDetails.submission.SubmittedBy?.name}
                         </span>
                       </div>
                       <div className="pt-2 border-t border-primary/5">
-                        <span className="text-[9px] text-on-surface-variant/50 uppercase font-mono block">Total Questions</span>
-                        <span className="block font-black text-primary truncate">
+                        <span className="text-[9px] text-[#9CA3AF] uppercase font-mono block">Total Questions</span>
+                        <span className="block font-black text-[#8B1E3F] truncate">
                           {activeSubmissionDetails.questions.length} MCQ Questions
                         </span>
                       </div>
@@ -423,20 +468,20 @@ const AdminRejectedSubmissions = () => {
 
                     {/* Questions Loop */}
                     <div className="space-y-4">
-                      <h4 className="text-xs font-mono font-black text-primary uppercase tracking-wider">Submitted Question Items</h4>
+                      <h4 className="text-[10px] font-mono font-black text-[#9CA3AF] uppercase tracking-wider">Submitted Question Items</h4>
                       {activeSubmissionDetails.questions.map((q, idx) => (
-                        <div key={q._id} className="p-4 bg-surface-container-lowest border border-primary/10 rounded-2xl space-y-3.5">
+                        <div key={q._id} className="p-4 bg-[#FAF8F7]/50 border border-primary/10 rounded-2xl space-y-3.5">
                           
-                          <div className="flex justify-between items-center text-[9px] font-bold text-on-surface-variant font-mono">
-                            <span className="px-2 py-0.5 rounded bg-primary/5 border border-primary/10 text-primary">
+                          <div className="flex justify-between items-center text-[9px] font-bold text-[#6B7280] font-mono">
+                            <span className="px-2 py-0.5 rounded bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] text-[#8B1E3F]">
                               Q{idx + 1} • DIFFICULTY: {q.Difficulty || q.difficulty}
                             </span>
-                            <span className="px-2 py-0.5 rounded bg-surface-container border uppercase">
+                            <span className="px-2 py-0.5 rounded bg-white border border-gray-100 uppercase">
                               By: {q.GeneratedBy || (q.metadata?.isAiGenerated ? 'AI' : 'Staff')}
                             </span>
                           </div>
 
-                          <div className="text-xs font-bold text-primary leading-relaxed">
+                          <div className="text-xs font-bold text-[#8B1E3F] leading-relaxed">
                             {q.Question || q.text}
                           </div>
 
@@ -449,8 +494,8 @@ const AdminRejectedSubmissions = () => {
                                   key={opt}
                                   className={`p-2.5 rounded-xl border text-[11px] font-semibold flex items-start gap-2.5 transition-colors ${
                                     isCorrect
-                                      ? 'bg-green-500/15 border-green-500/30 text-green-800'
-                                      : 'bg-surface border-primary/5 text-on-surface-variant/80'
+                                      ? 'bg-green-500/10 border-green-500/20 text-green-800 font-bold'
+                                      : 'bg-white border-primary/5 text-[#6B7280]'
                                   }`}
                                 >
                                   <span className={`w-4 h-4 rounded-full flex items-center justify-center font-black font-mono text-[9px] mt-0.5 ${
@@ -466,17 +511,17 @@ const AdminRejectedSubmissions = () => {
 
                           {/* Explanation */}
                           {(q.Explanation || q.explanation) && (
-                            <div className="p-3 bg-surface border border-primary/5 rounded-xl text-[10px] font-semibold text-on-surface-variant leading-relaxed">
-                              <span className="font-mono text-[9px] text-primary uppercase block font-bold mb-0.5">Explanation</span>
+                            <div className="p-3 bg-white border border-primary/5 rounded-xl text-[10px] font-semibold text-[#6B7280] leading-relaxed">
+                              <span className="font-mono text-[9px] text-[#8B1E3F] uppercase block font-bold mb-0.5">Explanation</span>
                               {q.Explanation || q.explanation}
                             </div>
                           )}
 
                           <div className="flex gap-2 pt-1">
-                            <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-[9px] font-semibold border">
+                            <span className="px-2 py-0.5 rounded bg-white text-[#6B7280] text-[9px] font-semibold border">
                               Unit {q.UnitId || 'N/A'}
                             </span>
-                            <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-[9px] font-semibold border truncate max-w-[150px]">
+                            <span className="px-2 py-0.5 rounded bg-white text-[#6B7280] text-[9px] font-semibold border truncate max-w-[150px]">
                               Topic {q.TopicId || 'N/A'}
                             </span>
                           </div>
@@ -488,11 +533,11 @@ const AdminRejectedSubmissions = () => {
                   </div>
 
                   {/* Close Footer */}
-                  <div className="pt-4 border-t border-primary/10 bg-surface">
+                  <div className="pt-4 border-t border-primary/5 bg-white">
                     <button
                       type="button"
                       onClick={() => setPreviewOpen(false)}
-                      className="w-full py-2.5 rounded-xl border border-primary/10 hover:bg-primary/5 font-bold text-xs transition-all flex items-center justify-center gap-1"
+                      className="w-full py-2.5 rounded-xl border border-primary/10 hover:bg-primary/5 text-xs font-bold transition-all flex items-center justify-center gap-1 text-[#6B7280]"
                     >
                       Close Details
                     </button>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { Camera, Save, Lock, Shield, User, Mail, Phone, Award, Building2 } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -47,9 +48,9 @@ const StaffProfile = () => {
         setValueProfile('qualification', u.staffDetails?.qualification || '');
       }
     } catch (error) {
-  console.log("PROFILE ERROR:", error);
-  toast.error(error.message || "Failed to retrieve profile details.");
-} finally {
+      console.log("PROFILE ERROR:", error);
+      toast.error(error.message || "Failed to retrieve profile details.");
+    } finally {
       setLoading(false);
     }
   };
@@ -78,18 +79,14 @@ const StaffProfile = () => {
 
       if (response.data && response.data.success) {
         setProfile(response.data.data);
-        // Sync context user
-        // if (login) {
-        //   login(response.data.data);
-        // }
         toast.success('Profile details updated successfully.', { id: toastId });
         setAvatarFile(null);
         fetchProfile();
       }
-    }catch (error) {
-  console.log(error);
-  toast.error(error.response?.data?.message || error.message);
-}finally {
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
       setUpdating(false);
     }
   };
@@ -120,22 +117,22 @@ const StaffProfile = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="glass-panel p-6 rounded-[24px] animate-pulse">
-          <div className="h-8 bg-surface-container-high rounded w-1/4 mb-2"></div>
-          <div className="h-4 bg-surface-container-high rounded w-1/2"></div>
+      <div className="space-y-6 font-sans">
+        <div className="bg-white border border-[rgba(140,29,64,0.08)] p-6 rounded-[24px] animate-pulse">
+          <div className="h-8 bg-gray-100 rounded w-1/4 mb-2"></div>
+          <div className="h-4 bg-gray-100 rounded w-1/2"></div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 glass-panel p-6 rounded-[24px] space-y-4 animate-pulse">
-            <div className="h-24 bg-surface-container-high rounded-full w-24 mx-auto"></div>
+          <div className="lg:col-span-2 bg-white border border-[rgba(140,29,64,0.08)] p-6 rounded-[24px] space-y-4 animate-pulse">
+            <div className="h-24 bg-gray-100 rounded-full w-24 mx-auto"></div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="h-10 bg-surface-container-high rounded"></div>
-              <div className="h-10 bg-surface-container-high rounded"></div>
+              <div className="h-10 bg-gray-100 rounded"></div>
+              <div className="h-10 bg-gray-100 rounded"></div>
             </div>
           </div>
-          <div className="glass-panel p-6 rounded-[24px] space-y-4 animate-pulse">
-            <div className="h-6 bg-surface-container-high rounded w-1/2"></div>
-            <div className="h-10 bg-surface-container-high rounded"></div>
+          <div className="bg-white border border-[rgba(140,29,64,0.08)] p-6 rounded-[24px] space-y-4 animate-pulse">
+            <div className="h-6 bg-gray-100 rounded w-1/2"></div>
+            <div className="h-10 bg-gray-100 rounded"></div>
           </div>
         </div>
       </div>
@@ -143,11 +140,12 @@ const StaffProfile = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 font-sans pb-10">
       {/* Header card */}
-      <div className="glass-panel p-6 rounded-[24px]">
-        <h2 className="text-2xl font-bold text-primary mb-1">Profile Management</h2>
-        <p className="text-on-surface-variant text-xs">
+      <div className="bg-white border border-[rgba(140,29,64,0.08)] p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[#8C1D40]/5 rounded-full blur-2xl pointer-events-none"></div>
+        <h2 className="text-xl font-extrabold text-[#1D1D1F] mb-1">Profile Management</h2>
+        <p className="text-[#6B7280] text-xs">
           Manage your personal details, workspace credentials, contact numbers, and security keys.
         </p>
       </div>
@@ -157,11 +155,11 @@ const StaffProfile = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-2 glass-panel p-6 rounded-[24px] space-y-6 shadow-sm border border-primary/5"
+          className="lg:col-span-2 bg-white p-6 rounded-[24px] space-y-6 shadow-xs border border-[rgba(140,29,64,0.08)]"
         >
-          <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-primary/5">
+          <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-gray-100">
             <div className="relative group">
-              <div className="w-24 h-24 rounded-full border-4 border-primary/10 overflow-hidden bg-primary/5 flex items-center justify-center text-primary font-bold text-3xl">
+              <div className="w-24 h-24 rounded-full border-4 border-[#8C1D40]/10 overflow-hidden bg-[#FAF8F7] flex items-center justify-center text-[#8C1D40] font-black text-3xl uppercase">
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -169,19 +167,19 @@ const StaffProfile = () => {
                 )}
               </div>
               <label className="absolute inset-0 bg-black/45 backdrop-blur-xs rounded-full opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-center items-center text-white cursor-pointer select-none">
-                <span className="material-symbols-outlined text-lg">photo_camera</span>
-                <span className="text-[9px] font-mono mt-0.5">Upload</span>
+                <Camera size={20} />
+                <span className="text-[9px] font-mono mt-0.5 font-bold">Upload</span>
                 <input type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
               </label>
             </div>
-            <div>
-              <h3 className="text-lg font-bold text-primary">{profile?.name}</h3>
-              <p className="text-xs text-on-surface-variant font-medium">
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg font-bold text-[#1D1D1F]">{profile?.name}</h3>
+              <p className="text-xs text-[#6B7280] font-semibold mt-1">
                 {profile?.staffDetails?.designation || 'Faculty Member'} — {profile?.staffDetails?.department?.name || 'Academic Department'}
               </p>
               {avatarFile && (
-                <p className="text-[10px] font-mono text-secondary font-bold mt-2 animate-pulse">
-                  Selected: {avatarFile.name} (Save to apply changes)
+                <p className="text-[10px] font-mono text-[#C74B74] font-bold mt-2 animate-pulse">
+                  Selected: {avatarFile.name} (Click Save below)
                 </p>
               )}
             </div>
@@ -191,87 +189,122 @@ const StaffProfile = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Employee ID */}
               <div>
-                <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Employee ID (Read-only)</label>
-                <input
-                  type="text"
-                  value={profile?.staffDetails?.employeeId || ''}
-                  disabled
-                  className="w-full input-underline py-2 focus:ring-0 text-sm bg-transparent border-b border-outline-variant text-on-surface/50 font-mono cursor-not-allowed"
-                />
+                <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Employee ID (Read-only)</span>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <User size={14} />
+                  </div>
+                  <input
+                    type="text"
+                    value={profile?.staffDetails?.employeeId || ''}
+                    disabled
+                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono text-gray-500 cursor-not-allowed"
+                  />
+                </div>
               </div>
 
               {/* Name */}
               <div>
-                <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Name *</label>
-                <input
-                  {...registerProfile('name', { required: 'Name is required' })}
-                  className="w-full input-underline py-2 focus:ring-0 text-sm"
-                  placeholder="e.g. Dr. John Doe"
-                />
-                {errorsProfile.name && <span className="text-error text-xs block font-mono mt-1">{errorsProfile.name.message}</span>}
+                <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Name *</span>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <User size={14} />
+                  </div>
+                  <input
+                    {...registerProfile('name', { required: 'Name is required' })}
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-[rgba(140,29,64,0.12)] focus:border-[#8C1D40]/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#8C1D40]/5"
+                    placeholder="e.g. Dr. John Doe"
+                  />
+                </div>
+                {errorsProfile.name && <span className="text-red-500 text-[10px] font-mono mt-1 block">{errorsProfile.name.message}</span>}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Academic Email (Read-only)</label>
-                <input
-                  type="text"
-                  value={profile?.email || ''}
-                  disabled
-                  className="w-full input-underline py-2 focus:ring-0 text-sm bg-transparent border-b border-outline-variant text-on-surface/50 font-mono cursor-not-allowed"
-                />
+                <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Academic Email (Read-only)</span>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <Mail size={14} />
+                  </div>
+                  <input
+                    type="text"
+                    value={profile?.email || ''}
+                    disabled
+                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono text-gray-500 cursor-not-allowed"
+                  />
+                </div>
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Phone Number</label>
-                <input
-                  {...registerProfile('phone')}
-                  className="w-full input-underline py-2 focus:ring-0 text-sm"
-                  placeholder="e.g. +91 9876543210"
-                />
+                <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Phone Number</span>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <Phone size={14} />
+                  </div>
+                  <input
+                    {...registerProfile('phone')}
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-[rgba(140,29,64,0.12)] focus:border-[#8C1D40]/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#8C1D40]/5"
+                    placeholder="e.g. +91 9876543210"
+                  />
+                </div>
               </div>
 
               {/* Department */}
               <div>
-                <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Department (Read-only)</label>
-                <input
-                  type="text"
-                  value={profile?.staffDetails?.department?.name || ''}
-                  disabled
-                  className="w-full input-underline py-2 focus:ring-0 text-sm bg-transparent border-b border-outline-variant text-on-surface/50 cursor-not-allowed"
-                />
+                <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Department (Read-only)</span>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <Building2 size={14} />
+                  </div>
+                  <input
+                    type="text"
+                    value={profile?.staffDetails?.department?.name || ''}
+                    disabled
+                    className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-500 cursor-not-allowed"
+                  />
+                </div>
               </div>
 
               {/* Designation */}
               <div>
-                <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Designation</label>
-                <input
-                  {...registerProfile('designation')}
-                  className="w-full input-underline py-2 focus:ring-0 text-sm"
-                  placeholder="e.g. Assistant Professor"
-                />
+                <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Designation</span>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <Award size={14} />
+                  </div>
+                  <input
+                    {...registerProfile('designation')}
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-[rgba(140,29,64,0.12)] focus:border-[#8C1D40]/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#8C1D40]/5"
+                    placeholder="e.g. Assistant Professor"
+                  />
+                </div>
               </div>
 
               {/* Qualification */}
               <div className="md:col-span-2">
-                <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Qualifications</label>
-                <input
-                  {...registerProfile('qualification')}
-                  className="w-full input-underline py-2 focus:ring-0 text-sm"
-                  placeholder="e.g. Ph.D. in Computer Science & Engineering"
-                />
+                <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Qualifications</span>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <Award size={14} />
+                  </div>
+                  <input
+                    {...registerProfile('qualification')}
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-[rgba(140,29,64,0.12)] focus:border-[#8C1D40]/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#8C1D40]/5"
+                    placeholder="e.g. Ph.D. in Computer Science & Engineering"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-primary/5">
+            <div className="flex justify-end pt-4 border-t border-gray-100">
               <button
                 type="submit"
                 disabled={updating}
-                className="bg-primary text-white py-2.5 px-6 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-primary/10 disabled:opacity-50 text-xs"
+                className="bg-gradient-to-r from-[#8C1D40] to-[#C74B74] hover:opacity-95 text-white py-2.5 px-6 rounded-xl font-bold active:scale-[0.98] transition-all flex items-center gap-2 shadow-md shadow-[#8C1D40]/10 disabled:opacity-50 text-xs"
               >
-                <span className="material-symbols-outlined text-[18px]">save</span>
-                Save Changes
+                <Save size={14} />
+                Save Profile
               </button>
             </div>
           </form>
@@ -282,71 +315,86 @@ const StaffProfile = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="glass-panel p-6 rounded-[24px] space-y-6 shadow-sm border border-primary/5 h-fit"
+          className="bg-white p-6 rounded-[24px] space-y-6 shadow-xs border border-[rgba(140,29,64,0.08)] h-fit"
         >
           <div>
-            <h3 className="text-base font-bold text-primary flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">security</span>
-              Security & Credentials
+            <h3 className="text-sm font-extrabold text-[#1D1D1F] flex items-center gap-2">
+              <Shield size={16} className="text-[#8C1D40]" />
+              Security credentials
             </h3>
-            <p className="text-[10px] text-on-surface-variant mt-1">Change password parameters regularly to retain security clearance.</p>
+            <p className="text-[10px] text-[#6B7280] mt-1 font-semibold">Change password parameters regularly to retain security clearance.</p>
           </div>
 
           <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-4">
             {/* Current Password */}
             <div>
-              <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Current Password *</label>
-              <input
-                type="password"
-                {...registerPassword('currentPassword', { required: 'Current password is required' })}
-                className="w-full input-underline py-2 focus:ring-0 text-sm"
-                placeholder="••••••••"
-              />
+              <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Current Password *</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <Lock size={14} />
+                </div>
+                <input
+                  type="password"
+                  {...registerPassword('currentPassword', { required: 'Current password is required' })}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-[rgba(140,29,64,0.12)] focus:border-[#8C1D40]/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#8C1D40]/5"
+                  placeholder="••••••••"
+                />
+              </div>
               {errorsPassword.currentPassword && (
-                <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsPassword.currentPassword.message}</span>
+                <span className="text-red-500 text-[10px] font-mono mt-1 block">{errorsPassword.currentPassword.message}</span>
               )}
             </div>
 
             {/* New Password */}
             <div>
-              <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">New Password *</label>
-              <input
-                type="password"
-                {...registerPassword('newPassword', {
-                  required: 'New password is required',
-                  minLength: { value: 8, message: 'Password must be at least 8 characters long' },
-                })}
-                className="w-full input-underline py-2 focus:ring-0 text-sm"
-                placeholder="••••••••"
-              />
+              <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">New Password *</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <Lock size={14} />
+                </div>
+                <input
+                  type="password"
+                  {...registerPassword('newPassword', {
+                    required: 'New password is required',
+                    minLength: { value: 8, message: 'Password must be at least 8 characters long' },
+                  })}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-[rgba(140,29,64,0.12)] focus:border-[#8C1D40]/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#8C1D40]/5"
+                  placeholder="••••••••"
+                />
+              </div>
               {errorsPassword.newPassword && (
-                <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsPassword.newPassword.message}</span>
+                <span className="text-red-500 text-[10px] font-mono mt-1 block">{errorsPassword.newPassword.message}</span>
               )}
             </div>
 
             {/* Confirm New Password */}
             <div>
-              <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Confirm Password *</label>
-              <input
-                type="password"
-                {...registerPassword('confirmPassword', {
-                  required: 'Please confirm your new password',
-                  validate: (value) => value === watchPassword('newPassword') || 'Passwords do not match',
-                })}
-                className="w-full input-underline py-2 focus:ring-0 text-sm"
-                placeholder="••••••••"
-              />
+              <span className="block font-mono text-[9px] font-bold text-[#6B7280] mb-1.5 uppercase px-1">Confirm Password *</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                  <Lock size={14} />
+                </div>
+                <input
+                  type="password"
+                  {...registerPassword('confirmPassword', {
+                    required: 'Please confirm your new password',
+                    validate: (value) => value === watchPassword('newPassword') || 'Passwords do not match',
+                  })}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-[rgba(140,29,64,0.12)] focus:border-[#8C1D40]/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#8C1D40]/5"
+                  placeholder="••••••••"
+                />
+              </div>
               {errorsPassword.confirmPassword && (
-                <span className="text-error text-[10px] font-mono mt-0.5 block">{errorsPassword.confirmPassword.message}</span>
+                <span className="text-red-500 text-[10px] font-mono mt-1 block">{errorsPassword.confirmPassword.message}</span>
               )}
             </div>
 
-            <div className="pt-4 border-t border-primary/5 flex justify-end">
+            <div className="pt-4 border-t border-gray-100 flex justify-end">
               <button
                 type="submit"
-                className="bg-primary text-white py-2 px-4 rounded-xl text-xs font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2"
+                className="bg-gradient-to-r from-[#8C1D40] to-[#C74B74] text-white py-2 px-4 rounded-xl text-xs font-bold hover:opacity-95 active:scale-[0.98] transition-all flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-[16px]">lock_reset</span>
+                <Lock size={13} />
                 Change Password
               </button>
             </div>

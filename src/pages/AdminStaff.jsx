@@ -3,6 +3,9 @@ import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import {
+  Users, UserCheck, ShieldAlert, Plus, Download, Upload, Search, Edit2, Trash2, Key, Info, GraduationCap, Building2, UserPlus, Trash, Shield, AlertTriangle
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminStaff = () => {
@@ -276,62 +279,111 @@ const AdminStaff = () => {
     <div className="space-y-6">
 
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-[24px] border border-primary/5">
-        <div>
-          <h2 className="text-2xl font-bold text-primary">Staff Management</h2>
-          <p className="text-on-surface-variant text-xs mt-1">Manage staff credentials, department mappings, and batch import Excel files.</p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <UserCheck size={12} />
+              Faculty Records
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Staff Management</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">Manage staff credentials, department mappings, and batch import Excel files.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setImportModalOpen(true)}
+              className="btn-secondary py-2 px-3 text-[12.5px] rounded-[10px] flex items-center gap-1.5"
+            >
+              <Upload size={14} />
+              Import Excel
+            </button>
+            <button
+              onClick={handleExport}
+              className="btn-secondary py-2 px-3 text-[12.5px] rounded-[10px] flex items-center gap-1.5"
+            >
+              <Download size={14} />
+              Export Excel
+            </button>
+            <button
+              onClick={() => setAddModalOpen(true)}
+              className="btn-primary py-2 px-4 text-[12.5px] rounded-[10px] flex items-center gap-1.5"
+            >
+              <UserPlus size={14} />
+              Add Staff
+            </button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={() => setImportModalOpen(true)}
-            className="border border-primary/10 text-primary py-3 px-6 rounded-xl font-semibold hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[20px]">upload_file</span>
-            Import Excel
-          </button>
-          <button
-            onClick={handleExport}
-            className="border border-secondary/10 text-secondary py-3 px-6 rounded-xl font-semibold hover:bg-secondary/5 active:scale-[0.98] transition-all flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[20px]">download</span>
-            Export Excel
-          </button>
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="bg-primary text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
-          >
-            <span className="material-symbols-outlined text-[20px]">person_add</span>
-            Add Staff
-          </button>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="stat-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-[#9CA3AF] uppercase">Total Staff</span>
+            <div className="w-8 h-8 rounded-[8px] bg-[#FDF0F4] text-[#8B1E3F] flex items-center justify-center">
+              <Users size={14} />
+            </div>
+          </div>
+          <p className="text-2xl font-black font-mono text-[#8B1E3F] leading-none mt-1">{pagination.total}</p>
+          <p className="text-[11px] text-[#6B7280] mt-1.5">Master staff directory</p>
+        </div>
+
+        <div className="stat-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-[#9CA3AF] uppercase">Active Faculty</span>
+            <div className="w-8 h-8 rounded-[8px] bg-[#ECFDF5] text-[#059669] flex items-center justify-center">
+              <UserCheck size={14} />
+            </div>
+          </div>
+          <p className="text-2xl font-black font-mono text-[#059669] leading-none mt-1">
+            {staffList.filter(s => s.status === 'Active').length}
+          </p>
+          <p className="text-[11px] text-[#6B7280] mt-1.5">Currently teaching</p>
+        </div>
+
+        <div className="stat-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-[#9CA3AF] uppercase">Pending Requests</span>
+            <div className="w-8 h-8 rounded-[8px] bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center">
+              <AlertTriangle size={14} />
+            </div>
+          </div>
+          <p className="text-2xl font-black font-mono text-[#DC2626] leading-none mt-1">
+            {staffList.filter(s => !s.isRegistered).length}
+          </p>
+          <p className="text-[11px] text-[#6B7280] mt-1.5">Awaiting setup completion</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
-        {/* Search */}
-        <div className="sm:col-span-2 flex items-center bg-surface rounded-xl px-4 py-2 border border-primary/5 shadow-sm">
-          <span className="material-symbols-outlined text-on-surface-variant text-lg">search</span>
-          <input
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            placeholder="Search by Employee ID, Name, Email..."
-            className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50 outline-none ml-2"
-            type="text"
-          />
-        </div>
+      <div className="card-flat p-4 bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
+          {/* Search */}
+          <div className="sm:col-span-2 search-bar">
+            <Search size={14} className="text-[#9CA3AF] flex-shrink-0" />
+            <input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search by Employee ID, Name, Email..."
+              type="text"
+            />
+          </div>
 
-        {/* Department filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Department filter */}
           <select
             value={deptFilter}
             onChange={(e) => {
               setDeptFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Departments</option>
             {departments.map((dept) => (
@@ -340,33 +392,29 @@ const AdminStaff = () => {
               </option>
             ))}
           </select>
-        </div>
 
-        {/* Status Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">All Statuses</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
-        </div>
 
-        {/* Registration state Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+          {/* Registration state Filter */}
           <select
             value={registeredFilter}
             onChange={(e) => {
               setRegisteredFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="select"
           >
             <option value="">Registration Status</option>
             <option value="true">Registered Accounts</option>
@@ -376,75 +424,72 @@ const AdminStaff = () => {
       </div>
 
       {/* Main Table */}
-      <div className="glass-panel p-6 rounded-[24px] shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          <div className="space-y-4 py-4">
-            <div className="h-8 bg-surface-container-high animate-pulse rounded-lg w-full"></div>
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-16 bg-surface-container-low animate-pulse rounded-xl w-full"></div>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
             ))}
           </div>
         ) : staffList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-            <span className="material-symbols-outlined text-primary/45 text-5xl">group_off</span>
-            <div className="space-y-1">
-              <h3 className="text-lg font-bold text-primary">No Staff Records</h3>
-              <p className="text-on-surface-variant text-sm max-w-sm">No master records found. Try adding staff or uploading Excel.</p>
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <UserCheck size={24} />
             </div>
+            <h3 className="text-base font-bold text-[#111111]">No Staff Records</h3>
+            <p className="text-[#6B7280] text-xs max-w-sm mt-1">No master records found. Try adding staff or uploading Excel.</p>
           </div>
         ) : (
           <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse">
+            <table className="table">
               <thead>
-                <tr className="border-b border-primary/10 pb-4 text-xs font-mono font-semibold text-primary uppercase tracking-wider">
-                  <th className="py-4 px-3">Employee ID</th>
-                  <th className="py-4 px-3">Name</th>
-                  <th className="py-4 px-3">Email</th>
-                  <th className="py-4 px-3">Department</th>
-                  <th className="py-4 px-3">Designation</th>
-                  <th className="py-4 px-3 text-center">Registration</th>
-                  <th className="py-4 px-3 text-center">Status</th>
-                  <th className="py-4 px-3 text-right">Actions</th>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Department</th>
+                  <th>Designation</th>
+                  <th className="text-center">Registration</th>
+                  <th className="text-center">Status</th>
+                  <th className="text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 text-sm">
+              <tbody>
                 {staffList.map((staff) => (
-                  <tr key={staff._id} className="hover:bg-primary/5 transition-colors">
-                    <td className="py-4 px-3 font-mono font-bold text-primary">{staff.employeeId}</td>
-                    <td className="py-4 px-3 font-semibold text-on-surface">{staff.name}</td>
-                    <td className="py-4 px-3 text-on-surface-variant">{staff.email}</td>
-                    <td className="py-4 px-3">{staff.department?.name || 'Unassigned'}</td>
-                    <td className="py-4 px-3">{staff.designation || '—'}</td>
-                    <td className="py-4 px-3 text-center">
-                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${staff.isRegistered ? 'bg-secondary/15 text-secondary' : 'bg-surface-container-high text-on-surface-variant'
-                        }`}>
+                  <tr key={staff._id}>
+                    <td className="font-mono font-bold text-[#8B1E3F]">{staff.employeeId}</td>
+                    <td className="font-semibold text-[#111111]">{staff.name}</td>
+                    <td className="text-[#6B7280] font-mono text-[11.5px]">{staff.email}</td>
+                    <td>{staff.department?.name || 'Unassigned'}</td>
+                    <td>{staff.designation || '—'}</td>
+                    <td className="text-center">
+                      <span className={`badge ${staff.isRegistered ? 'badge-wine' : 'badge-gray'}`}>
                         {staff.isRegistered ? 'Registered' : 'Pending'}
                       </span>
                     </td>
-                    <td className="py-4 px-3 text-center">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${staff.status === 'Active' ? 'bg-emerald-100 text-emerald-800' : 'bg-error/10 text-error'
-                        }`}>
+                    <td className="text-center">
+                      <span className={`badge ${staff.status === 'Active' ? 'badge-green' : 'badge-red'}`}>
                         {staff.status}
                       </span>
                     </td>
-                    <td className="py-4 px-3 text-right">
-                      <div className="flex justify-end gap-2">
+                    <td className="text-right">
+                      <div className="flex justify-end gap-1">
                         <button
                           onClick={() => handleEditClick(staff)}
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-secondary transition-colors"
-                          title="Edit staff details"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#8B1E3F] hover:bg-[#FDF0F4] transition-colors"
+                          title="Edit"
                         >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                          <Edit2 size={13} />
                         </button>
                         <button
                           onClick={() => {
                             setSelectedStaff(staff);
                             setDeleteDialogOpen(true);
                           }}
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-error transition-colors"
-                          title="Delete staff record"
+                          className="p-1 rounded-lg text-[#6B7280] hover:text-[#DC2626] hover:bg-red-50 transition-colors"
+                          title="Delete"
                         >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </td>

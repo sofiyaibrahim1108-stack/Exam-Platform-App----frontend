@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Award, CheckCircle, XCircle, Search, Calendar, ChevronLeft, ChevronRight, EyeOff, Send, HelpCircle, GraduationCap, X
+} from 'lucide-react';
 import api from '../services/api';
 
 const AdminResults = () => {
@@ -131,57 +134,85 @@ const AdminResults = () => {
   return (
     <div className="space-y-6 text-sm font-sans text-on-surface">
       {/* Top Banner Header */}
-      <div className="glass-panel p-6 rounded-[24px] border border-primary/5">
-        <h2 className="text-2xl font-bold text-primary mb-1">Result Management Dashboard</h2>
-        <p className="text-on-surface-variant text-xs font-semibold">
-          Access candidate scorecard details, auto-graded MCQ statistics, and control result publication states.
-        </p>
+      <div className="card-flat p-6 rounded-[24px] relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: 'radial-gradient(circle, #8B1E3F 1px, transparent 1px)',
+          backgroundSize: '24px 24px'
+        }} />
+        <div className="relative flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#8B1E3F] bg-[#FDF0F4] border border-[rgba(139,30,63,0.12)] px-2.5 py-1 rounded-[7px] mb-2">
+              <Award size={12} />
+              Performance Ledger
+            </div>
+            <h2 className="text-2xl font-black text-[#111111] leading-none">Result Management Dashboard</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1.5">
+              Access candidate scorecard details, auto-graded MCQ statistics, and control result publication states.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-5 rounded-[20px] bg-white border border-primary/5 shadow-sm">
-          <span className="text-[10px] text-on-surface-variant/60 uppercase font-mono block">Total Scorecards Graded</span>
-          <span className="block font-extrabold text-2xl text-primary font-mono mt-1">
-            {totalResults} Candidates
-          </span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="stat-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-[#9CA3AF] uppercase text-xs">Total Scorecards Graded</span>
+            <div className="w-8 h-8 rounded-[8px] bg-[#FDF0F4] text-[#8B1E3F] flex items-center justify-center">
+              <GraduationCap size={14} />
+            </div>
+          </div>
+          <p className="text-2xl font-black font-mono text-[#8B1E3F] leading-none mt-1">{totalResults}</p>
+          <p className="text-[11px] text-[#6B7280] mt-1.5">Graded candidate papers</p>
         </div>
-        <div className="glass-card p-5 rounded-[20px] bg-white border border-primary/5 shadow-sm">
-          <span className="text-[10px] text-on-surface-variant/60 uppercase font-mono block">Published Results</span>
-          <span className="block font-extrabold text-2xl text-green-700 font-mono mt-1">
-            {publishedCount} Exams
-          </span>
+
+        <div className="stat-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-[#9CA3AF] uppercase text-xs">Published Results</span>
+            <div className="w-8 h-8 rounded-[8px] bg-[#ECFDF5] text-[#059669] flex items-center justify-center">
+              <CheckCircle size={14} />
+            </div>
+          </div>
+          <p className="text-2xl font-black font-mono text-[#059669] leading-none mt-1">{publishedCount}</p>
+          <p className="text-[11px] text-[#6B7280] mt-1.5">Visible to candidates</p>
         </div>
-        <div className="glass-card p-5 rounded-[20px] bg-white border border-primary/5 shadow-sm">
-          <span className="text-[10px] text-on-surface-variant/60 uppercase font-mono block">Draft Results (Pending)</span>
-          <span className="block font-extrabold text-2xl text-amber-600 font-mono mt-1">
-            {draftCount} Exams
-          </span>
+
+        <div className="stat-card">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold text-[#9CA3AF] uppercase text-xs">Draft Results (Pending)</span>
+            <div className="w-8 h-8 rounded-[8px] bg-[#FFFBEB] text-[#D97706] flex items-center justify-center">
+              <Calendar size={14} />
+            </div>
+          </div>
+          <p className="text-2xl font-black font-mono text-[#D97706] leading-none mt-1">{draftCount}</p>
+          <p className="text-[11px] text-[#6B7280] mt-1.5">Releasable marks</p>
         </div>
       </div>
 
       {/* Filters Board */}
-      <div className="glass-panel p-4 rounded-[20px] border border-primary/5 space-y-4 bg-white">
-        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end text-xs font-semibold">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Search Student</label>
-            <input
-              type="text"
-              placeholder="Name or Roll Number..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
-            />
+      <div className="card-flat p-4 bg-white">
+        <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end text-xs">
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Search Student</span>
+            <div className="search-bar">
+              <Search size={14} className="text-[#9CA3AF]" />
+              <input
+                type="text"
+                placeholder="Name or Roll Number..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Filter Subject</label>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Filter Subject</span>
             <select
               value={subjectFilter}
               onChange={(e) => { setSubjectFilter(e.target.value); setPage(1); }}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="select"
             >
-              <option value="">-- All Subjects --</option>
+              <option value="">All Subjects</option>
               {subjectsList.map((sub) => (
                 <option key={sub._id} value={sub._id}>
                   {sub.name} ({sub.code})
@@ -190,14 +221,14 @@ const AdminResults = () => {
             </select>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Filter Exam</label>
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Filter Exam</span>
             <select
               value={examFilter}
               onChange={(e) => { setExamFilter(e.target.value); setPage(1); }}
-              className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
+              className="select"
             >
-              <option value="">-- All Exams --</option>
+              <option value="">All Exams</option>
               {examsList.map((ex) => (
                 <option key={ex._id} value={ex._id}>
                   {ex.title}
@@ -206,23 +237,31 @@ const AdminResults = () => {
             </select>
           </div>
 
+          <div className="flex flex-col gap-1">
+            <span className="text-[9px] font-mono font-bold text-[#9CA3AF] uppercase block mb-1">Status</span>
+            <select
+              value={publishedFilter}
+              onChange={(e) => { setPublishedFilter(e.target.value); setPage(1); }}
+              className="select"
+            >
+              <option value="">All Statuses</option>
+              <option value="true">Published</option>
+              <option value="false">Draft</option>
+            </select>
+          </div>
+
           <div className="flex gap-2">
-            <div className="flex flex-col gap-1.5 flex-1">
-              <label className="text-[10px] font-mono font-bold text-on-surface-variant uppercase">Status</label>
-              <select
-                value={publishedFilter}
-                onChange={(e) => { setPublishedFilter(e.target.value); setPage(1); }}
-                className="p-2.5 bg-surface-container-low border border-primary/10 rounded-xl focus:outline-none text-xs"
-              >
-                <option value="">-- All --</option>
-                <option value="true">Published</option>
-                <option value="false">Draft</option>
-              </select>
-            </div>
+            <button
+              type="submit"
+              className="btn-primary py-2 px-4 flex-1 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
+            >
+              <Search size={13} />
+              Search
+            </button>
             <button
               type="button"
               onClick={handleClearFilters}
-              className="py-2.5 px-4 rounded-xl border border-primary/10 text-on-surface-variant hover:bg-primary/5 text-xs font-bold transition-all shrink-0 h-[38px] self-end"
+              className="btn-secondary py-2 px-3 text-[12.5px] rounded-[10px] flex items-center justify-center gap-1.5"
             >
               Clear
             </button>
@@ -231,96 +270,96 @@ const AdminResults = () => {
       </div>
 
       {/* Results Table List */}
-      <div className="glass-panel rounded-[24px] border border-primary/5 overflow-hidden bg-white shadow-sm">
+      <div className="table-wrap">
         {loading ? (
-          <div className="p-12 space-y-4 animate-pulse">
-            <div className="h-8 bg-surface-container-high rounded w-full"></div>
-            <div className="h-8 bg-surface-container-high rounded w-full"></div>
-            <div className="h-8 bg-surface-container-high rounded w-full"></div>
+          <div className="space-y-3 p-4 animate-pulse">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-9 bg-gray-200 rounded w-full"></div>
+            ))}
           </div>
         ) : results.length === 0 ? (
-          <div className="p-16 text-center border-t border-primary/5">
-            <span className="material-symbols-outlined text-on-surface-variant/20 text-6xl mb-4">
-              history_edu
-            </span>
-            <h4 className="text-base font-bold text-on-surface">No Results Available</h4>
-            <p className="text-on-surface-variant text-xs mt-1">
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <Award size={24} />
+            </div>
+            <h4 className="text-base font-bold text-[#111111]">No Results Available</h4>
+            <p className="text-[#6B7280] text-xs mt-1">
               No auto-graded exam scorecards match your search criteria.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs font-semibold">
+            <table className="table">
               <thead>
-                <tr className="bg-primary/5 text-primary border-b border-primary/10 font-bold uppercase tracking-wider text-[10px]">
-                  <th className="p-4">Candidate Details</th>
-                  <th className="p-4">Exam Paper</th>
-                  <th className="p-4 text-center">Marks Obtained</th>
-                  <th className="p-4 text-center">Percentage</th>
-                  <th className="p-4 text-center">Pass/Fail</th>
-                  <th className="p-4 text-center">Status</th>
-                  <th className="p-4 text-center">Actions</th>
+                <tr>
+                  <th>Candidate Details</th>
+                  <th>Exam Paper</th>
+                  <th className="text-center">Marks Obtained</th>
+                  <th className="text-center">Percentage</th>
+                  <th className="text-center">Pass/Fail</th>
+                  <th className="text-center">Status</th>
+                  <th className="text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5">
+              <tbody>
                 {results.map((resDoc) => (
-                  <tr key={resDoc._id} className="hover:bg-primary/[0.02] transition-colors">
-                    <td className="p-4">
-                      <p className="font-bold text-primary">{resDoc.student?.name || 'Anonymous Student'}</p>
-                      <p className="text-[10px] text-on-surface-variant font-mono mt-0.5">
+                  <tr key={resDoc._id}>
+                    <td>
+                      <p className="font-bold text-[#8B1E3F]">{resDoc.student?.name || 'Anonymous Student'}</p>
+                      <p className="text-[10px] text-[#6B7280] font-mono mt-0.5">
                         Roll: {resDoc.student?.masterId?.rollNumber || 'N/A'}
                       </p>
                     </td>
-                    <td className="p-4">
-                      <p className="font-bold">{resDoc.exam?.title}</p>
-                      <p className="text-[10px] text-on-surface-variant mt-0.5">
+                    <td>
+                      <p className="font-bold text-[#111111]">{resDoc.exam?.title}</p>
+                      <p className="text-[10px] text-[#6B7280] mt-0.5">
                         Subject: {resDoc.exam?.subject?.name} ({resDoc.exam?.subject?.code})
                       </p>
                     </td>
-                    <td className="p-4 text-center font-mono font-bold">
+                    <td className="text-center font-mono font-bold text-[#111111]">
                       {resDoc.marksObtained} / {resDoc.totalMarks}
                     </td>
-                    <td className="p-4 text-center font-mono font-bold">
+                    <td className="text-center font-mono font-bold text-[#111111]">
                       {resDoc.percentage}%
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="text-center">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                        className={`badge ${
                           resDoc.status === 'Pass'
-                            ? 'bg-green-100 text-green-800 border border-green-200'
-                            : 'bg-red-100 text-red-800 border border-red-200'
+                            ? 'badge-green'
+                            : 'badge-red'
                         }`}
                       >
                         {resDoc.status}
                       </span>
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="text-center">
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
+                        className={`badge ${
                           resDoc.published
-                            ? 'bg-green-600 text-white shadow-sm'
-                            : 'bg-amber-500 text-white shadow-sm'
+                            ? 'badge-green font-bold'
+                            : 'badge-gray'
                         }`}
                       >
                         {resDoc.published ? 'Published' : 'Draft'}
                       </span>
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="text-center">
                       <div className="flex items-center justify-center gap-2">
                         {resDoc.published ? (
                           <button
                             onClick={() => handleUnpublishResults(resDoc.exam?._id)}
-                            className="py-1.5 px-3 rounded-lg border border-amber-600/30 text-amber-700 bg-amber-50 hover:bg-amber-100/50 text-[10px] font-bold transition-all flex items-center gap-1"
+                            className="py-1 px-2.5 text-[11.5px] rounded-[8px] border border-red-200 text-red-600 hover:bg-red-50 font-bold transition-all flex items-center gap-1"
                           >
-                            <span className="material-symbols-outlined text-xs">visibility_off</span>
+                            <EyeOff size={12} />
                             Unpublish
                           </button>
                         ) : (
                           <button
                             onClick={() => handlePublishResults(resDoc.exam?._id)}
-                            className="py-1.5 px-3 rounded-lg bg-primary text-white hover:bg-primary/95 text-[10px] font-bold transition-all shadow-sm flex items-center gap-1"
+                            className="py-1 px-2.5 text-[11.5px] rounded-[8px] bg-[#8B1E3F] text-white hover:bg-[#A62E52] font-bold transition-all flex items-center gap-1"
                           >
-                            <span className="material-symbols-outlined text-xs">publish</span>
+                            <Send size={12} />
                             Publish
                           </button>
                         )}
@@ -336,24 +375,26 @@ const AdminResults = () => {
 
       {/* Pagination controls */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 text-xs font-bold pt-2">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Previous
-          </button>
-          <span className="text-on-surface-variant font-mono">
-            Page {page} of {totalPages}
+        <div className="flex justify-between items-center px-6 py-4 bg-white border-t border-primary/5 text-xs text-[#6B7280]">
+          <span className="font-mono text-xs">
+            Showing {(page - 1) * limit + 1} - {Math.min(page * limit, totalResults)} of {totalResults} scorecards
           </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-            className="px-4 py-2 border border-primary/10 rounded-xl hover:bg-primary/5 disabled:opacity-40 transition-colors"
-          >
-            Next
-          </button>
+          <div className="flex gap-2">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Previous
+            </button>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+              className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
     </div>

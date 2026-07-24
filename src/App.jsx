@@ -82,6 +82,7 @@ import StudentNotifications from './pages/StudentNotifications';
 import StudentProfile from './pages/StudentProfile';
 import StudentSettings from './pages/StudentSettings';
 import StudentExamInterface from './pages/StudentExamInterface';
+import StudentReviewAnswers from './pages/StudentReviewAnswers';
 
 /**
  * Home path redirector based on authentication state and user role
@@ -235,6 +236,7 @@ const App = () => {
               <Route path="profile"       element={<StudentProfile />} />
               <Route path="settings"      element={<StudentSettings />} />
               <Route path="ai-center/:feature" element={<StudentAiCenter />} />
+              <Route path="results/review/:resultId" element={<StudentReviewAnswers />} />
               <Route index element={<Navigate to="dashboard" replace />} />
             </Route>
 

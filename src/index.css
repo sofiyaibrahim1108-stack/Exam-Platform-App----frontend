@@ -606,10 +606,9 @@ div[class*="bg-white"][class*="rounded-"][class*="shadow-"]:not([class*="input"]
 }
 
 /* ── Enterprise Clean Form Controls ── */
-form,
-.form-container,
-[class*="form-container"],
-[class*="admin-form"] {
+form:not([data-scope="auth"]),
+.form-container:not([data-scope="auth"]),
+[class*="form-container"]:not([data-scope="auth"]) {
   background-color: #FFFFFF !important;
   border-radius: 12px !important;
   border: 1px solid #E5E7EB !important;
@@ -618,19 +617,18 @@ form,
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-form:hover,
-.form-container:hover,
-[class*="form-container"]:hover,
-[class*="admin-form"]:hover {
+form:not([data-scope="auth"]):hover,
+.form-container:not([data-scope="auth"]):hover,
+[class*="form-container"]:not([data-scope="auth"]):hover {
   transform: none !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
   border-color: #E5E7EB !important;
 }
 
 /* Clean label hierarchy */
-form label,
-.form-container label,
-[class*="form-container"] label {
+form:not([data-scope="auth"]) label,
+.form-container:not([data-scope="auth"]) label,
+[class*="form-container"]:not([data-scope="auth"]) label {
   color: #4B5563 !important; /* dark gray text-gray-600 */
   font-weight: 600 !important;
   font-size: 0.8125rem !important;
@@ -638,19 +636,18 @@ form label,
 }
 
 /* Inputs, Selects & Textareas clean styles */
-form input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
-form select,
-form textarea,
-.form-container input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
-.form-container select,
-.form-container textarea,
-[class*="form-container"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
-[class*="form-container"] select,
-[class*="form-container"] textarea {
+form:not([data-scope="auth"]) input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+form:not([data-scope="auth"]) select,
+form:not([data-scope="auth"]) textarea,
+.form-container:not([data-scope="auth"]) input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+.form-container:not([data-scope="auth"]) select,
+.form-container:not([data-scope="auth"]) textarea,
+[class*="form-container"]:not([data-scope="auth"]) input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+[class*="form-container"]:not([data-scope="auth"]) select,
+[class*="form-container"]:not([data-scope="auth"]) textarea {
   background: #FFFFFF !important;
   border: 1px solid #D1D5DB !important; /* light gray borders */
   border-radius: 8px !important;
-  padding: 0.5rem 0.75rem !important;
   font-size: 0.875rem !important;
   color: #1F2937 !important;
   outline: none !important;
@@ -658,23 +655,45 @@ form textarea,
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-form input:focus,
-form select:focus,
-form textarea:focus,
-.form-container input:focus,
-.form-container select:focus,
-.form-container textarea:focus,
-[class*="form-container"] input:focus,
-[class*="form-container"] select:focus,
-[class*="form-container"] textarea:focus {
+/*
+  Default padding — deliberately NOT !important and wrapped in :where() so its
+  specificity is zero. This makes it act only as a fallback: any component that
+  already sets its own padding (e.g. Tailwind's pl-10 for icon-padded inputs like
+  the profile/security-credential fields) will always win, so icons never overlap
+  input text again anywhere in the app. Inputs with no custom padding class still
+  get this default 0.5rem/0.75rem spacing exactly like before.
+*/
+:where(
+  form:not([data-scope="auth"]) input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+  form:not([data-scope="auth"]) select,
+  form:not([data-scope="auth"]) textarea,
+  .form-container:not([data-scope="auth"]) input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+  .form-container:not([data-scope="auth"]) select,
+  .form-container:not([data-scope="auth"]) textarea,
+  [class*="form-container"]:not([data-scope="auth"]) input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+  [class*="form-container"]:not([data-scope="auth"]) select,
+  [class*="form-container"]:not([data-scope="auth"]) textarea
+) {
+  padding: 0.5rem 0.75rem;
+}
+
+form:not([data-scope="auth"]) input:focus,
+form:not([data-scope="auth"]) select:focus,
+form:not([data-scope="auth"]) textarea:focus,
+.form-container:not([data-scope="auth"]) input:focus,
+.form-container:not([data-scope="auth"]) select:focus,
+.form-container:not([data-scope="auth"]) textarea:focus,
+[class*="form-container"]:not([data-scope="auth"]) input:focus,
+[class*="form-container"]:not([data-scope="auth"]) select:focus,
+[class*="form-container"]:not([data-scope="auth"]) textarea:focus {
   border-color: #8B1538 !important; /* Deep maroon focus border */
   box-shadow: 0 0 0 3px rgba(139, 21, 56, 0.12) !important; /* Soft maroon ring */
 }
 
 /* Submits & Cancel form buttons overrides */
-form button[type="submit"],
-.form-container button[type="submit"],
-[class*="form-container"] button[type="submit"] {
+form:not([data-scope="auth"]) button[type="submit"],
+.form-container:not([data-scope="auth"]) button[type="submit"],
+[class*="form-container"]:not([data-scope="auth"]) button[type="submit"] {
   background-color: #8B1538 !important; /* Deep maroon */
   color: #FFFFFF !important;
   border: none !important;
@@ -687,17 +706,17 @@ form button[type="submit"],
   transition: background 0.15s ease !important;
 }
 
-form button[type="submit"]:hover,
-.form-container button[type="submit"]:hover,
-[class*="form-container"] button[type="submit"]:hover {
+form:not([data-scope="auth"]) button[type="submit"]:hover,
+.form-container:not([data-scope="auth"]) button[type="submit"]:hover,
+[class*="form-container"]:not([data-scope="auth"]) button[type="submit"]:hover {
   background-color: #720F2B !important;
   transform: none !important;
 }
 
 /* Outlined cancellation/secondary buttons inside form controls */
-form button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]),
-.form-container button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]),
-[class*="form-container"] button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]) {
+form:not([data-scope="auth"]) button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]),
+.form-container:not([data-scope="auth"]) button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]),
+[class*="form-container"]:not([data-scope="auth"]) button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]) {
   background-color: transparent !important;
   color: #8B1538 !important;
   border: 1px solid rgba(139, 21, 56, 0.3) !important;
@@ -709,23 +728,22 @@ form button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine
   transition: background 0.15s ease !important;
 }
 
-form button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover,
-.form-container button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover,
-[class*="form-container"] button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover {
+form:not([data-scope="auth"]) button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover,
+.form-container:not([data-scope="auth"]) button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover,
+[class*="form-container"]:not([data-scope="auth"]) button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover {
   background-color: #FDF3F6 !important;
   border-color: #8B1538 !important;
   transform: none !important;
 }
 
 /* Redesign input-underline as standard rounded inputs */
-form .input-underline,
-.form-container .input-underline,
-[class*="form-container"] .input-underline,
+form:not([data-scope="auth"]) .input-underline,
+.form-container:not([data-scope="auth"]) .input-underline,
+[class*="form-container"]:not([data-scope="auth"]) .input-underline,
 .input-underline {
   background: #FFFFFF !important;
   border: 1px solid #D1D5DB !important;
   border-radius: 8px !important;
-  padding: 0.5rem 0.75rem !important;
   font-size: 0.875rem !important;
   color: #1F2937 !important;
   outline: none !important;
@@ -733,14 +751,19 @@ form .input-underline,
   transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-form .input-underline:focus,
-.form-container .input-underline:focus,
-[class*="form-container"] .input-underline:focus,
+:where(
+  form:not([data-scope="auth"]) .input-underline,
+  .form-container:not([data-scope="auth"]) .input-underline,
+  [class*="form-container"]:not([data-scope="auth"]) .input-underline,
+  .input-underline
+) {
+  padding: 0.5rem 0.75rem;
+}
+
+form:not([data-scope="auth"]) .input-underline:focus,
+.form-container:not([data-scope="auth"]) .input-underline:focus,
+[class*="form-container"]:not([data-scope="auth"]) .input-underline:focus,
 .input-underline:focus {
   border-color: #8B1538 !important;
   box-shadow: 0 0 0 3px rgba(139, 21, 56, 0.12) !important;
 }
-
-
-
-

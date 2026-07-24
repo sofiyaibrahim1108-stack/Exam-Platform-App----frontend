@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   CheckCircle2, Clock, BookOpen, Award, TrendingUp, X, Search, Filter,
@@ -30,6 +31,7 @@ const performanceBadge = (pct) => {
 
 /* ── Result Detail Modal ─────────────────────────────────────────── */
 const ResultModal = ({ result, onClose }) => {
+  const navigate = useNavigate();
   const pb = result.percentage != null ? performanceBadge(result.percentage) : null;
 
   return (
@@ -135,6 +137,16 @@ const ResultModal = ({ result, onClose }) => {
                 Submitted: {new Date(result.attempt?.submissionTime || result.createdAt).toLocaleString()}
                 {result.passingMarks && ` · Pass Mark: ${result.passingMarks}`}
               </p>
+
+              <button
+                onClick={() => {
+                  onClose();
+                  navigate(`/student/results/review/${result._id}`);
+                }}
+                className="w-full mb-2 py-2.5 rounded-[12px] text-[13px] font-bold text-white bg-[#7A001F] hover:bg-[#9D174D] transition-colors"
+              >
+                Review Answers
+              </button>
 
               <button onClick={onClose}
                 className="w-full py-2.5 rounded-[12px] text-[13px] font-semibold text-[#6B7280] bg-[#F9FAFB] border border-[rgba(122,0,31,0.08)] hover:bg-[rgba(122,0,31,0.04)] transition-colors">
@@ -257,6 +269,22 @@ const StudentCompleted = () => {
     const matchSearch = !search || e.title.toLowerCase().includes(search.toLowerCase());
     const matchSubject = !subjectFilter || e.subject?._id === subjectFilter;
     return matchSearch && matchSubject;
+  }).sort((a, b) => {
+    const dateA = new Date(a.date || a.startTime || 0).getTime();
+    const dateB = new Date(b.date || b.startTime || 0).getTime();
+    if (dateB !== dateA) return dateB - dateA;
+
+    const compA = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+    const compB = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+    if (compB !== compA) return compB - compA;
+
+    const pubA = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+    const pubB = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+    if (pubB !== pubA) return pubB - pubA;
+
+    const createA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const createB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return createB - createA;
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / LIMIT));

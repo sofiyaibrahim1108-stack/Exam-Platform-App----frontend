@@ -27,6 +27,9 @@ const AdminResults = () => {
   // Statistics
   const [publishedCount, setPublishedCount] = useState(0);
   const [draftCount, setDraftCount] = useState(0);
+  const [verifiedCount, setVerifiedCount] = useState(0);
+  const [bulkPublishing, setBulkPublishing] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const fetchDropdowns = async () => {
     try {
@@ -69,8 +72,9 @@ const AdminResults = () => {
         const allRes = await api.get('/results', { params: { limit: 1000 } });
         if (allRes.data && allRes.data.success) {
           const list = allRes.data.data.results || [];
-          setPublishedCount(list.filter((r) => r.published).length);
-          setDraftCount(list.filter((r) => !r.published).length);
+          setPublishedCount(list.filter((r) => r.published || r.resultStatus === 'Published').length);
+          setVerifiedCount(list.filter((r) => !r.published && (r.resultStatus === 'Verified' || !r.resultStatus)).length);
+          setDraftCount(list.filter((r) => !r.published && r.resultStatus !== 'Verified' && r.resultStatus && r.resultStatus !== 'Published').length);
         }
       }
     } catch (error) {
@@ -128,6 +132,28 @@ const AdminResults = () => {
       }
     } catch (error) {
       toast.error(error.message || 'Failed to unpublish results.', { id: loadToast });
+    }
+  };
+
+  const handleBulkPublish = async () => {
+    setBulkPublishing(true);
+    setShowConfirmModal(false);
+    const loadToast = toast.loading('Bulk publishing results...');
+    try {
+      const response = await api.post('/results/publish-all', {
+        examId: examFilter || undefined,
+        subjectId: subjectFilter || undefined,
+        search: search || undefined,
+      });
+
+      if (response.data && response.data.success) {
+        toast.success(response.data.message || 'Results published successfully!', { id: loadToast });
+        fetchResults();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || 'Failed to bulk publish results.', { id: loadToast });
+    } finally {
+      setBulkPublishing(false);
     }
   };
 
@@ -268,6 +294,92 @@ const AdminResults = () => {
           </div>
         </form>
       </div>
+
+      {/* Bulk Publish Section */}
+      <div className="card-flat p-4 bg-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-wrap gap-4 text-xs font-semibold text-gray-500">
+          <div className="flex items-center gap-1.5">
+            <span>Total Students :</span>
+            <span className="font-bold font-mono text-[#8B1E3F]">{totalResults}</span>
+          </div>
+          <div className="w-px h-3 bg-gray-200 self-center hidden sm:block" />
+          <div className="flex items-center gap-1.5">
+            <span>Published :</span>
+            <span className="font-bold font-mono text-green-600">{publishedCount}</span>
+          </div>
+          <div className="w-px h-3 bg-gray-200 self-center hidden sm:block" />
+          <div className="flex items-center gap-1.5">
+            <span>Verified :</span>
+            <span className="font-bold font-mono text-[#8B1E3F]">{verifiedCount}</span>
+          </div>
+          <div className="w-px h-3 bg-gray-200 self-center hidden sm:block" />
+          <div className="flex items-center gap-1.5">
+            <span>Draft :</span>
+            <span className="font-bold font-mono text-amber-600">{draftCount}</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setShowConfirmModal(true)}
+          disabled={bulkPublishing || verifiedCount === 0}
+          className="btn-primary py-2 px-4 text-[12.5px] rounded-[10px] flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none"
+        >
+          {bulkPublishing ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span>Publishing Results...</span>
+            </>
+          ) : (
+            <>
+              <Send size={13} />
+              <span>Publish All Results</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {showConfirmModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-[20px] max-w-md w-full p-6 shadow-2xl border border-gray-100"
+            >
+              <h3 className="text-lg font-bold text-[#8B1E3F] mb-2">Publish Results</h3>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                Are you sure you want to publish results for all eligible students?
+                <br /><br />
+                This action will make the results visible to students.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-4 py-2 text-xs font-bold text-[#8B1E3F] hover:bg-gray-50 border border-[rgba(139,30,63,0.3)] rounded-lg transition-all"
+                  disabled={bulkPublishing}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBulkPublish}
+                  className="px-4 py-2 text-xs font-bold text-white bg-[#8B1E3F] hover:bg-[#A62E52] rounded-lg transition-all flex items-center gap-1.5"
+                  disabled={bulkPublishing}
+                >
+                  {bulkPublishing ? 'Publishing...' : 'Publish'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Results Table List */}
       <div className="table-wrap">

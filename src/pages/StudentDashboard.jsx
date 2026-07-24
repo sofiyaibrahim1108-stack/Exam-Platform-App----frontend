@@ -1215,10 +1215,20 @@ const StudentDashboard = () => {
                     </div>
                   </div>
 
-                  <div className="text-[9px] font-mono text-[#9CA3AF] text-right leading-none space-y-0.5">
+                  <div className="text-[9px] font-mono text-[#9CA3AF] text-right leading-none space-y-0.5 mb-4">
                     <p>Submission Time: {new Date(activeResult.attempt?.submissionTime || activeResult.createdAt).toLocaleString()}</p>
                     <p>Passing Threshold: {activeResult.passingMarks} Marks</p>
                   </div>
+
+                  <button
+                    onClick={() => {
+                      setModalOpen(false);
+                      navigate(`/student/results/review/${activeResult._id}`);
+                    }}
+                    className="w-full py-2.5 rounded-full bg-[#7A001F] text-white hover:bg-[#9D174D] text-xs font-bold transition-all shadow-md active:scale-95 text-center flex items-center justify-center gap-2"
+                  >
+                    Review Answers
+                  </button>
                 </div>
               )}
             </motion.div>

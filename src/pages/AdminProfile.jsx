@@ -5,8 +5,10 @@ import {
   User, Mail, Phone, Shield, Camera, Lock, Eye, EyeOff, Save, Trash2, Key, Info, Terminal, Settings
 } from 'lucide-react';
 import api from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const AdminProfile = () => {
+  const { updateUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,6 +88,9 @@ const AdminProfile = () => {
       const response = await api.put('/profile', payload);
       if (response.data && response.data.success) {
         toast.success('Profile details updated successfully!', { id: saveToast });
+        if (typeof updateUser === 'function') {
+          updateUser(response.data.data);
+        }
         fetchProfile();
       }
     } catch (error) {
@@ -160,6 +165,9 @@ const AdminProfile = () => {
 
       if (response.data && response.data.success) {
         toast.success('Profile photo uploaded successfully!', { id: photoToast });
+        if (typeof updateUser === 'function') {
+          updateUser(response.data.data);
+        }
         fetchProfile();
       }
     } catch (error) {
@@ -178,6 +186,9 @@ const AdminProfile = () => {
       const response = await api.delete('/profile/photo');
       if (response.data && response.data.success) {
         toast.success('Profile photo removed.', { id: removeToast });
+        if (typeof updateUser === 'function') {
+          updateUser({ avatar: '', profileImage: '', photoUrl: '' });
+        }
         fetchProfile();
       }
     } catch (error) {
@@ -188,7 +199,8 @@ const AdminProfile = () => {
   const getAvatarSrc = (avatar) => {
     if (!avatar) return null;
     if (avatar.startsWith('http://') || avatar.startsWith('https://')) return avatar;
-    return `http://localhost:5000/${avatar}`;
+    const baseUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api/v1', '') : 'http://localhost:5000';
+    return `${baseUrl}/${avatar}`;
   };
 
   // Password rules validation check helpers

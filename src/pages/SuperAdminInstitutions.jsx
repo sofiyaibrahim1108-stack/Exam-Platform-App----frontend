@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Search, Plus, Eye, Edit, Trash2, Building2, ExternalLink,
+  Globe, Phone, Mail, MapPin, X, Info, ShieldCheck, ShieldX, Calendar
+} from 'lucide-react';
 import api from '../services/api';
 
 const SuperAdminInstitutions = () => {
@@ -162,16 +166,16 @@ const SuperAdminInstitutions = () => {
     <div className="space-y-6">
       
       {/* Upper header section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-[24px] border border-primary/5">
+      <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(139,21,56,0.04)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-primary">Institution Management</h2>
-          <p className="text-on-surface-variant text-xs mt-1">Configure, register, and monitor academic institutions on the network.</p>
+          <h2 className="text-xl font-extrabold text-[#8B1538]">Institution Management</h2>
+          <p className="text-gray-500 text-xs mt-0.5 font-semibold">Configure, register, and monitor academic institutions on the network.</p>
         </div>
         <button
           onClick={() => setAddModalOpen(true)}
-          className="bg-primary text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
+          className="bg-[#8B1538] hover:bg-[#720F2B] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center gap-1.5 shadow-md shadow-[#8B1538]/10"
         >
-          <span className="material-symbols-outlined text-[20px]">add</span>
+          <Plus size={15} />
           Onboard Institution
         </button>
       </div>
@@ -179,8 +183,8 @@ const SuperAdminInstitutions = () => {
       {/* Search & Filter toolbar */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
         {/* Search */}
-        <div className="md:col-span-3 flex items-center bg-surface rounded-xl px-4 py-2 border border-primary/5 shadow-sm">
-          <span className="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+        <div className="md:col-span-3 flex items-center bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
+          <Search size={15} className="text-gray-400 shrink-0" />
           <input
             value={search}
             onChange={(e) => {
@@ -188,20 +192,20 @@ const SuperAdminInstitutions = () => {
               setCurrentPage(1);
             }}
             placeholder="Search institutions by name, code, or city..."
-            className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50 outline-none ml-2"
+            className="bg-transparent border-none focus:ring-0 text-xs font-semibold w-full placeholder:text-gray-400 outline-none ml-2 text-gray-800"
             type="text"
           />
         </div>
 
         {/* Status Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+        <div className="bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="w-full bg-transparent border-none text-xs font-semibold text-gray-600 focus:ring-0 outline-none cursor-pointer"
           >
             <option value="">All Clearances</option>
             <option value="Active">Active Nodes</option>
@@ -211,31 +215,27 @@ const SuperAdminInstitutions = () => {
       </div>
 
       {/* Main Content Card Wrapper */}
-      <div className="glass-panel p-6 rounded-[24px] shadow-sm">
-        
+      <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(139,21,56,0.04)]">
         {loading ? (
-          // Loading Skeleton
           <div className="space-y-4 py-4">
-            <div className="h-8 bg-surface-container-high animate-pulse rounded-lg w-full"></div>
+            <div className="h-8 bg-gray-100 animate-pulse rounded-lg w-full"></div>
             {[1, 2, 3].map((n) => (
-              <div key={n} className="h-16 bg-surface-container-low animate-pulse rounded-xl w-full"></div>
+              <div key={n} className="h-16 bg-gray-50 animate-pulse rounded-xl w-full"></div>
             ))}
           </div>
         ) : institutions.length === 0 ? (
-          // Empty State
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-            <span className="material-symbols-outlined text-primary/45 text-5xl">domain_disabled</span>
+            <Building2 size={40} className="text-gray-300" />
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-primary">No Institutions Found</h3>
-              <p className="text-on-surface-variant text-sm max-w-sm">No active or inactive university profiles match your search boundaries.</p>
+              <h3 className="text-sm font-bold text-gray-800">No Institutions Found</h3>
+              <p className="text-gray-500 text-xs max-w-sm font-semibold">No active or inactive university profiles match your search boundaries.</p>
             </div>
           </div>
         ) : (
-          // Data Table View
           <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-primary/10 pb-4 text-xs font-mono font-semibold text-primary uppercase tracking-wider">
+                <tr className="border-b border-gray-100 pb-4 text-xs font-mono font-bold text-gray-400 uppercase tracking-wider">
                   <th className="py-4 px-3">Logo</th>
                   <th className="py-4 px-3">Name & Code</th>
                   <th className="py-4 px-3">Contact Email</th>
@@ -244,12 +244,12 @@ const SuperAdminInstitutions = () => {
                   <th className="py-4 px-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 text-sm">
+              <tbody className="divide-y divide-gray-50 text-xs font-semibold text-gray-700">
                 {institutions.map((inst) => (
-                  <tr key={inst._id} className="hover:bg-primary/5 transition-colors">
+                  <tr key={inst._id} className="hover:bg-gray-50/50 transition-colors">
                     {/* Logo Column */}
                     <td className="py-4 px-3">
-                      <div className="w-12 h-12 rounded-lg border border-primary/10 flex items-center justify-center overflow-hidden bg-white">
+                      <div className="w-10 h-10 rounded-lg border border-gray-150 flex items-center justify-center overflow-hidden bg-white shrink-0">
                         {inst.logo ? (
                           <img
                             src={`${backendUrl}/${inst.logo}`}
@@ -257,25 +257,25 @@ const SuperAdminInstitutions = () => {
                             className="w-full h-full object-contain"
                           />
                         ) : (
-                          <span className="material-symbols-outlined text-primary text-xl">domain</span>
+                          <Building2 size={16} className="text-gray-405 text-[#8B1538]" />
                         )}
                       </div>
                     </td>
 
                     {/* Name & Code Column */}
                     <td className="py-4 px-3">
-                      <p className="font-semibold text-primary">{inst.institutionName}</p>
-                      <p className="font-mono text-xs text-on-surface-variant tracking-wider mt-0.5">{inst.institutionCode}</p>
+                      <p className="font-bold text-gray-850">{inst.institutionName}</p>
+                      <p className="font-mono text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">{inst.institutionCode}</p>
                     </td>
 
                     {/* Contact Email Column */}
                     <td className="py-4 px-3">
-                      <span className="font-medium text-on-surface-variant">{inst.email}</span>
+                      <span className="text-gray-500 font-semibold">{inst.email}</span>
                     </td>
 
                     {/* Location Column */}
                     <td className="py-4 px-3">
-                      <span className="font-semibold text-on-surface">
+                      <span className="text-gray-800">
                         {inst.city ? `${inst.city}, ` : ''}{inst.country || 'Global'}
                       </span>
                     </td>
@@ -284,51 +284,48 @@ const SuperAdminInstitutions = () => {
                     <td className="py-4 px-3 text-center">
                       <button
                         onClick={() => handleStatusToggle(inst)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                           inst.status === 'Active'
-                            ? 'bg-secondary/15 text-secondary'
-                            : 'bg-error/10 text-error'
-                        } hover:scale-95 transition-transform`}
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                            : 'bg-red-50 text-red-600 border border-red-100'
+                        } transition-transform`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${inst.status === 'Active' ? 'bg-secondary' : 'bg-error'}`}></span>
+                        <span className={`w-1 h-1 rounded-full ${inst.status === 'Active' ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
                         {inst.status}
                       </button>
                     </td>
 
                     {/* Actions Column */}
                     <td className="py-4 px-3 text-right">
-                      <div className="flex justify-end gap-3">
-                        {/* View Details Drawer trigger */}
+                      <div className="flex justify-end gap-2">
                         <button
                           onClick={() => {
                             setSelectedInst(inst);
                             setDetailsDrawerOpen(true);
                           }}
                           title="View Details"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">visibility</span>
+                          <Eye size={14} />
                         </button>
                         
-                        {/* Edit Modal trigger */}
                         <button
                           onClick={() => handleEditClick(inst)}
                           title="Edit Credentials"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-secondary transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-[#FDF3F6] text-[#8B1538] transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                          <Edit size={14} />
                         </button>
 
-                        {/* Delete Confirmation trigger */}
                         <button
                           onClick={() => {
                             setSelectedInst(inst);
                             setDeleteDialogOpen(true);
                           }}
                           title="Deactivate / Delete"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-error transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -338,22 +335,22 @@ const SuperAdminInstitutions = () => {
             </table>
 
             {/* Pagination footer */}
-            <div className="flex items-center justify-between border-t border-primary/10 mt-6 pt-4">
-              <span className="text-xs text-on-surface-variant font-mono">
-                Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
+            <div className="flex items-center justify-between border-t border-gray-100 mt-6 pt-4">
+              <span className="text-xs text-gray-400 font-mono font-bold">
+                Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
               </span>
               <div className="flex gap-2">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+                  className="px-3 py-1.5 border border-gray-200 text-xs font-bold rounded-lg hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none text-gray-600"
                 >
                   Previous
                 </button>
                 <button
                   disabled={currentPage === pagination.totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
-                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+                  className="px-3 py-1.5 border border-gray-200 text-xs font-bold rounded-lg hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none text-gray-600"
                 >
                   Next
                 </button>
@@ -382,50 +379,57 @@ const SuperAdminInstitutions = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-surface-container-lowest max-w-2xl w-full rounded-[24px] border border-primary/10 p-8 shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
+              className="relative bg-white max-w-2xl w-full rounded-[24px] border border-gray-150 p-8 shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
             >
-              <h3 className="text-xl font-bold text-primary mb-2">Onboard Academic Institution</h3>
-              <p className="text-on-surface-variant text-xs mb-6">Provision institutional servers, configurations, and contacts.</p>
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-[#8B1538]">Onboard Academic Institution</h3>
+                  <p className="text-gray-500 text-xs mt-0.5 font-semibold">Provision institutional servers, configurations, and contacts.</p>
+                </div>
+                <button onClick={() => setAddModalOpen(false)} className="p-1 rounded-full hover:bg-gray-100 text-gray-400">
+                  <X size={16} />
+                </button>
+              </div>
 
               <form onSubmit={handleSubmitAdd(onAddSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Name */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Institution Name</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Institution Name</label>
                     <input
                       {...registerAdd('institutionName', { required: 'Name is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
                       placeholder="e.g. University of California, Berkeley"
                     />
-                    {errorsAdd.institutionName && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.institutionName.message}</span>}
+                    {errorsAdd.institutionName && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.institutionName.message}</span>}
                   </div>
 
                   {/* Code */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Code</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Code</label>
                     <input
                       {...registerAdd('institutionCode', { required: 'Code is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base uppercase"
                       placeholder="e.g. UCB"
                     />
-                    {errorsAdd.institutionCode && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.institutionCode.message}</span>}
+                    {errorsAdd.institutionCode && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.institutionCode.message}</span>}
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Institutional Email</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Institutional Email</label>
                     <input
                       {...registerAdd('email', { required: 'Contact email is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
                       placeholder="e.g. admin@berkeley.edu"
                       type="email"
                     />
-                    {errorsAdd.email && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.email.message}</span>}
+                    {errorsAdd.email && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.email.message}</span>}
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Phone</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Phone</label>
                     <input
                       {...registerAdd('phone')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -435,7 +439,7 @@ const SuperAdminInstitutions = () => {
 
                   {/* Website */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Website URL</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Website URL</label>
                     <input
                       {...registerAdd('website')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -445,90 +449,91 @@ const SuperAdminInstitutions = () => {
 
                   {/* Address */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Street Address</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Street Address</label>
                     <input
                       {...registerAdd('address')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="110 Sproul Hall"
+                      placeholder="e.g. 101 University Hall"
                     />
                   </div>
 
                   {/* City */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">City</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">City</label>
                     <input
                       {...registerAdd('city')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="Berkeley"
+                      placeholder="e.g. Berkeley"
                     />
                   </div>
 
                   {/* State */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">State / Province</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">State / Province</label>
                     <input
                       {...registerAdd('state')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="California"
+                      placeholder="e.g. California"
                     />
                   </div>
 
                   {/* Country */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Country</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Country</label>
                     <input
                       {...registerAdd('country')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="United States"
+                      placeholder="e.g. United States"
                     />
                   </div>
 
                   {/* Postal Code */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Postal Code</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Postal Code</label>
                     <input
                       {...registerAdd('postalCode')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="94720"
+                      placeholder="e.g. 94720"
                     />
                   </div>
 
                   {/* Description */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Description / Notes</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Description / Notes</label>
                     <textarea
                       {...registerAdd('description')}
                       rows={2}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 focus:ring-0 outline-none text-base"
-                      placeholder="Notes on regional campus, settings, exam slots capacity..."
+                      className="w-full input-underline py-2 focus:ring-0 text-base"
+                      placeholder="Provide basic notes about campus parameters..."
                     />
                   </div>
 
-                  {/* Logo Image Upload */}
+                  {/* Logo Upload */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-2 uppercase px-1">Institutional Seal / Logo</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase">Institution Seal Logo</label>
                     <input
                       {...registerAdd('logo')}
-                      className="w-full text-xs text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/5 file:text-primary hover:file:bg-primary/10 file:cursor-pointer"
                       type="file"
                       accept="image/*"
+                      className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#FDF3F6] file:text-[#8B1538] hover:file:bg-[#FCEEF2] file:cursor-pointer"
                     />
                   </div>
                 </div>
 
-                <div className="flex gap-4 justify-end pt-4 border-t border-primary/5">
+                {/* Submit Row */}
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => setAddModalOpen(false)}
-                    className="py-3 px-6 rounded-xl border border-primary/10 text-sm font-semibold hover:bg-primary/5 active:scale-95 transition-all"
+                    className="px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors text-gray-500 border border-gray-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="py-3 px-6 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-container active:scale-[0.98] transition-all"
+                    className="px-4 py-2 bg-[#8B1538] hover:bg-[#720F2B] text-white rounded-xl text-xs font-bold transition-all"
                   >
-                    Complete Onboarding
+                    Register Node
                   </button>
                 </div>
               </form>
@@ -555,47 +560,54 @@ const SuperAdminInstitutions = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-surface-container-lowest max-w-2xl w-full rounded-[24px] border border-primary/10 p-8 shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
+              className="relative bg-white max-w-2xl w-full rounded-[24px] border border-gray-150 p-8 shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
             >
-              <h3 className="text-xl font-bold text-primary mb-2">Edit Institution Credentials</h3>
-              <p className="text-on-surface-variant text-xs mb-6">Modify contact information, network servers, and details.</p>
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-[#8B1538]">Edit Institution Details</h3>
+                  <p className="text-gray-500 text-xs mt-0.5 font-semibold">Modify security keys, active email lines, or campus descriptions.</p>
+                </div>
+                <button onClick={() => setEditModalOpen(false)} className="p-1 rounded-full hover:bg-gray-100 text-gray-400">
+                  <X size={16} />
+                </button>
+              </div>
 
               <form onSubmit={handleSubmitEdit(onEditSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Name */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Institution Name</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Institution Name</label>
                     <input
                       {...registerEdit('institutionName', { required: 'Name is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
                     />
-                    {errorsEdit.institutionName && <span className="text-error text-xs block font-mono mt-1">{errorsEdit.institutionName.message}</span>}
+                    {errorsEdit.institutionName && <span className="text-red-500 text-xs block font-mono mt-1">{errorsEdit.institutionName.message}</span>}
                   </div>
 
                   {/* Code */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Code</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Code</label>
                     <input
                       {...registerEdit('institutionCode', { required: 'Code is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base uppercase"
+                      disabled
                     />
-                    {errorsEdit.institutionCode && <span className="text-error text-xs block font-mono mt-1">{errorsEdit.institutionCode.message}</span>}
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Institutional Email</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Institutional Email</label>
                     <input
                       {...registerEdit('email', { required: 'Contact email is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
                       type="email"
                     />
-                    {errorsEdit.email && <span className="text-error text-xs block font-mono mt-1">{errorsEdit.email.message}</span>}
+                    {errorsEdit.email && <span className="text-red-500 text-xs block font-mono mt-1">{errorsEdit.email.message}</span>}
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Phone</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Phone</label>
                     <input
                       {...registerEdit('phone')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -604,7 +616,7 @@ const SuperAdminInstitutions = () => {
 
                   {/* Website */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Website URL</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Website URL</label>
                     <input
                       {...registerEdit('website')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -613,7 +625,7 @@ const SuperAdminInstitutions = () => {
 
                   {/* Address */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Street Address</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Street Address</label>
                     <input
                       {...registerEdit('address')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -622,7 +634,7 @@ const SuperAdminInstitutions = () => {
 
                   {/* City */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">City</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">City</label>
                     <input
                       {...registerEdit('city')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -631,7 +643,7 @@ const SuperAdminInstitutions = () => {
 
                   {/* State */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">State / Province</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">State / Province</label>
                     <input
                       {...registerEdit('state')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -640,7 +652,7 @@ const SuperAdminInstitutions = () => {
 
                   {/* Country */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Country</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Country</label>
                     <input
                       {...registerEdit('country')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -649,7 +661,7 @@ const SuperAdminInstitutions = () => {
 
                   {/* Postal Code */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Postal Code</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Postal Code</label>
                     <input
                       {...registerEdit('postalCode')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
@@ -658,39 +670,40 @@ const SuperAdminInstitutions = () => {
 
                   {/* Description */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Description / Notes</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Description / Notes</label>
                     <textarea
                       {...registerEdit('description')}
                       rows={2}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2 focus:ring-0 outline-none text-base"
+                      className="w-full input-underline py-2 focus:ring-0 text-base"
                     />
                   </div>
 
-                  {/* Logo Image Upload */}
+                  {/* Logo Upload */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-2 uppercase px-1">Change Seal / Logo (Optional)</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-2 uppercase">Modify Institution Seal Logo</label>
                     <input
                       {...registerEdit('logo')}
-                      className="w-full text-xs text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/5 file:text-primary hover:file:bg-primary/10 file:cursor-pointer"
                       type="file"
                       accept="image/*"
+                      className="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#FDF3F6] file:text-[#8B1538] hover:file:bg-[#FCEEF2] file:cursor-pointer"
                     />
                   </div>
                 </div>
 
-                <div className="flex gap-4 justify-end pt-4 border-t border-primary/5">
+                {/* Submit Row */}
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => setEditModalOpen(false)}
-                    className="py-3 px-6 rounded-xl border border-primary/10 text-sm font-semibold hover:bg-primary/5 active:scale-95 transition-all"
+                    className="px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors text-gray-500 border border-gray-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="py-3 px-6 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-container active:scale-[0.98] transition-all"
+                    className="px-4 py-2 bg-[#8B1538] hover:bg-[#720F2B] text-white rounded-xl text-xs font-bold transition-all"
                   >
-                    Save Changes
+                    Sync Credentials
                   </button>
                 </div>
               </form>
@@ -700,7 +713,7 @@ const SuperAdminInstitutions = () => {
       </AnimatePresence>
 
       {/* ========================================================
-          DELETE DIALOG
+          DELETE MODAL
       ======================================================== */}
       <AnimatePresence>
         {deleteDialogOpen && (
@@ -717,32 +730,33 @@ const SuperAdminInstitutions = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-surface-container-lowest max-w-md w-full rounded-[24px] border border-primary/10 p-8 shadow-2xl z-50 text-center space-y-6"
+              className="relative bg-white max-w-md w-full rounded-[24px] border border-gray-150 p-6 shadow-2xl z-50"
             >
-              <div className="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto text-3xl">
-                <span className="material-symbols-outlined">warning</span>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center shrink-0">
+                  <Trash2 size={20} />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-base font-extrabold text-gray-800">Archive Academic Profile</h3>
+                  <p className="text-gray-500 text-xs font-semibold leading-relaxed">
+                    Are you sure you want to deactivate and soft-delete <span className="font-bold text-[#8B1538]">{selectedInst?.institutionName}</span>? 
+                    All sub-databases associated with this node will lose active sync clearance.
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-primary">Deactivate Institution?</h3>
-                <p className="text-on-surface-variant text-sm">
-                  This will archive the profile of <span className="font-semibold text-primary">{selectedInst?.institutionName}</span>. 
-                  Syllabi and users will remain referenced, but active exams and access credentials will be blocked.
-                </p>
-              </div>
-
-              <div className="flex gap-4 justify-center">
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
                 <button
                   onClick={() => setDeleteDialogOpen(false)}
-                  className="py-3 px-6 rounded-xl border border-primary/10 text-sm font-semibold hover:bg-primary/5 active:scale-95 transition-all w-1/2"
+                  className="px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors text-gray-500 border border-gray-200"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteConfirm}
-                  className="py-3 px-6 rounded-xl bg-error text-white text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all w-1/2"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all"
                 >
-                  Confirm Deactivation
+                  Deactivate Profile
                 </button>
               </div>
             </motion.div>
@@ -751,111 +765,166 @@ const SuperAdminInstitutions = () => {
       </AnimatePresence>
 
       {/* ========================================================
-          VIEW DETAILS DRAWER
+          DETAILS DRAWER
       ======================================================== */}
       <AnimatePresence>
-        {detailsDrawerOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end">
+        {detailsDrawerOpen && selectedInst && (
+          <div className="fixed inset-0 z-50 overflow-hidden">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDetailsDrawerOpen(false)}
-              className="fixed inset-0 bg-black/35 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs"
             ></motion.div>
 
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-md h-full bg-surface-container-lowest border-l border-primary/10 shadow-2xl p-8 z-50 overflow-y-auto flex flex-col justify-between"
-            >
-              <div className="space-y-8">
-                {/* Header Drawer */}
-                <div className="flex justify-between items-center pb-4 border-b border-primary/10">
-                  <h3 className="text-lg font-bold text-primary">Institution Details</h3>
+            <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'tween', duration: 0.3 }}
+                className="w-screen max-w-md bg-white shadow-2xl border-l border-gray-150 flex flex-col"
+              >
+                {/* Header */}
+                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl border border-gray-150 bg-white flex items-center justify-center overflow-hidden shrink-0">
+                      {selectedInst.logo ? (
+                        <img
+                          src={`${backendUrl}/${selectedInst.logo}`}
+                          alt={selectedInst.institutionName}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <Building2 size={20} className="text-[#8B1538]" />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold text-gray-800">{selectedInst.institutionName}</h4>
+                      <p className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-wider mt-0.5">{selectedInst.institutionCode}</p>
+                    </div>
+                  </div>
                   <button
                     onClick={() => setDetailsDrawerOpen(false)}
-                    className="p-1 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors"
+                    className="p-1 rounded-full hover:bg-gray-200 text-gray-400"
                   >
-                    <span className="material-symbols-outlined">close</span>
+                    <X size={16} />
                   </button>
                 </div>
 
-                {/* Identity Card */}
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-24 h-24 rounded-2xl border-2 border-primary/20 flex items-center justify-center overflow-hidden bg-white p-2">
-                    {selectedInst?.logo ? (
-                      <img
-                        src={`${backendUrl}/${selectedInst.logo}`}
-                        alt={selectedInst.institutionName}
-                        className="w-full h-full object-contain"
-                      />
-                    ) : (
-                      <span className="material-symbols-outlined text-primary text-4xl">domain</span>
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-primary">{selectedInst?.institutionName}</h4>
-                    <p className="font-mono text-xs text-secondary font-bold tracking-widest mt-1 uppercase">{selectedInst?.institutionCode}</p>
-                  </div>
-                </div>
-
-                {/* Info Blocks */}
-                <div className="space-y-4 text-sm">
-                  {/* Website */}
-                  <div className="flex justify-between py-2 border-b border-primary/5">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase">Website</span>
-                    <a
-                      href={selectedInst?.website ? (selectedInst.website.startsWith('http') ? selectedInst.website : `https://${selectedInst.website}`) : '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-secondary hover:underline truncate max-w-xs"
-                    >
-                      {selectedInst?.website || 'Not configured'}
-                    </a>
-                  </div>
-
-                  {/* Email */}
-                  <div className="flex justify-between py-2 border-b border-primary/5">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase">Email</span>
-                    <span className="font-semibold text-on-surface">{selectedInst?.email}</span>
-                  </div>
-
-                  {/* Phone */}
-                  <div className="flex justify-between py-2 border-b border-primary/5">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase">Phone</span>
-                    <span className="font-semibold text-on-surface">{selectedInst?.phone || 'Not configured'}</span>
-                  </div>
-
-                  {/* Address */}
-                  <div className="flex justify-between py-2 border-b border-primary/5">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase">Address</span>
-                    <span className="font-semibold text-on-surface text-right max-w-xs leading-snug">
-                      {selectedInst?.address ? `${selectedInst.address}, ` : ''}
-                      {selectedInst?.city ? `${selectedInst.city}, ` : ''}
-                      {selectedInst?.state ? `${selectedInst.state}, ` : ''}
-                      {selectedInst?.country || ''}
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 font-semibold text-xs text-gray-700">
+                  {/* Status Card */}
+                  <div className="p-4 rounded-2xl border border-gray-150 bg-gray-50/50 flex items-center justify-between">
+                    <span className="text-gray-400 font-mono text-[10px] uppercase font-bold tracking-wider">Node Standing</span>
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold ${
+                      selectedInst.status === 'Active'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                        : 'bg-red-50 text-red-600 border border-red-100'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${selectedInst.status === 'Active' ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+                      {selectedInst.status}
                     </span>
                   </div>
 
-                  {/* Description */}
-                  <div className="py-2">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase block mb-1">About / Notes</span>
-                    <p className="text-on-surface-variant leading-relaxed bg-surface-container py-3 px-4 rounded-xl text-xs">
-                      {selectedInst?.description || 'No notes provisioned for this institutional profile.'}
+                  {/* Basic Parameters */}
+                  <div className="space-y-4">
+                    <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono border-b border-gray-100 pb-1.5">Network Coordinates</h5>
+                    
+                    <div className="flex items-start gap-3">
+                      <Mail size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Contact Email</p>
+                        <p className="text-gray-800 mt-0.5">{selectedInst.email}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Phone size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Phone Line</p>
+                        <p className="text-gray-800 mt-0.5">{selectedInst.phone || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Globe size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Web Domain</p>
+                        {selectedInst.website ? (
+                          <a
+                            href={selectedInst.website.startsWith('http') ? selectedInst.website : `https://${selectedInst.website}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#8B1538] hover:underline flex items-center gap-1 mt-0.5"
+                          >
+                            {selectedInst.website}
+                            <ExternalLink size={10} />
+                          </a>
+                        ) : (
+                          <p className="text-gray-500 mt-0.5">N/A</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Physical Address */}
+                  <div className="space-y-4">
+                    <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono border-b border-gray-100 pb-1.5">Campus Location</h5>
+                    
+                    <div className="flex items-start gap-3">
+                      <MapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Street Address</p>
+                        <p className="text-gray-800 mt-0.5">{selectedInst.address || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">City</p>
+                        <p className="text-gray-800 mt-0.5">{selectedInst.city || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">State / Province</p>
+                        <p className="text-gray-800 mt-0.5">{selectedInst.state || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Country</p>
+                        <p className="text-gray-800 mt-0.5">{selectedInst.country || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Postal Code</p>
+                        <p className="text-gray-800 mt-0.5">{selectedInst.postalCode || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Notes / Description */}
+                  <div className="space-y-2">
+                    <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono border-b border-gray-100 pb-1.5">Institutional Context</h5>
+                    <p className="text-xs text-gray-500 leading-relaxed font-semibold">
+                      {selectedInst.description || 'No description notes saved for this campus profile.'}
                     </p>
                   </div>
                 </div>
-              </div>
 
-              {/* Status block in drawer */}
-              <div className="pt-6 border-t border-primary/10 mt-8 flex justify-between items-center text-sm font-mono text-[10px] font-semibold text-on-surface-variant">
-                <span>NODE_STATUS: {selectedInst?.status?.toUpperCase()}</span>
-                <span>ONBOARDED: {selectedInst?.createdAt ? new Date(selectedInst.createdAt).toLocaleDateString() : ''}</span>
-              </div>
-            </motion.div>
+                {/* Footer */}
+                <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setDetailsDrawerOpen(false);
+                      handleEditClick(selectedInst);
+                    }}
+                    className="px-4 py-2 bg-[#8B1538] hover:bg-[#720F2B] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+                  >
+                    <Edit size={12} />
+                    Modify Profile
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           </div>
         )}
       </AnimatePresence>

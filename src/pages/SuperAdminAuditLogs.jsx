@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import {
+  Search, History, Download, FileText, Calendar, Clock,
+  Laptop, ShieldAlert, ArrowLeftRight, Activity, X
+} from 'lucide-react';
 import api from '../services/api';
 
 const SuperAdminAuditLogs = () => {
@@ -141,36 +145,36 @@ const SuperAdminAuditLogs = () => {
       `}} />
 
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-[24px] border border-primary/5 no-print">
+      <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(139,21,56,0.04)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 no-print">
         <div>
-          <h2 className="text-2xl font-bold text-primary">Platform Audit Logs</h2>
-          <p className="text-on-surface-variant text-xs mt-1">Audit events, configuration changes, password resets, and user entries.</p>
+          <h2 className="text-xl font-extrabold text-[#8B1538]">Platform Audit Logs</h2>
+          <p className="text-gray-500 text-xs mt-0.5 font-semibold">Audit events, configuration changes, password resets, and user entries.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2.5">
           <button
             onClick={handleExportCSV}
-            className="border border-primary/15 text-primary py-3 px-5 rounded-xl font-semibold hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center gap-2 text-sm"
+            className="border border-[#8B1538]/20 text-[#8B1538] hover:bg-[#FDF3F6] hover:border-[#8B1538] py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
           >
-            <span className="material-symbols-outlined text-[20px]">csv</span>
+            <Download size={14} />
             Export CSV
           </button>
           <button
             onClick={handleExportPDF}
-            className="bg-primary text-white py-3 px-5 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 text-sm shadow-lg shadow-primary/10"
+            className="bg-[#8B1538] hover:bg-[#720F2B] text-white py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-[#8B1538]/10"
           >
-            <span className="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+            <FileText size={14} />
             Export PDF
           </button>
         </div>
       </div>
 
       {/* Filters Toolbar */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end no-print">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end no-print">
         {/* Search Input */}
-        <div className="md:col-span-2 space-y-1">
-          <label className="block font-mono text-[9px] font-semibold text-on-surface-variant uppercase px-1">Details Search</label>
-          <div className="flex items-center bg-surface rounded-xl px-4 py-2 border border-primary/5 shadow-sm">
-            <span className="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+        <div className="lg:col-span-2 space-y-1">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">Details Search</label>
+          <div className="flex items-center bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
+            <Search size={15} className="text-gray-400 shrink-0" />
             <input
               value={search}
               onChange={(e) => {
@@ -178,7 +182,7 @@ const SuperAdminAuditLogs = () => {
                 setCurrentPage(1);
               }}
               placeholder="Search descriptions, IP addresses..."
-              className="bg-transparent border-none focus:ring-0 text-xs w-full placeholder:text-on-surface-variant/50 outline-none ml-2"
+              className="bg-transparent border-none focus:ring-0 text-xs font-semibold w-full placeholder:text-gray-400 outline-none ml-2 text-gray-800"
               type="text"
             />
           </div>
@@ -186,15 +190,15 @@ const SuperAdminAuditLogs = () => {
 
         {/* Action Type Filter */}
         <div className="space-y-1">
-          <label className="block font-mono text-[9px] font-semibold text-on-surface-variant uppercase px-1">Action Type</label>
-          <div className="bg-surface rounded-xl px-3 py-2 border border-primary/5 shadow-sm">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">Action Type</label>
+          <div className="bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
             <select
               value={actionFilter}
               onChange={(e) => {
                 setActionFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-transparent border-none text-xs text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+              className="w-full bg-transparent border-none text-xs font-semibold text-gray-600 focus:ring-0 outline-none cursor-pointer"
             >
               <option value="">All Actions</option>
               {ACTIONS.map((act) => (
@@ -206,15 +210,15 @@ const SuperAdminAuditLogs = () => {
 
         {/* Performer User Filter */}
         <div className="space-y-1">
-          <label className="block font-mono text-[9px] font-semibold text-on-surface-variant uppercase px-1">User Performer</label>
-          <div className="bg-surface rounded-xl px-3 py-2 border border-primary/5 shadow-sm">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">User Performer</label>
+          <div className="bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
             <select
               value={userFilter}
               onChange={(e) => {
                 setUserFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-transparent border-none text-xs text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+              className="w-full bg-transparent border-none text-xs font-semibold text-gray-600 focus:ring-0 outline-none cursor-pointer"
             >
               <option value="">All Performers</option>
               {usersList.map((user) => (
@@ -225,9 +229,9 @@ const SuperAdminAuditLogs = () => {
         </div>
 
         {/* Start / End Date Picker */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="space-y-1">
-            <label className="block font-mono text-[9px] font-semibold text-on-surface-variant uppercase px-1">Start Date</label>
+        <div className="space-y-1">
+          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">Date Constraints</label>
+          <div className="grid grid-cols-2 gap-2">
             <input
               type="date"
               value={startDate}
@@ -235,11 +239,8 @@ const SuperAdminAuditLogs = () => {
                 setStartDate(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-surface border border-primary/5 rounded-xl px-2.5 py-1.5 text-xs text-on-surface outline-none focus:border-primary cursor-pointer shadow-sm"
+              className="w-full bg-white border border-gray-150 rounded-xl px-3 py-1.5 text-xs text-gray-600 outline-none focus:border-[#8B1538] focus:ring-0 cursor-pointer shadow-xs font-semibold"
             />
-          </div>
-          <div className="space-y-1">
-            <label className="block font-mono text-[9px] font-semibold text-on-surface-variant uppercase px-1">End Date</label>
             <input
               type="date"
               value={endDate}
@@ -247,38 +248,34 @@ const SuperAdminAuditLogs = () => {
                 setEndDate(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-surface border border-primary/5 rounded-xl px-2.5 py-1.5 text-xs text-on-surface outline-none focus:border-primary cursor-pointer shadow-sm"
+              className="w-full bg-white border border-gray-150 rounded-xl px-3 py-1.5 text-xs text-gray-600 outline-none focus:border-[#8B1538] focus:ring-0 cursor-pointer shadow-xs font-semibold"
             />
           </div>
         </div>
       </div>
 
       {/* Main Print Wrapper */}
-      <div id="print-section" className="glass-panel p-6 rounded-[24px] shadow-sm">
-        
+      <div id="print-section" className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(139,21,56,0.04)]">
         {loading ? (
-          // Loading Skeletons
           <div className="space-y-4 py-4">
-            <div className="h-8 bg-surface-container-high animate-pulse rounded-lg w-full"></div>
+            <div className="h-8 bg-gray-100 animate-pulse rounded-lg w-full"></div>
             {[1, 2, 3].map((n) => (
-              <div key={n} className="h-14 bg-surface-container-low animate-pulse rounded-xl w-full"></div>
+              <div key={n} className="h-14 bg-gray-50 animate-pulse rounded-xl w-full"></div>
             ))}
           </div>
         ) : logs.length === 0 ? (
-          // Empty State
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-            <span className="material-symbols-outlined text-primary/45 text-5xl">history_toggle_off</span>
+            <History size={40} className="text-gray-300" />
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-primary">No Event Records</h3>
-              <p className="text-on-surface-variant text-sm max-w-sm">No recorded action logs matches the active filters query variables.</p>
+              <h3 className="text-sm font-bold text-gray-800">No Event Records</h3>
+              <p className="text-gray-500 text-xs max-w-sm font-semibold">No recorded action logs matches the active filters query variables.</p>
             </div>
           </div>
         ) : (
-          // Audits Data Table
           <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse text-sm">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-primary/10 pb-4 text-xs font-mono font-semibold text-primary uppercase tracking-wider">
+                <tr className="border-b border-gray-100 pb-4 text-xs font-mono font-bold text-gray-400 uppercase tracking-wider">
                   <th className="py-4 px-3">Date & Time</th>
                   <th className="py-4 px-3">Performer</th>
                   <th className="py-4 px-3">Clearance Role</th>
@@ -288,27 +285,27 @@ const SuperAdminAuditLogs = () => {
                   <th className="py-4 px-3">Device Agent</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 text-xs">
+              <tbody className="divide-y divide-gray-50 text-xs font-semibold text-gray-700">
                 {logs.map((log) => (
-                  <tr key={log._id} className="hover:bg-primary/5 transition-colors">
+                  <tr key={log._id} className="hover:bg-gray-50/50 transition-colors">
                     {/* Timestamp */}
-                    <td className="py-4 px-3 font-mono text-[11px] text-on-surface-variant">
+                    <td className="py-4 px-3 font-mono text-[10px] text-gray-400">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
 
                     {/* Performer */}
-                    <td className="py-4 px-3 font-semibold text-on-surface">
+                    <td className="py-4 px-3 font-bold text-gray-850">
                       {log.user ? log.user.name : 'System Engine'}
                     </td>
 
                     {/* Role */}
                     <td className="py-4 px-3">
                       {log.user ? (
-                        <span className="bg-secondary/10 text-secondary px-2.5 py-0.5 rounded-full font-mono text-[10px] font-semibold uppercase">
+                        <span className="bg-[#FDF3F6] border border-[#8B1538]/10 text-[#8B1538] px-2 py-0.5 rounded-full font-mono text-[9px] font-bold uppercase">
                           {log.user.role}
                         </span>
                       ) : (
-                        <span className="bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-mono text-[10px] font-semibold uppercase">
+                        <span className="bg-gray-50 border border-gray-200 text-gray-500 px-2 py-0.5 rounded-full font-mono text-[9px] font-bold uppercase">
                           SYSTEM
                         </span>
                       )}
@@ -316,23 +313,23 @@ const SuperAdminAuditLogs = () => {
 
                     {/* Action */}
                     <td className="py-4 px-3">
-                      <span className="font-mono font-bold text-primary uppercase text-[10px] tracking-wider">
+                      <span className="font-mono font-extrabold text-[#8B1538] uppercase text-[10px] tracking-wider">
                         {log.action}
                       </span>
                     </td>
 
                     {/* Details Description */}
-                    <td className="py-4 px-3 text-on-surface-variant font-medium max-w-[250px] truncate leading-normal" title={log.details}>
+                    <td className="py-4 px-3 text-gray-500 max-w-[250px] truncate leading-normal" title={log.details}>
                       {log.details}
                     </td>
 
                     {/* IP */}
-                    <td className="py-4 px-3 font-mono text-[10px] text-on-surface-variant">
+                    <td className="py-4 px-3 font-mono text-[10px] text-gray-400">
                       {log.ipAddress || '127.0.0.1'}
                     </td>
 
                     {/* User Agent */}
-                    <td className="py-4 px-3 text-on-surface-variant font-medium max-w-[150px] truncate" title={log.userAgent}>
+                    <td className="py-4 px-3 text-gray-400 font-mono text-[10px] max-w-[150px] truncate" title={log.userAgent}>
                       {log.userAgent || '—'}
                     </td>
                   </tr>
@@ -341,22 +338,22 @@ const SuperAdminAuditLogs = () => {
             </table>
 
             {/* Pagination Controls */}
-            <div className="flex items-center justify-between border-t border-primary/10 mt-6 pt-4 no-print">
-              <span className="text-xs text-on-surface-variant font-mono">
-                Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
+            <div className="flex items-center justify-between border-t border-gray-100 mt-6 pt-4 no-print">
+              <span className="text-xs text-gray-400 font-mono font-bold">
+                Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
               </span>
               <div className="flex gap-2">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+                  className="px-3 py-1.5 border border-gray-200 text-xs font-bold rounded-lg hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none text-gray-600"
                 >
                   Previous
                 </button>
                 <button
                   disabled={currentPage === pagination.totalPages}
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, pagination.totalPages))}
-                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+                  className="px-3 py-1.5 border border-gray-200 text-xs font-bold rounded-lg hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none text-gray-600"
                 >
                   Next
                 </button>

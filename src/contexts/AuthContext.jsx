@@ -135,6 +135,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Update the currently logged-in user's data in context.
+   * Call this after any profile edit (staff or student) so the
+   * navbar avatar/name and sidebar avatar/name refresh instantly
+   * without needing a full page reload.
+   */
+  const updateUser = (updatedFields) => {
+  console.log('🔵 updateUser CALLED with:', updatedFields);
+  setUser((prev) => {
+    console.log('🔵 prev:', prev?.name, '→ new:', updatedFields?.name);
+    return prev ? { ...prev, ...updatedFields } : updatedFields;
+  });
+};
+
   const contextValue = {
     user,
     loading,
@@ -145,7 +159,8 @@ export const AuthProvider = ({ children }) => {
     registerStudent,
     logout,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    updateUser
   };
 
   return (

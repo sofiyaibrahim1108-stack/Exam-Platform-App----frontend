@@ -91,7 +91,7 @@ const StaffQuestionGenerator = () => {
   const fetchInitialData = async () => {
     setInitialLoading(true);
     try {
-      const assResponse = await api.get('/faculty-assignments/staff/me');
+      const assResponse = await api.get('/staff-subjects/my-subjects');
       const sylResponse = await api.get('/syllabi');
       
       if (assResponse.data && assResponse.data.success) {

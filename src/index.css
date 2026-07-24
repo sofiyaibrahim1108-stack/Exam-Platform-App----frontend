@@ -584,8 +584,8 @@
 .pagination-btn { @apply page-btn; }
 
 /* ── Global Ad-Hoc Card Overrides ── */
-div[class*="bg-white"][class*="rounded-"][class*="border"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]),
-div[class*="bg-white"][class*="rounded-"][class*="shadow-"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]) {
+div[class*="bg-white"][class*="rounded-"][class*="border"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]):not([class*="form"]):not(:has(form)),
+div[class*="bg-white"][class*="rounded-"][class*="shadow-"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]):not([class*="form"]):not(:has(form)) {
   background-color: #FFFFFF !important;
   border-color: #EADFE3 !important;
   border-width: 1px !important;
@@ -598,11 +598,149 @@ div[class*="bg-white"][class*="rounded-"][class*="shadow-"]:not([class*="input"]
               background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-div[class*="bg-white"][class*="rounded-"][class*="border"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]):hover,
-div[class*="bg-white"][class*="rounded-"][class*="shadow-"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]):hover {
+div[class*="bg-white"][class*="rounded-"][class*="border"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]):not([class*="form"]):not(:has(form)):hover,
+div[class*="bg-white"][class*="rounded-"][class*="shadow-"]:not([class*="input"]):not([class*="select"]):not([class*="search"]):not([class*="btn"]):not([class*="badge"]):not([class*="dropdown"]):not([class*="modal"]):not([class*="toast"]):not([class*="tooltip"]):not([class*="menu"]):not([class*="popover"]):not([class*="sidebar"]):not([class*="topbar"]):not([class*="navbar"]):not([class*="avatar"]):not([class*="form"]):not(:has(form)):hover {
   transform: translateY(-4px) !important;
   box-shadow: 0 20px 45px rgba(106,0,25,.12) !important;
   border-color: rgba(106,0,25,0.15) !important;
 }
+
+/* ── Enterprise Clean Form Controls ── */
+form,
+.form-container,
+[class*="form-container"],
+[class*="admin-form"] {
+  background-color: #FFFFFF !important;
+  border-radius: 12px !important;
+  border: 1px solid #E5E7EB !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  transform: none !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+form:hover,
+.form-container:hover,
+[class*="form-container"]:hover,
+[class*="admin-form"]:hover {
+  transform: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  border-color: #E5E7EB !important;
+}
+
+/* Clean label hierarchy */
+form label,
+.form-container label,
+[class*="form-container"] label {
+  color: #4B5563 !important; /* dark gray text-gray-600 */
+  font-weight: 600 !important;
+  font-size: 0.8125rem !important;
+  margin-bottom: 0.375rem !important;
+}
+
+/* Inputs, Selects & Textareas clean styles */
+form input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+form select,
+form textarea,
+.form-container input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+.form-container select,
+.form-container textarea,
+[class*="form-container"] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+[class*="form-container"] select,
+[class*="form-container"] textarea {
+  background: #FFFFFF !important;
+  border: 1px solid #D1D5DB !important; /* light gray borders */
+  border-radius: 8px !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  color: #1F2937 !important;
+  outline: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus,
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus,
+[class*="form-container"] input:focus,
+[class*="form-container"] select:focus,
+[class*="form-container"] textarea:focus {
+  border-color: #8B1538 !important; /* Deep maroon focus border */
+  box-shadow: 0 0 0 3px rgba(139, 21, 56, 0.12) !important; /* Soft maroon ring */
+}
+
+/* Submits & Cancel form buttons overrides */
+form button[type="submit"],
+.form-container button[type="submit"],
+[class*="form-container"] button[type="submit"] {
+  background-color: #8B1538 !important; /* Deep maroon */
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 600 !important;
+  font-size: 0.8125rem !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(139, 21, 56, 0.15) !important;
+  transition: background 0.15s ease !important;
+}
+
+form button[type="submit"]:hover,
+.form-container button[type="submit"]:hover,
+[class*="form-container"] button[type="submit"]:hover {
+  background-color: #720F2B !important;
+  transform: none !important;
+}
+
+/* Outlined cancellation/secondary buttons inside form controls */
+form button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]),
+.form-container button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]),
+[class*="form-container"] button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]) {
+  background-color: transparent !important;
+  color: #8B1538 !important;
+  border: 1px solid rgba(139, 21, 56, 0.3) !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 600 !important;
+  font-size: 0.8125rem !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+}
+
+form button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover,
+.form-container button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover,
+[class*="form-container"] button:not([type="submit"]):not([class*="btn-ghost"]):not([class*="btn-wine"]):hover {
+  background-color: #FDF3F6 !important;
+  border-color: #8B1538 !important;
+  transform: none !important;
+}
+
+/* Redesign input-underline as standard rounded inputs */
+form .input-underline,
+.form-container .input-underline,
+[class*="form-container"] .input-underline,
+.input-underline {
+  background: #FFFFFF !important;
+  border: 1px solid #D1D5DB !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  color: #1F2937 !important;
+  outline: none !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+form .input-underline:focus,
+.form-container .input-underline:focus,
+[class*="form-container"] .input-underline:focus,
+.input-underline:focus {
+  border-color: #8B1538 !important;
+  box-shadow: 0 0 0 3px rgba(139, 21, 56, 0.12) !important;
+}
+
+
 
 

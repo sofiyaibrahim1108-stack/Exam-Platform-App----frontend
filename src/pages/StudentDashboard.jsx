@@ -12,7 +12,7 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 // Custom Dynamic Sparkline Component matching Oxford Wine theme
-const Sparkline = ({ color = '#6A0019', data = [10, 15, 8, 12, 18, 14, 20] }) => {
+const Sparkline = ({ color = '#7A001F', data = [10, 15, 8, 12, 18, 14, 20] }) => {
   const points = data.map((val, idx) => `${idx * 8},${20 - (val / 25) * 16}`).join(' ');
   return (
     <svg className="w-12 h-6 stroke-current fill-none shrink-0" style={{ color }} viewBox="0 0 50 20">
@@ -24,28 +24,28 @@ const Sparkline = ({ color = '#6A0019', data = [10, 15, 8, 12, 18, 14, 20] }) =>
 // Oxford style SVG Illustration for Hero
 const StudentDashboardIllustration = () => (
   <svg viewBox="0 0 200 200" className="w-36 h-36 drop-shadow-md select-none pointer-events-none">
-    <circle cx="100" cy="100" r="72" fill="#FCEEF2" />
+    <circle cx="100" cy="100" r="72" fill="#FDF3F6" />
     <motion.g
       animate={{ y: [0, -6, 0] }}
       transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
     >
       {/* Book base */}
-      <path d="M60 115 L100 135 L140 115 M60 123 L100 143 L140 123" fill="none" stroke="#6A0019" strokeWidth="2.5" strokeLinecap="round" />
-      <rect x="50" y="80" width="100" height="40" rx="6" fill="#FFFFFF" stroke="#EADFE3" strokeWidth="2" />
-      
+      <path d="M60 115 L100 135 L140 115 M60 123 L100 143 L140 123" fill="none" stroke="#7A001F" strokeWidth="2.5" strokeLinecap="round" />
+      <rect x="50" y="80" width="100" height="40" rx="6" fill="#FFFFFF" stroke="#F0D6DD" strokeWidth="2" />
+
       {/* Reading shape */}
-      <path d="M70 100 Q100 85 130 100" fill="none" stroke="#A11D42" strokeWidth="2" strokeLinecap="round" />
-      
+      <path d="M70 100 Q100 85 130 100" fill="none" stroke="#8C1D40" strokeWidth="2" strokeLinecap="round" />
+
       {/* Graduation Cap */}
-      <path d="M100 35 L135 47 L100 59 L65 47 Z" fill="#6A0019" />
-      <rect x="91" y="53" width="18" height="9" fill="#7A0E2F" />
-      <path d="M125 50 L125 70 Q125 72 122 72" fill="none" stroke="#D85A7F" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="122" cy="72" r="2.5" fill="#D85A7F" />
-      
+      <path d="M100 35 L135 47 L100 59 L65 47 Z" fill="#7A001F" />
+      <rect x="91" y="53" width="18" height="9" fill="#8C1D40" />
+      <path d="M125 50 L125 70 Q125 72 122 72" fill="none" stroke="#C24B72" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="122" cy="72" r="2.5" fill="#C24B72" />
+
       {/* Light glow elements */}
-      <circle cx="50" cy="50" r="3" fill="#D85A7F" />
-      <circle cx="155" cy="85" r="4.5" fill="#6A0019" />
-      <circle cx="145" cy="120" r="3.5" fill="#A11D42" />
+      <circle cx="50" cy="50" r="3" fill="#C24B72" />
+      <circle cx="155" cy="85" r="4.5" fill="#7A001F" />
+      <circle cx="145" cy="120" r="3.5" fill="#8C1D40" />
     </motion.g>
   </svg>
 );
@@ -163,6 +163,18 @@ const StudentDashboard = () => {
   const simulatedGPA = totalPublishedCount > 0
     ? parseFloat((averageScore / 25).toFixed(2))
     : 0.0;
+
+  // Calculate highest score and trend for student performance
+  const highestScore = totalPublishedCount > 0
+    ? Math.max(...publishedResults.map((r) => r.percentage || 0))
+    : 0;
+
+  const latestExam = publishedResults.length > 0 ? publishedResults[publishedResults.length - 1] : null;
+  const previousExams = publishedResults.length > 1 ? publishedResults.slice(0, -1) : [];
+  const prevAverage = previousExams.length > 0
+    ? previousExams.reduce((acc, curr) => acc + (curr.percentage || 0), 0) / previousExams.length
+    : averageScore;
+  const trendVal = latestExam ? parseFloat((latestExam.percentage - prevAverage).toFixed(1)) : 0;
 
   // Performance Standing Calculation
   let performanceTier = 'Good Standing';
@@ -294,43 +306,56 @@ const StudentDashboard = () => {
       >
         {/* LEFT COLUMN: Main Dashboard Workspace (Takes 8 spaces) */}
         <div className="lg:col-span-8 space-y-6">
-          
+
           {/* 👋 Hero Welcome Banner */}
           <motion.div
             variants={itemVariants}
-            className="p-6 lg:p-8 rounded-[32px] border border-[#EADFE3] relative overflow-hidden shadow-[0_15_40px_rgba(106,0,25,0.08)] bg-gradient-to-br from-[#FFF8F9] to-white"
+            className="p-6 lg:p-8 rounded-[32px] relative overflow-hidden shadow-[0_15px_40px_rgba(122,0,31,0.12)]"
+            style={{
+              background: 'linear-gradient(135deg, #7A001F 0%, #8C1D40 50%, #A83E63 100%)',
+              border: '1px solid rgba(240,214,221,0.2)'
+            }}
           >
-            <div className="absolute top-0 right-0 w-52 h-52 bg-gradient-to-br from-[#FCEEF2] to-transparent rounded-full blur-3xl pointer-events-none"></div>
+            {/* Subtle gradient overlay for depth */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.15), transparent, rgba(255,255,255,0.10))' }}
+            ></div>
+            {/* Background glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#7A001F] rounded-full blur-3xl opacity-40 pointer-events-none"></div>
+
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-3.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-[#FCEEF2] text-[#6A0019] text-[10px] font-mono font-bold uppercase tracking-wider border border-[#EADFE3]">
+                  <span className="px-3 py-1 rounded-full bg-[#FDF3F6] text-[#7A001F] text-[10px] font-mono font-bold uppercase tracking-wider border border-[#F0D6DD]">
                     AI Student Portal
                   </span>
                   <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-mono font-bold uppercase border border-emerald-500/10">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
                     Enrolled Candidate
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-[#FFF7F8] text-[#A11D42] text-[10px] font-mono font-bold uppercase border border-[#EADFE3]">
+                  <span className="px-3 py-1 rounded-full bg-[#FDF3F6] text-[#8C1D40] text-[10px] font-mono font-bold uppercase border border-[#F0D6DD]">
                     {user?.semester?.name || 'Semester 4'}
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-xs font-bold text-[#666666]">Welcome Back</span>
-                  <h1 className="text-2xl lg:text-3xl font-extrabold text-[#1A1A1A] leading-tight">
+                  <span className="text-xs font-bold" style={{ color: 'rgba(255,255,255,0.7)' }}>Welcome Back</span>
+                  <h1 className="text-2xl lg:text-3xl font-extrabold text-white leading-tight">
                     {user?.name || 'Student Candidate'}
                   </h1>
                 </div>
 
-                <p className="text-xs text-[#666666] font-bold flex flex-wrap items-center gap-2">
-                  <span className="text-[#1A1A1A]">{user?.course?.name || 'Computer Science Engineering'}</span>
+                <p className="text-xs font-bold flex flex-wrap items-center gap-2" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                  <span className="text-white">{user?.course?.name || 'Computer Science Engineering'}</span>
                   <span>•</span>
                   <span>{user?.department?.name || 'Department of Technology'}</span>
                 </p>
               </div>
 
-              <div className="shrink-0 flex items-center justify-center">
+              <div className="relative shrink-0 flex items-center justify-center">
+                {/* Soft wine glow behind the illustration */}
+                <div className="absolute w-36 h-36 bg-[#7A001F] rounded-full blur-2xl opacity-45 pointer-events-none"></div>
                 <StudentDashboardIllustration />
               </div>
             </div>
@@ -339,104 +364,112 @@ const StudentDashboard = () => {
           {/* 📊 STAT CARDS (KEEP SAME POSITION) */}
           <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {/* Upcoming Exams Card */}
-            <div className="bg-white p-4.5 rounded-[24px] border border-[#EADFE3] border-t-4 border-t-blue-500 shadow-[0_12px_30px_rgba(106,0,25,0.08)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(106,0,25,0.12)] flex flex-col justify-between group">
+            <div className="bg-white p-5 h-[112px] rounded-[20px] border border-[#F0D6DD] border-t-4 border-t-blue-500 shadow-[0_8px_24px_rgba(122,0,31,0.06)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(122,0,31,0.12)] flex flex-col justify-between group">
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider">Upcoming</span>
-                <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shadow-xs">
-                  <Calendar size={13} />
+                <span className="text-[8px] font-mono font-bold text-[#666666] uppercase tracking-wider">Upcoming</span>
+                <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shadow-xs shrink-0">
+                  <Calendar size={11} />
                 </div>
               </div>
-              <div className="mt-4 flex items-end justify-between">
+              <div className="mt-2.5 flex items-center justify-between">
                 <div>
-                  <span className="text-2xl font-black text-[#1A1A1A] font-mono block">{upcomingExams.length}</span>
-                  <span className="text-[9px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded-md font-mono font-bold block mt-0.5">Pending</span>
+                  <span className="text-[21px] font-black text-[#1A1A1A] font-mono leading-none block">{upcomingExams.length}</span>
+                  <span className="text-[8px] text-blue-700 bg-blue-50 px-1 py-0.5 rounded-md font-mono font-bold inline-block mt-0.5">Pending</span>
                 </div>
-                <Sparkline color="#3B82F6" data={[5, 10, 4, 8, 12, 6, upcomingExams.length]} />
+                <div className="pb-0.5 pr-0.5 shrink-0">
+                  <Sparkline color="#3B82F6" data={[5, 10, 4, 8, 12, 6, upcomingExams.length]} />
+                </div>
               </div>
             </div>
 
             {/* Completed Exams Card */}
-            <div className="bg-white p-4.5 rounded-[24px] border border-[#EADFE3] border-t-4 border-t-emerald-500 shadow-[0_12px_30px_rgba(106,0,25,0.08)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(106,0,25,0.12)] flex flex-col justify-between group">
+            <div className="bg-white p-5 h-[112px] rounded-[20px] border border-[#F0D6DD] border-t-4 border-t-emerald-500 shadow-[0_8px_24px_rgba(122,0,31,0.06)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(122,0,31,0.12)] flex flex-col justify-between group">
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider">Completed</span>
-                <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shadow-xs">
-                  <BookOpenCheck size={13} />
+                <span className="text-[8px] font-mono font-bold text-[#666666] uppercase tracking-wider">Completed</span>
+                <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shadow-xs shrink-0">
+                  <BookOpenCheck size={11} />
                 </div>
               </div>
-              <div className="mt-4 flex items-end justify-between">
+              <div className="mt-2.5 flex items-center justify-between">
                 <div>
-                  <span className="text-2xl font-black text-[#1A1A1A] font-mono block">{completedExams.length}</span>
-                  <span className="text-[9px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md font-mono font-bold block mt-0.5">Attempted</span>
+                  <span className="text-[21px] font-black text-[#1A1A1A] font-mono leading-none block">{completedExams.length}</span>
+                  <span className="text-[8px] text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded-md font-mono font-bold inline-block mt-0.5">Attempted</span>
                 </div>
-                <Sparkline color="#10B981" data={[8, 12, 15, 14, 18, 20, completedExams.length]} />
+                <div className="pb-0.5 pr-0.5 shrink-0">
+                  <Sparkline color="#10B981" data={[8, 12, 15, 14, 18, 20, completedExams.length]} />
+                </div>
               </div>
             </div>
 
             {/* Average Marks Card */}
-            <div className="bg-white p-4.5 rounded-[24px] border border-[#EADFE3] border-t-4 border-t-orange-500 shadow-[0_12px_30px_rgba(106,0,25,0.08)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(106,0,25,0.12)] flex flex-col justify-between group">
+            <div className="bg-white p-5 h-[112px] rounded-[20px] border border-[#F0D6DD] border-t-4 border-t-orange-500 shadow-[0_8px_24px_rgba(122,0,31,0.06)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(122,0,31,0.12)] flex flex-col justify-between group">
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider">Avg Score</span>
-                <div className="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100 shadow-xs">
-                  <TrendingUp size={13} />
+                <span className="text-[8px] font-mono font-bold text-[#666666] uppercase tracking-wider">Avg Score</span>
+                <div className="w-7 h-7 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100 shadow-xs shrink-0">
+                  <TrendingUp size={11} />
                 </div>
               </div>
-              <div className="mt-4 flex items-end justify-between">
+              <div className="mt-2.5 flex items-center justify-between">
                 <div>
-                  <span className="text-2xl font-black text-[#1A1A1A] font-mono block">{averageScore}%</span>
-                  <span className="text-[9px] text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded-md font-mono font-bold block mt-0.5">Passing</span>
+                  <span className="text-[21px] font-black text-[#1A1A1A] font-mono leading-none block">{averageScore}%</span>
+                  <span className="text-[8px] text-orange-700 bg-orange-50 px-1 py-0.5 rounded-md font-mono font-bold inline-block mt-0.5">Passing</span>
                 </div>
-                <Sparkline color="#F59E0B" data={[65, 72, 70, 78, 84, 80, averageScore]} />
+                <div className="pb-0.5 pr-0.5 shrink-0">
+                  <Sparkline color="#F59E0B" data={[65, 72, 70, 78, 84, 80, averageScore]} />
+                </div>
               </div>
             </div>
 
             {/* Current GPA Card */}
-            <div className="bg-white p-4.5 rounded-[24px] border border-[#EADFE3] border-t-4 border-t-purple-500 shadow-[0_12px_30px_rgba(106,0,25,0.08)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(106,0,25,0.12)] flex flex-col justify-between group">
+            <div className="bg-white p-5 h-[112px] rounded-[20px] border border-[#F0D6DD] border-t-4 border-t-purple-500 shadow-[0_8px_24px_rgba(122,0,31,0.06)] transition-all duration-300 hover:translate-y-[-5px] hover:shadow-[0_18px_45px_rgba(122,0,31,0.12)] flex flex-col justify-between group">
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider">Standing</span>
-                <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 shadow-xs">
-                  <Award size={13} />
+                <span className="text-[8px] font-mono font-bold text-[#666666] uppercase tracking-wider">Standing</span>
+                <div className="w-7 h-7 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100 shadow-xs shrink-0">
+                  <Award size={11} />
                 </div>
               </div>
-              <div className="mt-4 flex items-end justify-between">
+              <div className="mt-2.5 flex items-center justify-between">
                 <div>
-                  <span className="text-xl font-black text-[#1A1A1A] block">{performanceTier}</span>
-                  <span className="text-[9px] text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-md font-mono font-bold block mt-0.5 truncate max-w-[80px]">Top tier</span>
+                  <span className="text-[17px] font-extrabold text-[#1A1A1A] leading-none block truncate max-w-[80px]" title={performanceTier}>{performanceTier}</span>
+                  <span className="text-[8px] text-purple-700 bg-purple-50 px-1 py-0.5 rounded-md font-mono font-bold inline-block mt-0.5 truncate max-w-[60px]">Top tier</span>
                 </div>
-                <Sparkline color="#8B5CF6" data={[2, 3, 2, 4, 3, 5, totalPublishedCount * 2]} />
+                <div className="pb-0.5 pr-0.5 shrink-0">
+                  <Sparkline color="#8B5CF6" data={[2, 3, 2, 4, 3, 5, totalPublishedCount * 2]} />
+                </div>
               </div>
             </div>
           </motion.div>
 
           {/* ⚡ QUICK ACTION BUTTONS */}
-          <motion.div variants={itemVariants} className="bg-white p-5 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)]">
+          <motion.div variants={itemVariants} className="bg-white p-5 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(122,0,31,0.06)]">
             <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider block mb-3.5">
               Quick Actions Portal
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <button
                 onClick={() => navigate('/student/live')}
-                className="p-3 rounded-full bg-white border border-[#6A0019] text-[#6A0019] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-[#6A0019] hover:text-white active:scale-95 shadow-xs"
+                className="p-3 rounded-full bg-white border border-[#7A001F] text-[#7A001F] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-[#7A001F] hover:text-white active:scale-95 shadow-xs"
               >
-                <span className="w-2 h-2 rounded-full bg-[#6A0019] animate-ping shrink-0" />
+                <span className="w-2 h-2 rounded-full bg-[#7A001F] animate-ping shrink-0" />
                 Live Exams ({liveExams.length})
               </button>
               <button
                 onClick={() => navigate('/student/upcoming')}
-                className="p-3 rounded-full bg-white border border-[#6A0019] text-[#6A0019] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-[#6A0019] hover:text-white active:scale-95 shadow-xs"
+                className="p-3 rounded-full bg-white border border-[#7A001F] text-[#7A001F] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-[#7A001F] hover:text-white active:scale-95 shadow-xs"
               >
                 <Calendar size={13} />
                 Upcoming ({upcomingExams.length})
               </button>
               <button
                 onClick={() => navigate('/student/completed')}
-                className="p-3 rounded-full bg-white border border-[#6A0019] text-[#6A0019] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-[#6A0019] hover:text-white active:scale-95 shadow-xs"
+                className="p-3 rounded-full bg-white border border-[#7A001F] text-[#7A001F] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-[#7A001F] hover:text-white active:scale-95 shadow-xs"
               >
                 <Award size={13} />
                 Scorecards
               </button>
               <button
                 onClick={() => navigate('/student/profile')}
-                className="p-3 rounded-full bg-white border border-gray-300 text-[#666666] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-gray-150 active:scale-95 shadow-xs"
+                className="p-3 rounded-full bg-white border border-[#7A001F] text-[#7A001F] text-xs font-bold transition-all flex items-center justify-center gap-2 hover:bg-[#FDF3F6] hover:border-[#8C1D40] hover:text-[#8C1D40] active:scale-95 shadow-xs"
               >
                 <User size={13} />
                 My Profile
@@ -446,124 +479,173 @@ const StudentDashboard = () => {
 
           {/* 📈 PERFORMANCE CARDS (LINE CHART & SUBJECTS) */}
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Overall Score Trend Chart */}
-            <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] space-y-4">
+
+            {/* A. Overall Performance Card */}
+            <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] flex flex-col space-y-4 justify-between">
               <div className="flex items-center justify-between border-b border-[#EADFE3]/60 pb-3">
                 <div>
-                  <h3 className="text-sm font-extrabold text-[#6A0019] flex items-center gap-2">
+                  <h3 className="text-sm font-extrabold text-[#7A1238] flex items-center gap-2">
                     <BarChart3 size={15} />
-                    Performance Trend
+                    Overall Performance
                   </h3>
                   <p className="text-[10px] text-[#666666] font-semibold mt-0.5">
-                    Percentage scores over recent published exams
+                    Evaluated metrics across completed exams
                   </p>
                 </div>
-                <span className="text-[9px] font-mono font-bold px-2.5 py-1 bg-[#FCEEF2] text-[#6A0019] rounded-full border border-[#EADFE3]">
-                  {publishedResults.length} Evaluated
+                <span className="text-[9px] font-mono font-bold px-2.5 py-1 bg-[#FDF3F6] text-[#7A1238] rounded-full border border-[#F0D6DD]">
+                  Academic Analytics
                 </span>
               </div>
 
               {publishedResults.length === 0 ? (
-                <div className="py-14 text-center text-[#666666] text-xs space-y-1">
+                <div className="py-14 text-center text-[#666666] text-xs space-y-1 flex-1 flex flex-col justify-center">
                   <Activity size={24} className="text-gray-300 mx-auto" />
-                  <p className="font-bold text-[#1A1A1A]">No performance curve</p>
-                  <p className="text-[10px]">Complete examinations to chart progress.</p>
+                  <p className="font-bold text-[#1A1A1A]">No performance data</p>
+                  <p className="text-[10px]">Complete exams to visualize overall average standing.</p>
                 </div>
               ) : (
-                <div className="pt-2">
-                  <div className="h-44 w-full relative">
-                    <svg className="w-full h-full overflow-visible" viewBox="0 0 400 150">
+                <div className="flex flex-col sm:flex-row items-center justify-around gap-6 pt-2 flex-1">
+
+                  {/* Modern Circular Progress SVG */}
+                  <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
+                    <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 120 120">
+                      <circle cx="60" cy="60" r="50" stroke="#FDF3F6" strokeWidth="8" fill="none" />
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="50"
+                        stroke="url(#progressGrad)"
+                        strokeWidth="8"
+                        fill="none"
+                        strokeDasharray={2 * Math.PI * 50}
+                        strokeDashoffset={2 * Math.PI * 50 - (Math.min(averageScore, 100) / 100) * 2 * Math.PI * 50}
+                        strokeLinecap="round"
+                        className="transition-all duration-500"
+                      />
                       <defs>
-                        <linearGradient id="performanceGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#6A0019" stopOpacity="0.25" />
-                          <stop offset="100%" stopColor="#6A0019" stopOpacity="0.0" />
+                        <linearGradient id="progressGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#7A1238" />
+                          <stop offset="100%" stopColor="#C24B72" />
                         </linearGradient>
                       </defs>
-
-                      {/* Grid Lines */}
-                      {[0, 37.5, 75, 112.5, 150].map((y, i) => (
-                        <line key={i} x1="0" y1={y} x2="400" y2={y} stroke="rgba(106,0,25,0.06)" strokeDasharray="4 4" strokeWidth="1" />
-                      ))}
-
-                      {/* Line & Dots */}
-                      {(() => {
-                        const items = publishedResults.slice(-6);
-                        const step = items.length > 1 ? 400 / (items.length - 1) : 200;
-                        const points = items.map((item, idx) => {
-                          const x = items.length === 1 ? 200 : idx * step;
-                          const y = 150 - ((item.percentage || 0) / 100) * 115 - 15;
-                          return { x, y, pct: item.percentage || 0 };
-                        });
-
-                        const pathD = points.reduce((acc, p, idx) => {
-                          return idx === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`;
-                        }, '');
-
-                        const areaD = `${pathD} L ${points[points.length - 1].x} 150 L ${points[0].x} 150 Z`;
-
-                        return (
-                          <>
-                            <path d={areaD} fill="url(#performanceGrad)" />
-                            <path d={pathD} fill="none" stroke="#6A0019" strokeWidth="2.5" strokeLinecap="round" />
-                            {points.map((p, i) => (
-                              <g key={i}>
-                                <circle cx={p.x} cy={p.y} r="4.5" fill="#6A0019" stroke="#FFFFFF" strokeWidth="2" />
-                                <text x={p.x} y={p.y - 10} textAnchor="middle" fill="#6A0019" fontSize="9" fontWeight="800" fontFamily="monospace">
-                                  {p.pct}%
-                                </text>
-                              </g>
-                            ))}
-                          </>
-                        );
-                      })()}
                     </svg>
+                    <div className="absolute flex flex-col items-center justify-center text-center">
+                      <span className="text-lg font-black font-mono text-[#7A1238]">{averageScore}%</span>
+                      <span className="text-[8px] text-[#666666] uppercase font-bold tracking-wider">Overall</span>
+                    </div>
+                  </div>
+
+                  {/* Supporting Stats Grid */}
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-xs font-semibold text-[#666666] w-full max-w-[220px]">
+                    <div className="space-y-0.5">
+                      <span className="text-[9px] uppercase tracking-wider text-gray-400 font-mono font-bold">GPA Metric</span>
+                      <p className="text-sm font-black text-gray-800">{simulatedGPA} / 4.0</p>
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[9px] uppercase tracking-wider text-gray-400 font-mono font-bold">Highest Score</span>
+                      <p className="text-sm font-black text-emerald-600">{highestScore}%</p>
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[9px] uppercase tracking-wider text-gray-400 font-mono font-bold">Attempted</span>
+                      <p className="text-sm font-black text-gray-800">{totalPublishedCount} Exams</p>
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="text-[9px] uppercase tracking-wider text-gray-400 font-mono font-bold">Trend Standing</span>
+                      <div className="flex items-center gap-1">
+                        {trendVal >= 0 ? (
+                          <>
+                            <TrendingUp size={12} className="text-emerald-500" />
+                            <p className="text-sm font-black text-emerald-600">+{trendVal}%</p>
+                          </>
+                        ) : (
+                          <>
+                            <TrendingUp size={12} className="text-red-500 transform rotate-180" />
+                            <p className="text-sm font-black text-red-500">{trendVal}%</p>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* 📚 SUBJECT BREAKDOWN */}
-            <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] space-y-4">
-              <div className="flex items-center justify-between border-b border-[#EADFE3]/60 pb-3">
+            {/* B. Subject-wise Performance Card */}
+            <div className="bg-white p-6 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(106,0,25,0.06)] flex flex-col space-y-4">
+              <div className="flex items-center justify-between border-b border-[#F0D6DD]/60 pb-3">
                 <div>
-                  <h3 className="text-sm font-extrabold text-[#6A0019] flex items-center gap-2">
-                    <Database size={15} />
-                    Subject Breakdown
+                  <h3 className="text-sm font-extrabold text-[#7A1238] flex items-center gap-2">
+                    <BookOpen size={15} />
+                    Subject-wise Performance
                   </h3>
                   <p className="text-[10px] text-[#666666] font-semibold mt-0.5">
-                    Enrolled course average metrics
+                    Individual subject averages and standing grades
                   </p>
                 </div>
-                <span className="text-[9px] font-mono font-bold px-2.5 py-1 bg-[#FCEEF2] text-[#6A0019] rounded-full border border-[#EADFE3]">
-                  {subjectAverages.length} Subject Nodes
+                <span className="text-[9px] font-mono font-bold px-2.5 py-1 bg-[#FCEEF2] text-[#7A1238] rounded-full border border-[#EADFE3]">
+                  {subjectAverages.length} Enrolled
                 </span>
               </div>
 
               {subjectAverages.length === 0 ? (
-                <div className="py-14 text-center text-[#666666] text-xs space-y-1">
+                <div className="py-14 text-center text-[#666666] text-xs space-y-1 flex-1 flex flex-col justify-center">
                   <Database size={24} className="text-gray-300 mx-auto" />
                   <p className="font-bold text-[#1A1A1A]">No course stats</p>
-                  <p className="text-[10px]">Your subjects lists will load after published results.</p>
+                  <p className="text-[10px]">Your subjects list will load after published results.</p>
                 </div>
               ) : (
-                <div className="space-y-3.5 pt-1">
-                  {subjectAverages.slice(0, 4).map((sub, idx) => (
-                    <div key={idx} className="space-y-1">
-                      <div className="flex justify-between items-center text-xs font-bold">
-                        <span className="text-[#1A1A1A] truncate max-w-[200px]" title={sub.name}>
-                          {sub.name} {sub.code ? `(${sub.code})` : ''}
-                        </span>
-                        <span className="font-mono text-[#6A0019]">{sub.average}%</span>
+                <div className="space-y-3 pt-1 overflow-y-auto max-h-[140px] pr-1" style={{ scrollbarWidth: 'thin' }}>
+                  {subjectAverages.map((sub, idx) => {
+                    let grade = 'F';
+                    let statusText = 'Needs Focus';
+                    let badgeClass = 'bg-red-50 text-red-700 border-red-200';
+                    const avg = sub.average;
+
+                    if (avg >= 90) {
+                      grade = 'A+';
+                      statusText = 'Excellent';
+                      badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                    } else if (avg >= 80) {
+                      grade = 'A';
+                      statusText = 'Excellent';
+                      badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                    } else if (avg >= 70) {
+                      grade = 'B';
+                      statusText = 'Good';
+                      badgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+                    } else if (avg >= 60) {
+                      grade = 'C';
+                      statusText = 'Average';
+                      badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                    } else if (avg >= 50) {
+                      grade = 'D';
+                      statusText = 'Needs Focus';
+                      badgeClass = 'bg-red-50 text-red-700 border-red-200';
+                    }
+
+                    return (
+                      <div key={idx} className="space-y-1 bg-white hover:bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 transition-colors">
+                        <div className="flex justify-between items-center text-xs font-bold">
+                          <span className="text-[#1A1A1A] truncate max-w-[150px]" title={sub.name}>
+                            {sub.name} {sub.code ? `(${sub.code})` : ''}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-0.5 border text-[9px] font-bold rounded-md uppercase font-mono ${badgeClass}`}>
+                              {statusText}
+                            </span>
+                            <span className="font-mono text-[10px] text-gray-400 font-bold">Grade {grade}</span>
+                            <span className="font-mono text-[#7A1238] text-xs">{avg}%</span>
+                          </div>
+                        </div>
+                        <div className="w-full bg-[#FDF3F6] border border-[#F0D6DD]/50 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-[#7A1238] to-[#C24B72]"
+                            style={{ width: `${Math.min(avg, 100)}%` }}
+                          ></div>
+                        </div>
                       </div>
-                      <div className="w-full bg-[#FFF7F8] border border-[#EADFE3] rounded-full h-2.5 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-[#6A0019] to-[#D85A7F]"
-                          style={{ width: `${Math.min(sub.average, 100)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -575,51 +657,57 @@ const StudentDashboard = () => {
               AI Study & Prep Center
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              
+
               {/* Tile 1: Weak Topics Focus */}
-              <div className="bg-white p-4.5 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-md hover:border-[#6A0019]/25 space-y-2">
+              <div className="bg-white p-5 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(106,0,25,0.06)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-md hover:border-[#7A001F]/25 flex flex-col justify-between h-full space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider">Suggested Focus</span>
-                  <Sparkles size={14} className="text-amber-500" />
+                  <span className="text-[8.5px] font-mono font-bold text-[#666666] uppercase tracking-wider">Suggested Focus</span>
+                  <Sparkles size={13} className="text-amber-500 shrink-0" />
                 </div>
-                <h4 className="text-xs font-extrabold text-[#1A1A1A]">Focus Review Area</h4>
-                <p className="text-[11px] text-[#666666] font-semibold leading-relaxed">
-                  {weakestSubject ? `Extra revisions advised in ${weakestSubject.name} (${weakestSubject.average}%) ahead of tests.` : 'No critical areas flagged by system.'}
-                </p>
+                <div className="space-y-1 flex-1 flex flex-col justify-center">
+                  <h4 className="text-[11.5px] font-extrabold text-[#1A1A1A]">Focus Review Area</h4>
+                  <p className="text-[10.5px] text-[#666666] font-semibold leading-relaxed">
+                    {weakestSubject ? `Extra revisions advised in ${weakestSubject.name} (${weakestSubject.average}%) ahead of tests.` : 'No critical areas flagged by system.'}
+                  </p>
+                </div>
               </div>
 
               {/* Tile 2: Strong Topics / Stats */}
-              <div className="bg-white p-4.5 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-md hover:border-[#6A0019]/25 space-y-2">
+              <div className="bg-white p-5 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(106,0,25,0.06)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-md hover:border-[#7A001F]/25 flex flex-col justify-between h-full space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider">Strongest Area</span>
-                  <Trophy size={14} className="text-yellow-500" />
+                  <span className="text-[8.5px] font-mono font-bold text-[#666666] uppercase tracking-wider">Strongest Area</span>
+                  <Trophy size={13} className="text-yellow-500 shrink-0" />
                 </div>
-                <h4 className="text-xs font-extrabold text-[#1A1A1A]">Strongest Subject</h4>
-                <p className="text-[11px] text-[#666666] font-semibold leading-relaxed">
-                  {strongestSubject ? `Highly skilled in ${strongestSubject.name} averaging ${strongestSubject.average}% overall.` : 'Establish initial course score sheets.'}
-                </p>
+                <div className="space-y-1 flex-1 flex flex-col justify-center">
+                  <h4 className="text-[11.5px] font-extrabold text-[#1A1A1A]">Strongest Subject</h4>
+                  <p className="text-[10.5px] text-[#666666] font-semibold leading-relaxed">
+                    {strongestSubject ? `Highly skilled in ${strongestSubject.name} averaging ${strongestSubject.average}% overall.` : 'Establish initial course score sheets.'}
+                  </p>
+                </div>
               </div>
 
               {/* Tile 3: AI Recommendations */}
-              <div className="bg-white p-4.5 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-md hover:border-[#6A0019]/25 space-y-2">
+              <div className="bg-white p-5 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(106,0,25,0.06)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-md hover:border-[#7A001F]/25 flex flex-col justify-between h-full space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-mono font-bold text-[#666666] uppercase tracking-wider">Smart Tip</span>
-                  <Lightbulb size={14} className="text-[#6A0019]" />
+                  <span className="text-[8.5px] font-mono font-bold text-[#666666] uppercase tracking-wider">Smart Tip</span>
+                  <Lightbulb size={13} className="text-[#7A001F] shrink-0" />
                 </div>
-                <h4 className="text-xs font-extrabold text-[#1A1A1A]">Recommendation</h4>
-                <p className="text-[11px] text-[#666666] font-semibold leading-relaxed">
-                  Study session timers track syllabus goals. Try using the revision pomodoro timer widget.
-                </p>
+                <div className="space-y-1 flex-1 flex flex-col justify-center">
+                  <h4 className="text-[11.5px] font-extrabold text-[#1A1A1A]">Recommendation</h4>
+                  <p className="text-[10.5px] text-[#666666] font-semibold leading-relaxed">
+                    Study session timers track syllabus goals. Try using the revision pomodoro timer widget.
+                  </p>
+                </div>
               </div>
 
             </div>
           </motion.div>
 
           {/* Upcoming Exam Timeline list */}
-          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] space-y-4">
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(122,0,31,0.06)] space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
-                <h3 className="text-sm font-extrabold text-[#6A0019] flex items-center gap-2">
+                <h3 className="text-sm font-extrabold text-[#7A001F] flex items-center gap-2">
                   <Calendar size={15} />
                   Upcoming Examination Schedule
                 </h3>
@@ -629,7 +717,7 @@ const StudentDashboard = () => {
               </div>
               <button
                 onClick={() => navigate('/student/upcoming')}
-                className="text-xs font-bold text-[#6A0019] hover:underline flex items-center gap-1 active:scale-95"
+                className="text-xs font-bold text-[#7A001F] hover:underline flex items-center gap-1 active:scale-95"
               >
                 Full Schedule
                 <ChevronRight size={14} />
@@ -647,23 +735,23 @@ const StudentDashboard = () => {
                 {/* Today */}
                 {todayExams.length > 0 && (
                   <div className="space-y-2">
-                    <span className="px-2.5 py-0.5 bg-[#FCEEF2] text-[#6A0019] rounded-full text-[9px] font-mono font-bold uppercase tracking-wider border border-[#EADFE3]">
+                    <span className="px-2.5 py-0.5 bg-[#FDF3F6] text-[#7A001F] rounded-full text-[9px] font-mono font-bold uppercase tracking-wider border border-[#F0D6DD]">
                       Today
                     </span>
                     {todayExams.map((exam) => (
                       <div
                         key={exam._id}
-                        className="p-4 rounded-2xl border border-[#EADFE3] bg-[#FFF7F8] flex items-center justify-between gap-4"
+                        className="p-4 rounded-2xl border border-[#F0D6DD] bg-[#FDF3F6] flex items-center justify-between gap-4"
                       >
                         <div className="space-y-1 min-w-0">
-                          <h4 className="text-xs font-bold text-[#6A0019] truncate">{exam.title}</h4>
+                          <h4 className="text-xs font-bold text-[#7A001F] truncate">{exam.title}</h4>
                           <p className="text-[10px] text-[#666666] font-mono font-bold">
                             Subject: {exam.subject?.name} • Duration: {exam.durationMinutes} mins
                           </p>
                         </div>
                         <button
                           onClick={() => navigate(`/student/exam-session/${exam._id}`)}
-                          className="px-4 py-2 rounded-full bg-[#6A0019] text-white font-bold text-xs hover:bg-[#6A0019]/90 shrink-0 transition-all shadow-xs active:scale-95"
+                          className="px-4 py-2 rounded-full bg-[#7A001F] text-white font-bold text-xs hover:bg-[#7A001F]/90 shrink-0 transition-all shadow-xs active:scale-95"
                         >
                           Enter Session
                         </button>
@@ -681,7 +769,7 @@ const StudentDashboard = () => {
                     {tomorrowExams.map((exam) => (
                       <div
                         key={exam._id}
-                        className="p-4 rounded-2xl border border-[#EADFE3] bg-white flex items-center justify-between gap-4"
+                        className="p-4 rounded-2xl border border-[#F0D6DD] bg-white flex items-center justify-between gap-4"
                       >
                         <div className="space-y-1 min-w-0">
                           <h4 className="text-xs font-bold text-[#1A1A1A] truncate">{exam.title}</h4>
@@ -706,7 +794,7 @@ const StudentDashboard = () => {
                     {laterExams.slice(0, 3).map((exam) => (
                       <div
                         key={exam._id}
-                        className="p-4 rounded-2xl border border-[#EADFE3] bg-white flex items-center justify-between gap-4"
+                        className="p-4 rounded-2xl border border-[#F0D6DD] bg-white flex items-center justify-between gap-4"
                       >
                         <div className="space-y-1 min-w-0">
                           <h4 className="text-xs font-bold text-[#1A1A1A] truncate">{exam.title}</h4>
@@ -726,10 +814,10 @@ const StudentDashboard = () => {
           </motion.div>
 
           {/* Recent Results table */}
-          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] space-y-4">
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(122,0,31,0.06)] space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
-                <h3 className="text-sm font-extrabold text-[#6A0019] flex items-center gap-2">
+                <h3 className="text-sm font-extrabold text-[#7A001F] flex items-center gap-2">
                   <Award size={15} />
                   Recent Scorecards Summary
                 </h3>
@@ -739,7 +827,7 @@ const StudentDashboard = () => {
               </div>
               <button
                 onClick={() => navigate('/student/completed')}
-                className="text-xs font-bold text-[#6A0019] hover:underline flex items-center gap-1 active:scale-95"
+                className="text-xs font-bold text-[#7A001F] hover:underline flex items-center gap-1 active:scale-95"
               >
                 All Results
                 <ChevronRight size={14} />
@@ -767,11 +855,11 @@ const StudentDashboard = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-150/30">
                     {results.slice(0, 5).map((res) => (
-                      <tr key={res._id} className="hover:bg-[#FFF7F8] transition-colors">
+                      <tr key={res._id} className="hover:bg-[#FDF3F6] transition-colors">
                         <td className="py-3 px-3 font-extrabold text-[#1A1A1A] max-w-[150px] truncate">{res.exam?.title || 'Exam'}</td>
                         <td className="py-3 px-3 text-[#666666] max-w-[150px] truncate">{res.subject?.name || 'Subject'}</td>
                         <td className="py-3 px-3 text-center font-mono">{res.published ? `${res.marksObtained} / ${res.totalMarks}` : '—'}</td>
-                        <td className="py-3 px-3 text-center font-mono text-[#6A0019]">{res.published ? `${res.percentage}%` : '—'}</td>
+                        <td className="py-3 px-3 text-center font-mono text-[#7A001F]">{res.published ? `${res.percentage}%` : '—'}</td>
                         <td className="py-3 px-3 text-center">
                           {!res.published ? (
                             <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-500/20 text-[9px]">
@@ -790,7 +878,7 @@ const StudentDashboard = () => {
                         <td className="py-3 px-3 text-right">
                           <button
                             onClick={() => handleViewResultModal(res)}
-                            className="px-3 py-1.5 rounded-full bg-white border border-[#6A0019] text-[#6A0019] hover:bg-[#6A0019] hover:text-white hover:border-transparent text-[10px] transition-all font-bold shadow-xs active:scale-95"
+                            className="px-3 py-1.5 rounded-full bg-white border border-[#7A001F] text-[#7A001F] hover:bg-[#7A001F] hover:text-white hover:border-transparent text-[10px] transition-all font-bold shadow-xs active:scale-95"
                           >
                             Scorecard
                           </button>
@@ -808,51 +896,97 @@ const StudentDashboard = () => {
         {/* RIGHT COLUMN: Sidebar Widgets (Takes 4 spaces - RIGHT PANEL LAYOUT) */}
         <div className="lg:col-span-4 space-y-6">
 
-          {/* 👤 PROFILE CARD */}
-          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] text-center space-y-4">
-            <div className="relative w-20 h-20 mx-auto rounded-full border-2 border-[#6A0019] flex items-center justify-center bg-[#FCEEF2] shadow-sm">
-              <User size={36} className="text-[#6A0019]" />
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#6A0019] text-white flex items-center justify-center border border-white">
-                <Star size={10} fill="white" />
+          {/* 👤 PREMIUM HIGHLIGHTED PROFILE CARD */}
+          <motion.div
+            variants={itemVariants}
+            className="p-6 rounded-[28px] text-center space-y-5 relative overflow-hidden text-white"
+            style={{
+              background: 'linear-gradient(135deg, #4A0516 0%, #7A1238 60%, #9E1F4A 100%)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              boxShadow: '0 20px 50px rgba(74,5,22,0.35), 0 0 0 1px rgba(245,213,71,0.25), 0 0 24px rgba(245,213,71,0.20)'
+            }}
+          >
+            {/* Glass reflection gradient */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to top right, rgba(255,255,255,0), rgba(255,255,255,0.05), rgba(255,255,255,0.10))' }}
+            ></div>
+            {/* Top light glow */}
+            <div
+              className="absolute top-[-30%] left-[20%] w-36 h-36 rounded-full blur-2xl pointer-events-none"
+              style={{ backgroundColor: 'rgba(255,255,255,0.10)' }}
+            ></div>
+
+            <div
+              className="relative w-24 h-24 mx-auto rounded-full flex items-center justify-center shadow-md backdrop-blur-sm overflow-hidden shrink-0"
+              style={{
+                border: '2px solid rgba(245,213,71,0.6)',
+                backgroundColor: 'rgba(255,255,255,0.10)'
+              }}
+            >
+              {user?.photoUrl ? (
+                <img src={user.photoUrl} alt={user.name} className="w-full h-full object-cover rounded-full" />
+              ) : (
+                <User size={40} style={{ color: 'rgba(255,255,255,0.9)' }} />
+              )}
+              <div
+                className="absolute -bottom-1 -right-1 w-6.5 h-6.5 rounded-full bg-[#F5D547] text-[#7A1238] flex items-center justify-center shadow-xs"
+                style={{ border: '1px solid #7A1238' }}
+              >
+                <Star size={10} fill="#7A1238" className="stroke-none" />
               </div>
             </div>
-            <div>
-              <h3 className="text-sm font-extrabold text-[#1A1A1A]">{user?.name || 'Student Candidate'}</h3>
-              <p className="text-[10px] font-mono font-bold text-[#6A0019] uppercase tracking-wider mt-0.5">
+
+            <div className="space-y-1">
+              <h3 className="text-base font-extrabold tracking-tight text-white">{user?.name || 'Student Candidate'}</h3>
+              <p className="text-[10px] font-mono font-bold text-[#F0D6DD] uppercase tracking-wider">
                 Roll Number: {user?.rollNumber || 'ST-2026-01'}
               </p>
             </div>
 
-            <div className="p-3.5 bg-[#FFF7F8] border border-[#EADFE3] rounded-2xl text-left space-y-2.5 text-xs">
-              <div className="flex justify-between items-center text-[11px] font-bold text-[#666666]">
-                <span className="flex items-center gap-1.5"><Award size={13} className="text-[#6A0019]" /> GPA Standing:</span>
-                <span className="font-extrabold text-[#6A0019]">{simulatedGPA} / 4.0</span>
+            {/* Inner Glass Box */}
+            <div
+              className="p-4 rounded-2xl text-left space-y-3 text-xs shadow-inner"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.10)',
+                backdropFilter: 'blur(6px)',
+                WebkitBackdropFilter: 'blur(6px)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: 'rgba(255,255,255,0.95)'
+              }}
+            >
+              <div className="flex justify-between items-center text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                <span className="flex items-center gap-1.5"><Award size={13} className="text-[#F5D547]" /> GPA Standing:</span>
+                <span className="font-extrabold text-white">{simulatedGPA} / 4.0</span>
               </div>
-              <div className="flex justify-between items-center text-[11px] font-bold text-[#666666]">
-                <span className="flex items-center gap-1.5"><BookOpen size={13} className="text-[#6A0019]" /> Exam Completion:</span>
-                <span className="font-mono text-[#1A1A1A] font-bold">{semesterCompletionPct}%</span>
+              <div className="flex justify-between items-center text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                <span className="flex items-center gap-1.5"><BookOpen size={13} className="text-[#F5D547]" /> Exam Completion:</span>
+                <span className="font-mono font-bold text-white">{semesterCompletionPct}%</span>
               </div>
-              <div className="flex justify-between items-center text-[11px] font-bold text-[#666666]">
-                <span className="flex items-center gap-1.5"><ShieldCheck size={13} className="text-[#6A0019]" /> Status:</span>
-                <span className="text-emerald-700 font-bold">Good Standing</span>
+              <div className="flex justify-between items-center text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                <span className="flex items-center gap-1.5"><ShieldCheck size={13} className="text-[#F5D547]" /> Status:</span>
+                <span className="text-emerald-300 font-extrabold flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Good Standing
+                </span>
               </div>
             </div>
           </motion.div>
 
           {/* ⏱ STUDY TIMER */}
-          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] text-center space-y-4">
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(106,0,25,0.06)] text-center space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2 text-left">
               <h4 className="text-xs font-extrabold text-[#1A1A1A] flex items-center gap-1.5">
-                <Clock size={13} className="text-[#6A0019]" />
+                <Clock size={13} className="text-[#7A001F]" />
                 Study Timer
               </h4>
-              <span className="text-[9px] font-mono font-bold text-[#6A0019] bg-[#FCEEF2] px-1.5 py-0.5 rounded-full">
+              <span className="text-[9px] font-mono font-bold text-[#7A001F] bg-[#FDF3F6] px-1.5 py-0.5 rounded-full">
                 POMODORO
               </span>
             </div>
 
             <div className="py-2">
-              <span className="text-4xl font-black font-mono text-[#6A0019] tracking-tight block">
+              <span className="text-4xl font-black font-mono text-[#7A001F] tracking-tight block">
                 {formatTimer()}
               </span>
               <span className="text-[10px] text-[#666666] font-bold block mt-1">
@@ -865,14 +999,14 @@ const StudentDashboard = () => {
                 onClick={toggleTimer}
                 className="py-2 px-5 rounded-full text-xs font-extrabold shadow-xs transition-all active:scale-95 text-white"
                 style={{
-                  background: 'linear-gradient(135deg, #6A0019, #A11D42)'
+                  background: 'linear-gradient(135deg, #7A001F, #8C1D40)'
                 }}
               >
                 {timerRunning ? 'Pause' : 'Start'}
               </button>
               <button
                 onClick={resetTimer}
-                className="py-2 px-4 rounded-full bg-white border border-[#6A0019] text-[#6A0019] hover:bg-[#FFF7F8] text-xs font-bold transition-all active:scale-95"
+                className="py-2 px-4 rounded-full bg-white border border-[#7A001F] text-[#7A001F] hover:bg-[#FDF3F6] text-xs font-bold transition-all active:scale-95"
               >
                 Reset
               </button>
@@ -880,13 +1014,13 @@ const StudentDashboard = () => {
           </motion.div>
 
           {/* 🔔 NOTIFICATION CARD (Recent Alerts Feed) */}
-          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] space-y-4 flex flex-col justify-between h-[340px]">
+          <motion.div variants={itemVariants} className="bg-white p-6 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(122,0,31,0.06)] space-y-4 flex flex-col justify-between h-[340px]">
             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
               <h4 className="text-xs font-extrabold text-[#1A1A1A] flex items-center gap-1.5">
-                <AlertCircle size={13} className="text-[#6A0019]" />
+                <AlertCircle size={13} className="text-[#7A001F]" />
                 Recent Alerts
               </h4>
-              <span className="text-[9px] font-mono font-bold text-[#6A0019] bg-[#FCEEF2] px-1.5 py-0.5 rounded-full border border-[#EADFE3]">
+              <span className="text-[9px] font-mono font-bold text-[#7A001F] bg-[#FDF3F6] px-1.5 py-0.5 rounded-full border border-[#F0D6DD]">
                 {notifications.filter((n) => !n.read).length} New
               </span>
             </div>
@@ -899,9 +1033,9 @@ const StudentDashboard = () => {
                   <div
                     key={n._id}
                     className={`p-3 rounded-[18px] border text-left text-[11px] space-y-1 transition-all ${
-                      !n.read 
-                        ? 'bg-[#FCEEF2] border-[#EADFE3] shadow-xs' 
-                        : 'bg-white border-[#EADFE3] shadow-[0_4px_12px_rgba(0,0,0,0.03)]'
+                      !n.read
+                        ? 'bg-[#FDF3F6] border-[#F0D6DD] shadow-xs'
+                        : 'bg-white border-[#F0D6DD] shadow-[0_4px_12px_rgba(0,0,0,0.03)]'
                     }`}
                   >
                     <div className="flex justify-between items-center gap-2">
@@ -909,7 +1043,7 @@ const StudentDashboard = () => {
                       {!n.read && (
                         <button
                           onClick={(e) => handleMarkAsRead(e, n._id)}
-                          className="text-[9px] text-[#6A0019] font-bold hover:underline shrink-0"
+                          className="text-[9px] text-[#7A001F] font-bold hover:underline shrink-0"
                         >
                           Read
                         </button>
@@ -925,16 +1059,16 @@ const StudentDashboard = () => {
 
             <button
               onClick={() => navigate('/student/notifications')}
-              className="w-full py-2.5 rounded-full border border-[#6A0019] hover:bg-[#6A0019] hover:text-white text-[#6A0019] font-bold text-xs transition-all text-center active:scale-95 shadow-xs"
+              className="w-full py-2.5 rounded-full border border-[#7A001F] hover:bg-[#7A001F] hover:text-white text-[#7A001F] font-bold text-xs transition-all text-center active:scale-95 shadow-xs"
             >
               All Notifications Center
             </button>
           </motion.div>
 
           {/* AI Tip of the Day */}
-          <motion.div variants={itemVariants} className="bg-white p-5 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(106,0,25,0.06)] space-y-2 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#6A0019]/5 rounded-full blur-2xl pointer-events-none"></div>
-            <div className="flex items-center gap-1.5 text-[#6A0019]">
+          <motion.div variants={itemVariants} className="bg-white p-5 rounded-[24px] border border-[#F0D6DD] shadow-[0_12px_30px_rgba(122,0,31,0.06)] space-y-2 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#7A001F]/5 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="flex items-center gap-1.5 text-[#7A001F]">
               <Lightbulb size={14} />
               <span className="text-[9px] font-mono font-bold uppercase tracking-wider">AI Tip of the Day</span>
             </div>
@@ -950,7 +1084,7 @@ const StudentDashboard = () => {
       {/* SCORECARD MODAL */}
       <AnimatePresence>
         {modalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-xs" style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -963,7 +1097,7 @@ const StudentDashboard = () => {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative bg-white max-w-lg w-full rounded-[24px] border border-[#EADFE3] shadow-2xl p-6 space-y-6 overflow-hidden z-10"
+              className="relative bg-white max-w-lg w-full rounded-[24px] border border-[#F0D6DD] shadow-2xl p-6 space-y-6 overflow-hidden z-10"
             >
               {loadingResult ? (
                 <div className="p-12 text-center space-y-4 animate-pulse">
@@ -980,7 +1114,7 @@ const StudentDashboard = () => {
                   </p>
                   <button
                     onClick={() => setModalOpen(false)}
-                    className="mt-4 px-6 py-2.5 rounded-full bg-[#6A0019] text-white text-xs font-bold"
+                    className="mt-4 px-6 py-2.5 rounded-full bg-[#7A001F] text-white text-xs font-bold"
                   >
                     Close Window
                   </button>
@@ -1055,7 +1189,7 @@ const StudentDashboard = () => {
                         className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
                           activeResult.status === 'Pass'
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-500/10'
-                            : 'bg-red-50 text-red-750 border border-red-500/10'
+                            : 'bg-red-50 text-red-700 border border-red-500/10'
                         }`}
                       >
                         {activeResult.status.toUpperCase()}

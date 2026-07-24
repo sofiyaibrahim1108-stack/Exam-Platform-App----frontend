@@ -5,7 +5,7 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 const SuperAdminProfile = () => {
-  const { user: authUser, logout } = useAuth();
+  const { user: authUser, logout, updateUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -79,7 +79,13 @@ const SuperAdminProfile = () => {
       });
       toast.success('Profile details updated successfully!', { id: toastId });
       setProfile(response.data.data);
-      // Reload page context by simply triggering state reload (auth user updates automatically next time session checks)
+      
+      // Update global context so Navbar and Sidebar react immediately
+      const updatedUser = {
+        ...response.data.data,
+        photoUrl: response.data.data.avatar ? `${backendUrl}/${response.data.data.avatar}` : null
+      };
+      updateUser(updatedUser);
     } catch (error) {
       toast.error(error.message || 'Profile update failed.', { id: toastId });
     } finally {

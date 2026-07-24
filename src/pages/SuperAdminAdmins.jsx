@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  Search, Plus, Eye, Edit, Trash2, Key, X, Building2, User,
+  Mail, Phone, MapPin, Info, Lock, Unlock, Calendar, EyeOff
+} from 'lucide-react';
 import api from '../services/api';
 
 const SuperAdminAdmins = () => {
@@ -56,11 +60,11 @@ const SuperAdminAdmins = () => {
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
     if (score <= 2) {
-      return { score, label: 'Weak', color: 'text-error bg-error/10 border border-error/20', barColor: 'bg-error', width: 'w-1/3' };
+      return { score, label: 'Weak', color: 'text-red-600 bg-red-50 border border-red-100', barColor: 'bg-red-500', width: 'w-1/3' };
     } else if (score <= 4) {
-      return { score, label: 'Medium', color: 'text-amber-600 bg-amber-500/10 border border-amber-500/20', barColor: 'bg-amber-500', width: 'w-2/3' };
+      return { score, label: 'Medium', color: 'text-amber-600 bg-amber-50 border border-amber-100', barColor: 'bg-amber-500', width: 'w-2/3' };
     } else {
-      return { score, label: 'Strong', color: 'text-emerald-600 bg-emerald-500/10 border border-emerald-500/20', barColor: 'bg-emerald-500', width: 'w-full' };
+      return { score, label: 'Strong', color: 'text-emerald-600 bg-emerald-50 border border-emerald-100', barColor: 'bg-emerald-500', width: 'w-full' };
     }
   };
 
@@ -98,14 +102,12 @@ const SuperAdminAdmins = () => {
   // Load institutions for selectors dropdowns
   const fetchInstitutions = async () => {
     try {
-      const response = await api.get('/institutions', {
-        params: { limit: 100 }, // Fetch list of onboarded universities
-      });
+      const response = await api.get('/institutions', { params: { limit: 100 } });
       if (response.data && response.data.success) {
         setInstitutions(response.data.data.results);
       }
     } catch (error) {
-      console.error('Failed to load institutions dropdown list', error);
+      console.error('Failed to populate institutions selector dropdowns:', error);
     }
   };
 
@@ -117,39 +119,24 @@ const SuperAdminAdmins = () => {
     fetchInstitutions();
   }, []);
 
-  // Form data constructor for file transfers
-  const createFormData = (data) => {
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (key === 'avatar') {
-        if (data.avatar && data.avatar[0]) {
-          formData.append('avatar', data.avatar[0]);
-        }
-      } else {
-        formData.append(key, data[key] || '');
-      }
-    });
-    return formData;
-  };
-
   // CREATE Action
   const onAddSubmit = async (data) => {
-    const toastId = toast.loading('Registering Administrator account...');
+    const toastId = toast.loading('Registering admin...');
     try {
-      const formData = createFormData(data);
-      await api.post('/admins', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      
-      toast.success('Campus Admin created successfully.', { id: toastId });
+      const response = await api.post('/admins', data);
+      toast.success('Admin registered successfully!', { id: toastId });
       setAddModalOpen(false);
       resetAdd();
-      setShowPassword(false);
-      setShowConfirmPassword(false);
-
       fetchAdmins();
+      
+      // Store temporary credential details to display to super admin
+      if (response.data && response.data.data && response.data.data.tempPassword) {
+        setSelectedAdmin(response.data.data.admin);
+        setTempPasswordCreated(response.data.data.tempPassword);
+        setCredentialModalOpen(true);
+      }
     } catch (error) {
-      toast.error(error.message || 'Administrator registration failed.', { id: toastId });
+      toast.error(error.message || 'Onboarding registration failed.', { id: toastId });
     }
   };
 
@@ -159,7 +146,7 @@ const SuperAdminAdmins = () => {
     setValueEdit('name', admin.name);
     setValueEdit('email', admin.email);
     setValueEdit('phone', admin.phone || '');
-    setValueEdit('institution', admin.institution?._id || '');
+    setValueEdit('designation', admin.designation || '');
     setEditModalOpen(true);
   };
 
@@ -167,24 +154,21 @@ const SuperAdminAdmins = () => {
   const onEditSubmit = async (data) => {
     const toastId = toast.loading('Syncing administrator details...');
     try {
-      const formData = createFormData(data);
-      await api.put(`/admins/${selectedAdmin._id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      toast.success('Administrator details synced!', { id: toastId });
+      await api.put(`/admins/${selectedAdmin._id}`, data);
+      toast.success('Admin details updated successfully!', { id: toastId });
       setEditModalOpen(false);
       fetchAdmins();
     } catch (error) {
-      toast.error(error.message || 'Credential modification failed.', { id: toastId });
+      toast.error(error.message || 'Modification failed.', { id: toastId });
     }
   };
 
-  // HARD DELETE Action
+  // SOFT DELETE / ARCHIVE Action
   const handleDeleteConfirm = async () => {
-    const toastId = toast.loading('Removing user profile...');
+    const toastId = toast.loading('Archiving administrator...');
     try {
       await api.delete(`/admins/${selectedAdmin._id}`);
-      toast.success('Admin account deleted from network database.', { id: toastId });
+      toast.success('Admin clearance archived.', { id: toastId });
       setDeleteDialogOpen(false);
       fetchAdmins();
     } catch (error) {
@@ -192,242 +176,231 @@ const SuperAdminAdmins = () => {
     }
   };
 
-  // STATUS TOGGLE Action
+  // STATUS CLEARANCE TOGGLE Action
   const handleStatusToggle = async (admin) => {
-    const toastId = toast.loading('Toggling security clearance...');
+    const toastId = toast.loading('Modifying active clearance status...');
     try {
       await api.patch(`/admins/${admin._id}/status`);
-      toast.success(`Access level marked as ${admin.status === 'Active' ? 'Suspended' : 'Active'}.`, { id: toastId });
+      toast.success(`Clearance standing modified!`, { id: toastId });
       fetchAdmins();
     } catch (error) {
-      toast.error(error.message || 'Clearance toggle failed.', { id: toastId });
+      toast.error(error.message || 'Status standing toggle failed.', { id: toastId });
     }
   };
 
-  // PASSWORD RESET Action
-  const handlePasswordReset = async (admin) => {
-    const toastId = toast.loading('Generating new credentials key...');
+  // MANUAL PASSWORD RESET Action
+  const handleResetPassword = async (admin) => {
+    const toastId = toast.loading('Requesting credentials reset...');
     try {
-      const response = await api.patch(`/admins/${admin._id}/reset-password`);
-      toast.success('Credentials reset completed!', { id: toastId });
+      const response = await api.post(`/admins/${admin._id}/reset-password`);
+      toast.success('Temporary password generated successfully!', { id: toastId });
       
-      setTempPasswordCreated(response.data.data.tempPassword);
-      setCredentialModalOpen(true);
+      if (response.data && response.data.data && response.data.data.tempPassword) {
+        setSelectedAdmin(admin);
+        setTempPasswordCreated(response.data.data.tempPassword);
+        setCredentialModalOpen(true);
+      }
     } catch (error) {
-      toast.error(error.message || 'Reset failed.', { id: toastId });
+      toast.error(error.message || 'Reset password request failed.', { id: toastId });
     }
-  };
-
-  // Helper copy-to-clipboard function
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    toast.success('Temporary password copied to clipboard!');
   };
 
   return (
     <div className="space-y-6">
       
-      {/* Upper Header panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-6 rounded-[24px] border border-primary/5">
+      {/* Upper header section */}
+      <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(139,21,56,0.04)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-primary">System Admin Management</h2>
-          <p className="text-on-surface-variant text-xs mt-1">Provision and regulate campus administrator accounts across colleges.</p>
+          <h2 className="text-xl font-extrabold text-[#8B1538]">System Admin Management</h2>
+          <p className="text-gray-500 text-xs mt-0.5 font-semibold">Manage, register, reset, and monitor administrative keys across campus nodes.</p>
         </div>
         <button
           onClick={() => setAddModalOpen(true)}
-          className="bg-primary text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-primary/10"
+          className="bg-[#8B1538] hover:bg-[#720F2B] text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-all flex items-center gap-1.5 shadow-md shadow-[#8B1538]/10"
         >
-          <span className="material-symbols-outlined text-[20px]">person_add</span>
-          Provision Admin
+          <Plus size={15} />
+          Register System Admin
         </button>
       </div>
 
-      {/* Filters Toolbar */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+      {/* Search & Filter toolbar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
         {/* Search */}
-        <div className="md:col-span-3 flex items-center bg-surface rounded-xl px-4 py-2 border border-primary/5 shadow-sm">
-          <span className="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+        <div className="lg:col-span-2 flex items-center bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
+          <Search size={15} className="text-gray-400 shrink-0" />
           <input
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
-            placeholder="Search admins by name, email, or phone..."
-            className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-on-surface-variant/50 outline-none ml-2"
+            placeholder="Search admins by name, email, or designation..."
+            className="bg-transparent border-none focus:ring-0 text-xs font-semibold w-full placeholder:text-gray-400 outline-none ml-2 text-gray-800"
             type="text"
           />
         </div>
 
         {/* Institution Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+        <div className="bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
           <select
             value={instFilter}
             onChange={(e) => {
               setInstFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="w-full bg-transparent border-none text-xs font-semibold text-gray-600 focus:ring-0 outline-none cursor-pointer"
           >
             <option value="">All Institutions</option>
             {institutions.map((inst) => (
               <option key={inst._id} value={inst._id}>
-                {inst.institutionCode} - {inst.institutionName}
+                {inst.institutionName} ({inst.institutionCode})
               </option>
             ))}
           </select>
         </div>
 
         {/* Status Filter */}
-        <div className="bg-surface rounded-xl px-4 py-2.5 border border-primary/5 shadow-sm">
+        <div className="bg-white border border-gray-150 rounded-xl px-4 py-2 shadow-xs">
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full bg-transparent border-none text-sm text-on-surface-variant focus:ring-0 outline-none cursor-pointer"
+            className="w-full bg-transparent border-none text-xs font-semibold text-gray-600 focus:ring-0 outline-none cursor-pointer"
           >
-            <option value="">All Statuses</option>
-            <option value="Active">Active Profile</option>
-            <option value="Suspended">Suspended Profile</option>
+            <option value="">All Clearances</option>
+            <option value="Active">Active Clearance</option>
+            <option value="Suspended">Suspended Clearance</option>
           </select>
         </div>
       </div>
 
-      {/* Main Grid Card */}
-      <div className="glass-panel p-6 rounded-[24px] shadow-sm">
-        
+      {/* Main Content Card Wrapper */}
+      <div className="bg-white p-6 rounded-[24px] border border-[#EADFE3] shadow-[0_12px_30px_rgba(139,21,56,0.04)]">
         {loading ? (
-          // Loading Skeletons
           <div className="space-y-4 py-4">
-            <div className="h-8 bg-surface-container-high animate-pulse rounded-lg w-full"></div>
+            <div className="h-8 bg-gray-100 animate-pulse rounded-lg w-full"></div>
             {[1, 2, 3].map((n) => (
-              <div key={n} className="h-16 bg-surface-container-low animate-pulse rounded-xl w-full"></div>
+              <div key={n} className="h-16 bg-gray-55 animate-pulse rounded-xl w-full"></div>
             ))}
           </div>
         ) : admins.length === 0 ? (
-          // Empty state
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-            <span className="material-symbols-outlined text-primary/45 text-5xl">group_off</span>
+            <User size={40} className="text-gray-300" />
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-primary">No Admins Mapped</h3>
-              <p className="text-on-surface-variant text-sm max-w-sm">No administrators matched your filters search constraints.</p>
+              <h3 className="text-sm font-bold text-gray-800">No Administrators Found</h3>
+              <p className="text-gray-500 text-xs max-w-sm font-semibold">No administrator profiles match your active search or filters criteria.</p>
             </div>
           </div>
         ) : (
-          // Data Table
           <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-primary/10 pb-4 text-xs font-mono font-semibold text-primary uppercase tracking-wider">
+                <tr className="border-b border-gray-100 pb-4 text-xs font-mono font-bold text-gray-400 uppercase tracking-wider">
                   <th className="py-4 px-3">Avatar</th>
                   <th className="py-4 px-3">Name & Email</th>
-                  <th className="py-4 px-3">Institution Mapped</th>
-                  <th className="py-4 px-3">Phone</th>
-                  <th className="py-4 px-3 text-center">Status</th>
+                  <th className="py-4 px-3">Onboarded Node</th>
+                  <th className="py-4 px-3">Designation</th>
+                  <th className="py-4 px-3 text-center">Clearance</th>
                   <th className="py-4 px-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-primary/5 text-sm">
-                {admins.map((adm) => (
-                  <tr key={adm._id} className="hover:bg-primary/5 transition-colors">
-                    {/* Avatar */}
+              <tbody className="divide-y divide-gray-50 text-xs font-semibold text-gray-700">
+                {admins.map((admin) => (
+                  <tr key={admin._id} className="hover:bg-gray-50/50 transition-colors">
+                    {/* Avatar Column */}
                     <td className="py-4 px-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center text-primary font-bold border-2 border-primary/10">
-                        {adm.avatar ? (
+                      <div className="w-9 h-9 rounded-full border border-gray-150 flex items-center justify-center overflow-hidden bg-gray-50 shrink-0">
+                        {admin.avatar ? (
                           <img
-                            src={`${backendUrl}/${adm.avatar}`}
-                            alt={adm.name}
+                            src={`${backendUrl}/${admin.avatar}`}
+                            alt={admin.name}
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <span>{adm.name.charAt(0).toUpperCase()}</span>
+                          <User size={15} className="text-[#8B1538]" />
                         )}
                       </div>
                     </td>
 
-                    {/* Name & Email */}
+                    {/* Name & Email Column */}
                     <td className="py-4 px-3">
-                      <p className="font-bold text-primary">{adm.name}</p>
-                      <p className="text-xs text-on-surface-variant mt-0.5">{adm.email}</p>
+                      <p className="font-bold text-gray-850">{admin.name}</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5 font-mono lowercase">{admin.email}</p>
                     </td>
 
-                    {/* Institution */}
+                    {/* Onboarded Node Column */}
                     <td className="py-4 px-3">
-                      {adm.institution ? (
+                      {admin.institution ? (
                         <div>
-                          <p className="font-semibold text-on-surface">{adm.institution.institutionName}</p>
-                          <p className="font-mono text-xs text-on-surface-variant uppercase mt-0.5">{adm.institution.institutionCode}</p>
+                          <p className="text-gray-800">{admin.institution.institutionName}</p>
+                          <p className="font-mono text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">{admin.institution.institutionCode}</p>
                         </div>
                       ) : (
-                        <span className="text-xs text-error font-mono font-semibold uppercase">UNASSIGNED_NODE</span>
+                        <span className="text-red-500 font-mono text-[9px] tracking-wide font-bold uppercase">Orphan Node</span>
                       )}
                     </td>
 
-                    {/* Phone */}
+                    {/* Designation Column */}
                     <td className="py-4 px-3">
-                      <span className="font-medium text-on-surface-variant">{adm.phone || '—'}</span>
+                      <span className="text-gray-500 font-semibold">{admin.designation || 'System Admin'}</span>
                     </td>
 
-                    {/* Status Toggle */}
+                    {/* Clearance Column */}
                     <td className="py-4 px-3 text-center">
                       <button
-                        onClick={() => handleStatusToggle(adm)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-                          adm.status === 'Active'
-                            ? 'bg-secondary/15 text-secondary'
-                            : 'bg-error/10 text-error'
-                        } hover:scale-95 transition-transform`}
+                        onClick={() => handleStatusToggle(admin)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          admin.status === 'Active'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                            : 'bg-red-50 text-red-600 border border-red-100'
+                        } transition-transform`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${adm.status === 'Active' ? 'bg-secondary' : 'bg-error'}`}></span>
-                        {adm.status}
+                        <span className={`w-1 h-1 rounded-full ${admin.status === 'Active' ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+                        {admin.status}
                       </button>
                     </td>
 
-                    {/* Action buttons */}
+                    {/* Actions Column */}
                     <td className="py-4 px-3 text-right">
-                      <div className="flex justify-end gap-3">
-                        {/* Reset password */}
-                        <button
-                          onClick={() => handlePasswordReset(adm)}
-                          title="Reset Password"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-amber-600 transition-colors"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">lock_reset</span>
-                        </button>
-
-                        {/* View Drawer Details */}
+                      <div className="flex justify-end gap-2">
                         <button
                           onClick={() => {
-                            setSelectedAdmin(adm);
+                            setSelectedAdmin(admin);
                             setDetailsDrawerOpen(true);
                           }}
                           title="View Details"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">visibility</span>
+                          <Eye size={14} />
                         </button>
-
-                        {/* Edit details */}
+                        
                         <button
-                          onClick={() => handleEditClick(adm)}
+                          onClick={() => handleEditClick(admin)}
                           title="Edit Details"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-secondary transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-[#FDF3F6] text-[#8B1538] transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
+                          <Edit size={14} />
                         </button>
 
-                        {/* Delete account */}
+                        <button
+                          onClick={() => handleResetPassword(admin)}
+                          title="Reset Password Keys"
+                          className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 transition-colors"
+                        >
+                          <Key size={14} />
+                        </button>
+
                         <button
                           onClick={() => {
-                            setSelectedAdmin(adm);
+                            setSelectedAdmin(admin);
                             setDeleteDialogOpen(true);
                           }}
-                          title="Delete Account"
-                          className="p-1.5 rounded-lg hover:bg-surface-container text-error transition-colors"
+                          title="Archive Administrator"
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -436,23 +409,23 @@ const SuperAdminAdmins = () => {
               </tbody>
             </table>
 
-            {/* Pagination controls */}
-            <div className="flex items-center justify-between border-t border-primary/10 mt-6 pt-4">
-              <span className="text-xs text-on-surface-variant font-mono">
-                Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
+            {/* Pagination footer */}
+            <div className="flex items-center justify-between border-t border-gray-100 mt-6 pt-4">
+              <span className="text-xs text-gray-400 font-mono font-bold">
+                Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
               </span>
               <div className="flex gap-2">
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+                  className="px-3 py-1.5 border border-gray-200 text-xs font-bold rounded-lg hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none text-gray-600"
                 >
                   Previous
                 </button>
                 <button
                   disabled={currentPage === pagination.totalPages}
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
-                  className="px-4 py-2 border border-primary/10 text-xs font-bold rounded-lg hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none"
+                  className="px-3 py-1.5 border border-gray-200 text-xs font-bold rounded-lg hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none text-gray-600"
                 >
                   Next
                 </button>
@@ -464,7 +437,7 @@ const SuperAdminAdmins = () => {
       </div>
 
       {/* ========================================================
-          ADD ADMIN MODAL
+          ADD MODAL
       ======================================================== */}
       <AnimatePresence>
         {addModalOpen && (
@@ -481,106 +454,114 @@ const SuperAdminAdmins = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-surface-container-lowest max-w-xl w-full rounded-[24px] border border-primary/10 p-8 shadow-2xl z-50"
+              className="relative bg-white max-w-xl w-full rounded-[24px] border border-gray-150 p-8 shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
             >
-              <h3 className="text-xl font-bold text-primary mb-2">Provision Campus Admin</h3>
-              <p className="text-on-surface-variant text-xs mb-6">Create credentials and map the Admin to their respective institution.</p>
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-[#8B1538]">Register System Administrator</h3>
+                  <p className="text-gray-500 text-xs mt-0.5 font-semibold">Provision access credentials mapped to an academic institution.</p>
+                </div>
+                <button onClick={() => setAddModalOpen(false)} className="p-1 rounded-full hover:bg-gray-100 text-gray-400">
+                  <X size={16} />
+                </button>
+              </div>
 
               <form onSubmit={handleSubmitAdd(onAddSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Name */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Full Name</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Full Name</label>
                     <input
                       {...registerAdd('name', { required: 'Name is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="e.g. Dr. Thomas Harris"
+                      placeholder="e.g. Dr. Arthur Pendragon"
                     />
-                    {errorsAdd.name && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.name.message}</span>}
+                    {errorsAdd.name && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.name.message}</span>}
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Email Address</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Email address</label>
                     <input
-                      {...registerAdd('email', { required: 'Email address is required' })}
+                      {...registerAdd('email', { required: 'Email is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="e.g. t.harris@berkeley.edu"
+                      placeholder="e.g. arthur@lumina.edu"
                       type="email"
                     />
-                    {errorsAdd.email && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.email.message}</span>}
+                    {errorsAdd.email && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.email.message}</span>}
                   </div>
 
-                  {/* Phone */}
+                  {/* Institution */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Phone Number *</label>
-                    <input
-                      {...registerAdd('phone', { required: 'Phone Number is required' })}
-                      className="w-full input-underline py-2 focus:ring-0 text-base"
-                      placeholder="+1 (510) 902-1404"
-                    />
-                    {errorsAdd.phone && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.phone.message}</span>}
-                  </div>
-
-                  {/* Institution Map Dropdown */}
-                  <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Assign Institution *</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Target Institution</label>
                     <select
-                      {...registerAdd('institution', { required: 'Assigning an institution is required' })}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2.5 text-base focus:ring-0 focus:border-primary outline-none cursor-pointer"
+                      {...registerAdd('institution', { required: 'Target institution is required' })}
+                      className="w-full input-underline py-2 focus:ring-0 text-base font-semibold text-gray-700 bg-white"
                     >
-                      <option value="">Choose Institution...</option>
+                      <option value="">Select Institution...</option>
                       {institutions.map((inst) => (
                         <option key={inst._id} value={inst._id}>
                           {inst.institutionName} ({inst.institutionCode})
                         </option>
                       ))}
                     </select>
-                    {errorsAdd.institution && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.institution.message}</span>}
+                    {errorsAdd.institution && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.institution.message}</span>}
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Phone Number</label>
+                    <input
+                      {...registerAdd('phone')}
+                      className="w-full input-underline py-2 focus:ring-0 text-base"
+                      placeholder="e.g. +1 555-0199"
+                    />
+                  </div>
+
+                  {/* Designation */}
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Designation</label>
+                    <input
+                      {...registerAdd('designation')}
+                      className="w-full input-underline py-2 focus:ring-0 text-base"
+                      placeholder="e.g. System Controller"
+                    />
                   </div>
 
                   {/* Password */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Password *</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Access Password</label>
                     <div className="relative">
                       <input
                         {...registerAdd('password', {
                           required: 'Password is required',
-                          validate: {
-                            minLength: (v) => v.length >= 8 || 'Password must be at least 8 characters long',
-                            uppercase: (v) => /[A-Z]/.test(v) || 'Password must contain at least one uppercase letter',
-                            lowercase: (v) => /[a-z]/.test(v) || 'Password must contain at least one lowercase letter',
-                            number: (v) => /[0-9]/.test(v) || 'Password must contain at least one number',
-                            specialChar: (v) => /[^A-Za-z0-9]/.test(v) || 'Password must contain at least one special character',
-                          }
+                          minLength: { value: 6, message: 'Password must be at least 6 characters' }
                         })}
+                        type={showPassword ? 'text' : 'password'}
                         className="w-full input-underline py-2 pr-10 focus:ring-0 text-base"
                         placeholder="••••••••"
-                        type={showPassword ? 'text' : 'password'}
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword(prev => !prev)}
-                        className="absolute right-2 top-2 text-on-surface-variant hover:text-primary transition-colors focus:outline-none"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
                       >
-                        <span className="material-symbols-outlined text-[20px]">
-                          {showPassword ? 'visibility_off' : 'visibility'}
-                        </span>
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
-                    {errorsAdd.password && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.password.message}</span>}
-                    
+                    {errorsAdd.password && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.password.message}</span>}
+
                     {/* Password Strength Indicator */}
                     {passwordValue && (
-                      <div className="mt-2 space-y-1">
-                        <div className="flex justify-between items-center text-[10px] font-mono font-bold uppercase tracking-wider">
-                          <span className="text-on-surface-variant">Strength:</span>
-                          <span className={`px-2 py-0.5 rounded-full ${getPasswordStrength(passwordValue).color}`}>
+                      <div className="mt-3 space-y-1.5">
+                        <div className="flex justify-between items-center text-[10px] font-bold">
+                          <span className="text-gray-400 uppercase tracking-wider font-mono">Keys Strength</span>
+                          <span className={`px-2 py-0.5 rounded-md font-mono ${getPasswordStrength(passwordValue).color}`}>
                             {getPasswordStrength(passwordValue).label}
                           </span>
                         </div>
-                        <div className="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                          <div className={`h-full ${getPasswordStrength(passwordValue).barColor} ${getPasswordStrength(passwordValue).width} transition-all duration-300`}></div>
+                        <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className={`h-full transition-all duration-300 ${getPasswordStrength(passwordValue).barColor} ${getPasswordStrength(passwordValue).width}`}></div>
                         </div>
                       </div>
                     )}
@@ -588,55 +569,43 @@ const SuperAdminAdmins = () => {
 
                   {/* Confirm Password */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Confirm Password *</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Confirm Password</label>
                     <div className="relative">
                       <input
                         {...registerAdd('confirmPassword', {
-                          required: 'Confirm Password is required',
-                          validate: (value) => value === passwordValue || 'Passwords do not match'
+                          required: 'Confirmation is required',
+                          validate: (val) => val === passwordValue || 'Passwords do not match'
                         })}
+                        type={showConfirmPassword ? 'text' : 'password'}
                         className="w-full input-underline py-2 pr-10 focus:ring-0 text-base"
                         placeholder="••••••••"
-                        type={showConfirmPassword ? 'text' : 'password'}
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(prev => !prev)}
-                        className="absolute right-2 top-2 text-on-surface-variant hover:text-primary transition-colors focus:outline-none"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
                       >
-                        <span className="material-symbols-outlined text-[20px]">
-                          {showConfirmPassword ? 'visibility_off' : 'visibility'}
-                        </span>
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
-                    {errorsAdd.confirmPassword && <span className="text-error text-xs block font-mono mt-1">{errorsAdd.confirmPassword.message}</span>}
-                  </div>
-
-                  {/* Profile avatar photo upload */}
-                  <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-2 uppercase px-1">Profile Photo (Optional)</label>
-                    <input
-                      {...registerAdd('avatar')}
-                      className="w-full text-xs text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/5 file:text-primary hover:file:bg-primary/10 file:cursor-pointer"
-                      type="file"
-                      accept="image/*"
-                    />
+                    {errorsAdd.confirmPassword && <span className="text-red-500 text-xs block font-mono mt-1">{errorsAdd.confirmPassword.message}</span>}
                   </div>
                 </div>
 
-                <div className="flex gap-4 justify-end pt-4 border-t border-primary/5">
+                {/* Submit Row */}
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => setAddModalOpen(false)}
-                    className="py-3 px-6 rounded-xl border border-primary/10 text-sm font-semibold hover:bg-primary/5 active:scale-95 transition-all"
+                    className="px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors text-gray-500 border border-gray-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="py-3 px-6 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-container active:scale-[0.98] transition-all"
+                    className="px-4 py-2 bg-[#8B1538] hover:bg-[#720F2B] text-white rounded-xl text-xs font-bold transition-all"
                   >
-                    Create Campus Admin
+                    Register Credentials
                   </button>
                 </div>
               </form>
@@ -646,7 +615,7 @@ const SuperAdminAdmins = () => {
       </AnimatePresence>
 
       {/* ========================================================
-          EDIT ADMIN MODAL
+          EDIT MODAL
       ======================================================== */}
       <AnimatePresence>
         {editModalOpen && (
@@ -663,85 +632,74 @@ const SuperAdminAdmins = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-surface-container-lowest max-w-xl w-full rounded-[24px] border border-primary/10 p-8 shadow-2xl z-50"
+              className="relative bg-white max-w-xl w-full rounded-[24px] border border-gray-150 p-8 shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
             >
-              <h3 className="text-xl font-bold text-primary mb-2">Edit Admin Credentials</h3>
-              <p className="text-on-surface-variant text-xs mb-6">Modify administrator contact mapping configuration files.</p>
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-[#8B1538]">Modify Admin Details</h3>
+                  <p className="text-gray-500 text-xs mt-0.5 font-semibold">Update contact parameters or designations in the security system.</p>
+                </div>
+                <button onClick={() => setEditModalOpen(false)} className="p-1 rounded-full hover:bg-gray-100 text-gray-400">
+                  <X size={16} />
+                </button>
+              </div>
 
               <form onSubmit={handleSubmitEdit(onEditSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Name */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Full Name</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Full Name</label>
                     <input
                       {...registerEdit('name', { required: 'Name is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
                     />
-                    {errorsEdit.name && <span className="text-error text-xs block font-mono mt-1">{errorsEdit.name.message}</span>}
+                    {errorsEdit.name && <span className="text-red-500 text-xs block font-mono mt-1">{errorsEdit.name.message}</span>}
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Email Address</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Email address</label>
                     <input
-                      {...registerEdit('email', { required: 'Email address is required' })}
+                      {...registerEdit('email', { required: 'Email is required' })}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
                       type="email"
+                      disabled
                     />
-                    {errorsEdit.email && <span className="text-error text-xs block font-mono mt-1">{errorsEdit.email.message}</span>}
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Phone Number</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Phone Number</label>
                     <input
                       {...registerEdit('phone')}
                       className="w-full input-underline py-2 focus:ring-0 text-base"
                     />
                   </div>
 
-                  {/* Institution Map Dropdown */}
+                  {/* Designation */}
                   <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-1 uppercase px-1">Assign Institution</label>
-                    <select
-                      {...registerEdit('institution', { required: 'Assigning an institution is required' })}
-                      className="w-full bg-transparent border-0 border-b-2 border-outline-variant py-2.5 text-base focus:ring-0 focus:border-primary outline-none cursor-pointer"
-                    >
-                      <option value="">Choose Institution...</option>
-                      {institutions.map((inst) => (
-                        <option key={inst._id} value={inst._id}>
-                          {inst.institutionName} ({inst.institutionCode})
-                        </option>
-                      ))}
-                    </select>
-                    {errorsEdit.institution && <span className="text-error text-xs block font-mono mt-1">{errorsEdit.institution.message}</span>}
-                  </div>
-
-                  {/* Profile avatar photo upload */}
-                  <div className="col-span-2">
-                    <label className="block font-mono text-[10px] font-semibold text-on-surface-variant mb-2 uppercase px-1">Update Profile Photo (Optional)</label>
+                    <label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Designation</label>
                     <input
-                      {...registerEdit('avatar')}
-                      className="w-full text-xs text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/5 file:text-primary hover:file:bg-primary/10 file:cursor-pointer"
-                      type="file"
-                      accept="image/*"
+                      {...registerEdit('designation')}
+                      className="w-full input-underline py-2 focus:ring-0 text-base"
                     />
                   </div>
                 </div>
 
-                <div className="flex gap-4 justify-end pt-4 border-t border-primary/5">
+                {/* Submit Row */}
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                   <button
                     type="button"
                     onClick={() => setEditModalOpen(false)}
-                    className="py-3 px-6 rounded-xl border border-primary/10 text-sm font-semibold hover:bg-primary/5 active:scale-95 transition-all"
+                    className="px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors text-gray-500 border border-gray-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="py-3 px-6 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-container active:scale-[0.98] transition-all"
+                    className="px-4 py-2 bg-[#8B1538] hover:bg-[#720F2B] text-white rounded-xl text-xs font-bold transition-all"
                   >
-                    Save Changes
+                    Sync Details
                   </button>
                 </div>
               </form>
@@ -751,7 +709,7 @@ const SuperAdminAdmins = () => {
       </AnimatePresence>
 
       {/* ========================================================
-          DELETE DIALOG
+          DELETE MODAL
       ======================================================== */}
       <AnimatePresence>
         {deleteDialogOpen && (
@@ -768,32 +726,33 @@ const SuperAdminAdmins = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-surface-container-lowest max-w-md w-full rounded-[24px] border border-primary/10 p-8 shadow-2xl z-50 text-center space-y-6"
+              className="relative bg-white max-w-md w-full rounded-[24px] border border-gray-150 p-6 shadow-2xl z-50"
             >
-              <div className="w-16 h-16 rounded-full bg-error/10 text-error flex items-center justify-center mx-auto text-3xl">
-                <span className="material-symbols-outlined">warning</span>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center shrink-0">
+                  <Trash2 size={20} />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-base font-extrabold text-gray-800">Archive Admin standing</h3>
+                  <p className="text-gray-500 text-xs font-semibold leading-relaxed">
+                    Are you sure you want to deactivate and soft-delete <span className="font-bold text-[#8B1538]">{selectedAdmin?.name}</span>?
+                    This action will immediately terminate active campus credentials.
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-primary">Remove Admin Profile?</h3>
-                <p className="text-on-surface-variant text-sm">
-                  This will hard-delete the account of <span className="font-semibold text-primary">{selectedAdmin?.name}</span> from the network database.
-                  This action is irreversible and blocks administrative access to the campus node immediately.
-                </p>
-              </div>
-
-              <div className="flex gap-4 justify-center">
+              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
                 <button
                   onClick={() => setDeleteDialogOpen(false)}
-                  className="py-3 px-6 rounded-xl border border-primary/10 text-sm font-semibold hover:bg-primary/5 active:scale-95 transition-all w-1/2"
+                  className="px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors text-gray-500 border border-gray-200"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteConfirm}
-                  className="py-3 px-6 rounded-xl bg-error text-white text-sm font-semibold hover:brightness-110 active:scale-[0.98] transition-all w-1/2"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all"
                 >
-                  Delete Account
+                  Confirm Archive
                 </button>
               </div>
             </motion.div>
@@ -802,10 +761,10 @@ const SuperAdminAdmins = () => {
       </AnimatePresence>
 
       {/* ========================================================
-          TEMPORARY PASSWORD DISPLAY MODAL
+          CREDENTIAL REPORT MODAL (NEWLY onboarded credentials display)
       ======================================================== */}
       <AnimatePresence>
-        {credentialModalOpen && (
+        {credentialModalOpen && selectedAdmin && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
@@ -819,37 +778,49 @@ const SuperAdminAdmins = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="relative bg-surface-container-lowest max-w-md w-full rounded-[24px] border border-primary/10 p-8 shadow-2xl z-50 text-center space-y-6 animate-in fade-in duration-250"
+              className="relative bg-white max-w-md w-full rounded-[24px] border border-gray-150 p-8 shadow-2xl z-50 text-xs font-semibold text-gray-700 space-y-6"
             >
-              <div className="w-16 h-16 rounded-full bg-secondary/15 text-secondary flex items-center justify-center mx-auto text-3xl">
-                <span className="material-symbols-outlined">vpn_key</span>
+              <div className="text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto">
+                  <Lock size={22} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-gray-800">Security Credentials Generated</h3>
+                  <p className="text-gray-500 text-[10px] font-semibold">Copy temporary credentials keys below to provide to the administrator.</p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-primary">New Temporary Credentials</h3>
-                <p className="text-on-surface-variant text-sm">
-                  Please copy and share this temporary password with the administrator. It is hashed in the database and will not be displayed again.
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-150 space-y-3 font-semibold">
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase font-mono tracking-wider">Performer User</p>
+                  <p className="text-gray-800 font-bold mt-0.5">{selectedAdmin.name}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase font-mono tracking-wider">Login Identity Email</p>
+                  <p className="text-gray-800 font-mono mt-0.5">{selectedAdmin.email}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-400 uppercase font-mono tracking-wider">Temporary Password Seal</p>
+                  <p className="text-[#8B1538] font-mono font-bold text-sm tracking-wider mt-0.5 select-all">{tempPasswordCreated}</p>
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-[#FDF3F6] border border-[#8B1538]/10 rounded-xl flex items-start gap-2.5">
+                <Info size={14} className="text-[#8B1538] shrink-0 mt-0.5" />
+                <p className="text-[10px] text-gray-500 leading-normal font-semibold">
+                  This password is only visible once. Make sure to record these details securely before closing this window.
                 </p>
               </div>
 
-              {/* Password text block */}
-              <div className="bg-surface-container py-4 px-6 rounded-xl flex items-center justify-between border border-primary/5 max-w-sm mx-auto shadow-inner">
-                <span className="font-mono text-lg font-bold text-primary select-all tracking-widest">{tempPasswordCreated}</span>
+              <div className="flex justify-end pt-4 border-t border-gray-100">
                 <button
-                  onClick={() => copyToClipboard(tempPasswordCreated)}
-                  title="Copy password"
-                  className="p-2 text-on-surface-variant hover:text-primary rounded-lg transition-colors flex items-center"
+                  onClick={() => {
+                    setCredentialModalOpen(false);
+                    setTempPasswordCreated('');
+                  }}
+                  className="w-full py-2 bg-[#8B1538] hover:bg-[#720F2B] text-white rounded-xl text-xs font-bold transition-all text-center"
                 >
-                  <span className="material-symbols-outlined text-[20px]">content_copy</span>
-                </button>
-              </div>
-
-              <div>
-                <button
-                  onClick={() => setCredentialModalOpen(false)}
-                  className="py-3 px-8 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-container active:scale-[0.98] transition-all w-full max-w-xs shadow-md shadow-primary/10"
-                >
-                  Done
+                  Credentials Copy Verified
                 </button>
               </div>
             </motion.div>
@@ -858,94 +829,130 @@ const SuperAdminAdmins = () => {
       </AnimatePresence>
 
       {/* ========================================================
-          VIEW DETAILS DRAWER
+          DETAILS DRAWER
       ======================================================== */}
       <AnimatePresence>
-        {detailsDrawerOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end">
+        {detailsDrawerOpen && selectedAdmin && (
+          <div className="fixed inset-0 z-50 overflow-hidden">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDetailsDrawerOpen(false)}
-              className="fixed inset-0 bg-black/35 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs"
             ></motion.div>
 
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-md h-full bg-surface-container-lowest border-l border-primary/10 shadow-2xl p-8 z-50 overflow-y-auto flex flex-col justify-between"
-            >
-              <div className="space-y-8">
+            <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'tween', duration: 0.3 }}
+                className="w-screen max-w-md bg-white shadow-2xl border-l border-gray-150 flex flex-col"
+              >
                 {/* Header */}
-                <div className="flex justify-between items-center pb-4 border-b border-primary/10">
-                  <h3 className="text-lg font-bold text-primary">Admin Account Details</h3>
+                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full border border-gray-150 bg-white flex items-center justify-center overflow-hidden shrink-0">
+                      {selectedAdmin.avatar ? (
+                        <img
+                          src={`${backendUrl}/${selectedAdmin.avatar}`}
+                          alt={selectedAdmin.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User size={18} className="text-[#8B1538]" />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold text-gray-800">{selectedAdmin.name}</h4>
+                      <p className="text-[10px] font-mono text-gray-400 lowercase mt-0.5">{selectedAdmin.email}</p>
+                    </div>
+                  </div>
                   <button
                     onClick={() => setDetailsDrawerOpen(false)}
-                    className="p-1 rounded-full hover:bg-surface-container text-on-surface-variant transition-colors"
+                    className="p-1 rounded-full hover:bg-gray-200 text-gray-400"
                   >
-                    <span className="material-symbols-outlined">close</span>
+                    <X size={16} />
                   </button>
                 </div>
 
-                {/* Profile Card */}
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-24 h-24 rounded-full border-2 border-primary/20 flex items-center justify-center overflow-hidden bg-primary/5 text-primary text-3xl font-bold">
-                    {selectedAdmin?.avatar ? (
-                      <img
-                        src={`${backendUrl}/${selectedAdmin.avatar}`}
-                        alt={selectedAdmin.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span>{selectedAdmin?.name?.charAt(0).toUpperCase()}</span>
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-bold text-primary">{selectedAdmin?.name}</h4>
-                    <p className="font-mono text-[10px] font-semibold text-secondary px-2.5 py-0.5 bg-secondary/10 rounded-full inline-block tracking-wider mt-1 uppercase">
-                      {selectedAdmin?.role}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Info Blocks */}
-                <div className="space-y-4 text-sm">
-                  {/* Email */}
-                  <div className="flex justify-between py-2 border-b border-primary/5">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase">Email Address</span>
-                    <span className="font-semibold text-on-surface">{selectedAdmin?.email}</span>
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-6 font-semibold text-xs text-gray-700">
+                  {/* Status Card */}
+                  <div className="p-4 rounded-2xl border border-gray-150 bg-gray-50/50 flex items-center justify-between">
+                    <span className="text-gray-400 font-mono text-[10px] uppercase font-bold tracking-wider">Access Clearance</span>
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold ${
+                      selectedAdmin.status === 'Active'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                        : 'bg-red-50 text-red-600 border border-red-100'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${selectedAdmin.status === 'Active' ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+                      {selectedAdmin.status}
+                    </span>
                   </div>
 
-                  {/* Phone */}
-                  <div className="flex justify-between py-2 border-b border-primary/5">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase">Phone</span>
-                    <span className="font-semibold text-on-surface">{selectedAdmin?.phone || '—'}</span>
-                  </div>
-
-                  {/* Mapped Institution */}
-                  <div className="flex flex-col py-2 border-b border-primary/5 space-y-1">
-                    <span className="font-mono text-xs text-on-surface-variant uppercase">Mapped Institution</span>
-                    {selectedAdmin?.institution ? (
-                      <div className="bg-surface-container p-3 rounded-xl border border-primary/5">
-                        <p className="font-semibold text-primary">{selectedAdmin.institution.institutionName}</p>
-                        <p className="font-mono text-[10px] text-on-surface-variant uppercase mt-0.5">Code: {selectedAdmin.institution.institutionCode}</p>
+                  {/* Campus Node Mapping */}
+                  <div className="space-y-4">
+                    <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono border-b border-gray-100 pb-1.5">Campus Authorization</h5>
+                    {selectedAdmin.institution ? (
+                      <div className="flex items-start gap-3 p-3.5 bg-gray-50 border border-gray-150 rounded-xl">
+                        <Building2 size={16} className="text-[#8B1538] shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-gray-850 font-bold">{selectedAdmin.institution.institutionName}</p>
+                          <p className="text-[9px] font-mono font-bold text-gray-400 uppercase mt-0.5 tracking-wider">Node code: {selectedAdmin.institution.institutionCode}</p>
+                        </div>
                       </div>
                     ) : (
-                      <span className="text-xs text-error font-semibold font-mono uppercase">NODE_UNASSIGNED</span>
+                      <p className="text-red-500 font-mono text-[9px] tracking-wider uppercase font-bold">Orphan Node - No mapped institution</p>
                     )}
                   </div>
-                </div>
-              </div>
 
-              {/* Footer */}
-              <div className="pt-6 border-t border-primary/10 mt-8 flex justify-between items-center text-sm font-mono text-[10px] font-semibold text-on-surface-variant">
-                <span>NODE_CLEARANCE: {selectedAdmin?.status?.toUpperCase()}</span>
-                <span>REGISTERED: {selectedAdmin?.createdAt ? new Date(selectedAdmin.createdAt).toLocaleDateString() : ''}</span>
-              </div>
-            </motion.div>
+                  {/* Profile properties */}
+                  <div className="space-y-4">
+                    <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono border-b border-gray-100 pb-1.5">Contact Specs</h5>
+                    
+                    <div className="flex items-start gap-3">
+                      <Phone size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Phone Line</p>
+                        <p className="text-gray-800 mt-0.5">{selectedAdmin.phone || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <User size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Staff Designation</p>
+                        <p className="text-gray-800 mt-0.5">{selectedAdmin.designation || 'System Admin'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Calendar size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-mono">Date Registered</p>
+                        <p className="text-gray-850 mt-0.5">{new Date(selectedAdmin.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setDetailsDrawerOpen(false);
+                      handleEditClick(selectedAdmin);
+                    }}
+                    className="px-4 py-2 bg-[#8B1538] hover:bg-[#720F2B] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+                  >
+                    <Edit size={12} />
+                    Modify Details
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           </div>
         )}
       </AnimatePresence>

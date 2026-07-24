@@ -42,7 +42,7 @@ const StaffSyllabusAnalyzer = () => {
     setLoading(true);
     try {
       // Find the faculty assignment mapping to resolve metadata
-      const assResponse = await api.get('/faculty-assignments/staff/me');
+      const assResponse = await api.get('/staff-subjects/my-subjects');
       if (assResponse.data && assResponse.data.success) {
         const found = assResponse.data.data.assignments.find(
           (a) => a.subject?._id === subjectId

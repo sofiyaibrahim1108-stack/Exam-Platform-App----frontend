@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, User, BookOpen, Brain, Database, FileEdit, Award, Bell,
-  MessageSquare, HelpCircle, LogOut, Menu, X, Shield, Key, Building2, Search, Wifi
+  MessageSquare, HelpCircle, LogOut, Menu, X, Shield, Key, Building2, Search, Wifi,
+  Sparkles, ChevronDown, ChevronRight, ClipboardList
 } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 import StaffNotificationDrawer from '../components/StaffNotificationDrawer';
+import Avatar from '../components/Avatar';
 
 const StaffLayout = () => {
   const { user, logout } = useAuth();
@@ -49,17 +52,33 @@ const StaffLayout = () => {
     navigate('/login');
   };
 
+  const [aiCenterExpanded, setAiCenterExpanded] = useState(
+    location.pathname.startsWith('/staff/ai-center')
+  );
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/staff/ai-center')) {
+      setAiCenterExpanded(true);
+    }
+  }, [location.pathname]);
+
   const navItems = [
     { name: 'Dashboard', path: '/staff/dashboard', icon: LayoutDashboard },
     { name: 'Profile', path: '/staff/profile', icon: User },
     { name: 'Assigned Subjects', path: '/staff/assigned-subjects', icon: BookOpen },
     { name: 'Question Generator', path: '/staff/questions', icon: Brain },
+  ];
+
+  const trailingNavItems = [
     { name: 'Question Bank', path: '/staff/question-bank', icon: Database },
     { name: 'Exam Creation', path: '/staff/exams', icon: FileEdit },
     { name: 'Exam Results', path: '/staff/results', icon: Award },
+    { name: 'Participation Monitor', path: '/staff/participation-monitor', icon: ClipboardList },
     { name: 'Notifications', path: '/staff/notifications', icon: Bell },
     { name: 'Support Tickets', path: '/staff/support-tickets', icon: MessageSquare },
   ];
+
+
 
   const getBreadcrumbs = () => {
     const pathnames = location.pathname.split('/').filter((x) => x);
@@ -86,9 +105,57 @@ const StaffLayout = () => {
           </div>
         </div>
 
-        <nav className="flex-1 px-4 space-y-1">
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           <span className="block text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider px-3 mb-2">Navigation Workspace</span>
           {navItems.map((item) => {
+            const IconComponent = item.icon;
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group text-xs font-semibold relative ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#8C1D40] to-[#C74B74] text-white shadow-md shadow-[#8C1D40]/15'
+                    : 'text-[#6B7280] hover:bg-[#F8ECEF] hover:text-[#8C1D40]'
+                }`}
+              >
+                {!isActive && (
+                  <span className="absolute left-0 top-3 bottom-3 w-1 bg-[#8C1D40] rounded-r opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                )}
+                <IconComponent
+                  size={16}
+                  className={`transition-transform duration-200 group-hover:scale-105 ${
+                    isActive ? 'text-white' : 'text-[#6B7280] group-hover:text-[#8C1D40]'
+                  }`}
+                />
+                <span className="truncate">{item.name}</span>
+              </Link>
+            );
+          })}
+
+          {/* AI Assistant Link */}
+          <Link
+            to="/staff/ai-center/chat"
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 group text-xs font-semibold relative ${
+              location.pathname.startsWith('/staff/ai-center')
+                ? 'bg-gradient-to-r from-[#8C1D40] to-[#C74B74] text-white shadow-md shadow-[#8C1D40]/15'
+                : 'text-[#6B7280] hover:bg-[#F8ECEF] hover:text-[#8C1D40]'
+            }`}
+          >
+            {!location.pathname.startsWith('/staff/ai-center') && (
+              <span className="absolute left-0 top-3 bottom-3 w-1 bg-[#8C1D40] rounded-r opacity-0 group-hover:opacity-100 transition-opacity"></span>
+            )}
+            <Sparkles
+              size={16}
+              className={`transition-transform duration-200 group-hover:scale-105 ${
+                location.pathname.startsWith('/staff/ai-center') ? 'text-white' : 'text-[#6B7280] group-hover:text-[#8C1D40]'
+              }`}
+            />
+            <span className="truncate">AI Assistant</span>
+          </Link>
+
+          {trailingNavItems.map((item) => {
             const IconComponent = item.icon;
             const isActive = location.pathname === item.path;
             return (
@@ -136,12 +203,10 @@ const StaffLayout = () => {
 
           {/* User Profile Mini Card */}
           <div className="p-3 bg-[#F8ECEF]/40 border border-[rgba(140,29,64,0.06)] rounded-2xl flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#8C1D40]/10 border border-[#8C1D40]/20 flex items-center justify-center text-[#8C1D40] font-black text-xs uppercase shrink-0">
-              {user?.name ? user.name.charAt(0) : 'F'}
-            </div>
+            <Avatar photoUrl={user?.photoUrl} name={user?.name} size={8} role="Staff" />
             <div className="min-w-0">
               <p className="text-[11px] font-bold text-[#1D1D1F] truncate leading-none">{user?.name || 'Faculty Member'}</p>
-              <p className="text-[9px] font-mono text-[#6B7280] uppercase tracking-wider mt-0.5 truncate">Academic Staff</p>
+              <p className="text-[9px] font-mono text-[#6B7280] uppercase tracking-wider mt-0.5 truncate">{user?.role || 'Staff'}</p>
             </div>
           </div>
         </div>
@@ -174,8 +239,42 @@ const StaffLayout = () => {
               </button>
             </div>
 
-            <nav className="flex-1 space-y-1">
+            <nav className="flex-1 space-y-1 overflow-y-auto">
               {navItems.map((item) => {
+                const IconComponent = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setMobileSidebarOpen(false)}
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-semibold ${
+                      isActive
+                        ? 'bg-gradient-to-r from-[#8C1D40] to-[#C74B74] text-white shadow-md'
+                        : 'text-[#6B7280] hover:bg-[#F8ECEF]'
+                    }`}
+                  >
+                    <IconComponent size={16} />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+
+              {/* Mobile AI Assistant Link */}
+              <Link
+                to="/staff/ai-center/chat"
+                onClick={() => setMobileSidebarOpen(false)}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-semibold ${
+                  location.pathname.startsWith('/staff/ai-center')
+                    ? 'bg-gradient-to-r from-[#8C1D40] to-[#C74B74] text-white shadow-md'
+                    : 'text-[#6B7280] hover:bg-[#F8ECEF]'
+                }`}
+              >
+                <Sparkles size={16} />
+                <span>AI Assistant</span>
+              </Link>
+
+              {trailingNavItems.map((item) => {
                 const IconComponent = item.icon;
                 const isActive = location.pathname === item.path;
                 return (
@@ -265,12 +364,10 @@ const StaffLayout = () => {
                 <div className="text-right hidden sm:block">
                   <p className="text-xs font-bold leading-none text-[#1D1D1F]">{user?.name || 'Faculty Member'}</p>
                   <p className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-wider mt-0.5">
-                    Clearance Level 2
+                    {user?.role || 'Staff'}
                   </p>
                 </div>
-                <div className="w-9 h-9 rounded-full border border-[rgba(140,29,64,0.12)] overflow-hidden bg-[#FAF8F7] flex items-center justify-center text-[#8C1D40] font-black text-xs uppercase shadow-inner">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : 'F'}
-                </div>
+                <Avatar photoUrl={user?.photoUrl} name={user?.name} size={9} role="Staff" />
               </button>
 
               {profileDropdownOpen && (

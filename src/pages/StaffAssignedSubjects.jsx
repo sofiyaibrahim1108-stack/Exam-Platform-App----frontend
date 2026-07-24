@@ -16,7 +16,7 @@ const StaffAssignedSubjects = () => {
   const fetchAssignments = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/faculty-assignments/staff/me');
+      const response = await api.get('/staff-subjects/my-subjects');
       const syllabiRes = await api.get('/syllabi');
       if (response.data && response.data.success) {
         const list = response.data.data.assignments || [];

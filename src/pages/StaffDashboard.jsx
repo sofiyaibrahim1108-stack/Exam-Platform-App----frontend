@@ -62,7 +62,7 @@ const StaffDashboard = () => {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/faculty-assignments/staff/dashboard-stats');
+      const response = await api.get('/staff-subjects/dashboard-stats');
       if (response.data && response.data.success) {
         setStats(response.data.data);
       }

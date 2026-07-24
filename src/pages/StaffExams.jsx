@@ -83,7 +83,7 @@ const StaffExams = () => {
   const fetchFacultyAssignments = async () => {
     setLoadingAssignments(true);
     try {
-      const response = await api.get('/faculty-assignments/staff/me');
+      const response = await api.get('/staff-subjects/my-subjects');
       if (response.data && response.data.success) {
         setAssignments(response.data.data.assignments || []);
       }

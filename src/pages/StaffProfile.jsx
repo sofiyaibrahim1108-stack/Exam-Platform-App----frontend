@@ -7,7 +7,7 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 const StaffProfile = () => {
-  const { user: authUser } = useAuth();
+  const { user: authUser, updateUser } = useAuth(); // 👈 pull updateUser from context
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -65,6 +65,7 @@ const StaffProfile = () => {
     const toastId = toast.loading('Updating profile details...');
     try {
       const formData = new FormData();
+      console.log("PROFILE RESPONSE:", data);
       formData.append('name', data.name);
       formData.append('phone', data.phone);
       formData.append('designation', data.designation);
@@ -78,7 +79,16 @@ const StaffProfile = () => {
       });
 
       if (response.data && response.data.success) {
-        setProfile(response.data.data);
+        const updatedUser = response.data.data;
+
+        setProfile(updatedUser);
+
+        // 👇 THIS IS THE FIX: push the fresh data into AuthContext
+        // so the navbar avatar/name and sidebar avatar/name update instantly
+        if (typeof updateUser === 'function') {
+          updateUser(updatedUser);
+        }
+
         toast.success('Profile details updated successfully.', { id: toastId });
         setAvatarFile(null);
         fetchProfile();

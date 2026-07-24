@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Calendar, PlayCircle, GraduationCap, Bell, User,
   HelpCircle, LogOut, School, Menu, Check, BellOff, AlertCircle,
-  Settings, MessageSquare, ChevronRight, Zap, X,
+  Settings, MessageSquare, ChevronRight, Zap, X, Sparkles, ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { StudentProfileProvider, useStudentProfile } from '../contexts/StudentProfileContext';
@@ -12,30 +12,7 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 /* ─── Navigation Structure ───────────────────────────────────────── */
-const NAV_GROUPS = [
-  {
-    section: null,
-    items: [
-      { name: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
-    ],
-  },
-  {
-    section: 'Examinations',
-    items: [
-      { name: 'Upcoming Exams', path: '/student/upcoming', icon: Calendar },
-      { name: 'Live Exams',     path: '/student/live',     icon: PlayCircle },
-      { name: 'Completed Exams', path: '/student/completed', icon: GraduationCap },
-    ],
-  },
-  {
-    section: 'Account',
-    items: [
-      { name: 'Notifications', path: '/student/notifications', icon: Bell },
-      { name: 'Profile',       path: '/student/profile',       icon: User },
-      { name: 'Settings',      path: '/student/settings',      icon: Settings },
-    ],
-  },
-];
+
 
 /* ─── Breadcrumb helper ──────────────────────────────────────────── */
 const getBreadcrumb = (pathname) =>
@@ -61,9 +38,17 @@ const Avatar = ({ photoUrl, name, size = 8, ring = true }) => {
   );
 };
 
-/* ─── Sidebar Content Component ─────────────────────────────────── */
 const SidebarContent = ({ location, onClose, user, onLogout, unreadCount }) => {
   const { photoUrl } = useStudentProfile();
+  const [aiCenterExpanded, setAiCenterExpanded] = useState(
+    location.pathname.startsWith('/student/ai-center')
+  );
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/student/ai-center')) {
+      setAiCenterExpanded(true);
+    }
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col h-full">
@@ -90,55 +75,229 @@ const SidebarContent = ({ location, onClose, user, onLogout, unreadCount }) => {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
-        {NAV_GROUPS.map((group, gi) => (
-          <div key={gi}>
-            {group.section && (
-              <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-[#9CA3AF]">
-                {group.section}
-              </p>
+      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-3">
+        <div className="space-y-0.5">
+          {/* Dashboard */}
+          <Link
+            to="/student/dashboard"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname === '/student/dashboard'
+                ? 'text-[#7A001F] font-semibold'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname === '/student/dashboard' && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
             )}
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const active = location.pathname === item.path;
-                const isNotif = item.path === '/student/notifications';
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    onClick={onClose}
-                    className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
-                      active
-                        ? 'text-[#7A001F] font-semibold'
-                        : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
-                    }`}
-                  >
-                    {active && (
-                      <motion.div
-                        layoutId="studentActiveNav"
-                        className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
-                        transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                      />
-                    )}
-                    <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
-                      active
-                        ? 'bg-[#7A001F] text-white shadow-sm'
-                        : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
-                    }`}>
-                      <item.icon size={13} />
-                    </span>
-                    <span className="relative z-10 flex-1">{item.name}</span>
-                    {isNotif && unreadCount > 0 && (
-                      <span className="relative z-10 ml-auto bg-[#7A001F] text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname === '/student/dashboard'
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <LayoutDashboard size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Dashboard</span>
+          </Link>
+
+          {/* Upcoming Exams */}
+          <Link
+            to="/student/upcoming"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname === '/student/upcoming'
+                ? 'text-[#7A001F] font-semibold'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname === '/student/upcoming' && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname === '/student/upcoming'
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <Calendar size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Upcoming Exams</span>
+          </Link>
+
+          {/* Live Exams */}
+          <Link
+            to="/student/live"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname === '/student/live'
+                ? 'text-[#7A001F] font-semibold'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname === '/student/live' && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname === '/student/live'
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <PlayCircle size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Live Exams</span>
+          </Link>
+
+          {/* Ask EduAI Link */}
+          <Link
+            to="/student/ai-center/tutor"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname.startsWith('/student/ai-center')
+                ? 'text-[#7A001F] font-semibold bg-[rgba(122,0,31,0.05)]'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname.startsWith('/student/ai-center') && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname.startsWith('/student/ai-center')
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <Sparkles size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Ask EduAI</span>
+          </Link>
+
+          {/* Results (Completed Exams) */}
+          <Link
+            to="/student/completed"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname === '/student/completed'
+                ? 'text-[#7A001F] font-semibold'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname === '/student/completed' && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname === '/student/completed'
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <GraduationCap size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Results</span>
+          </Link>
+
+          {/* Notifications */}
+          <Link
+            to="/student/notifications"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname === '/student/notifications'
+                ? 'text-[#7A001F] font-semibold'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname === '/student/notifications' && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname === '/student/notifications'
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <Bell size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Notifications</span>
+            {unreadCount > 0 && (
+              <span className="relative z-10 ml-auto bg-[#7A001F] text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </Link>
+
+          {/* Profile */}
+          <Link
+            to="/student/profile"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname === '/student/profile'
+                ? 'text-[#7A001F] font-semibold'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname === '/student/profile' && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname === '/student/profile'
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <User size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Profile</span>
+          </Link>
+
+          {/* Settings */}
+          <Link
+            to="/student/settings"
+            onClick={onClose}
+            className={`relative flex items-center gap-2.5 px-3 py-[8px] rounded-[10px] text-[13px] font-medium transition-all duration-150 group ${
+              location.pathname === '/student/settings'
+                ? 'text-[#7A001F] font-semibold'
+                : 'text-[#6B7280] hover:text-[#7A001F] hover:bg-[rgba(122,0,31,0.05)]'
+            }`}
+          >
+            {location.pathname === '/student/settings' && (
+              <motion.div
+                layoutId="studentActiveNav"
+                className="absolute inset-0 bg-[rgba(122,0,31,0.07)] rounded-[10px]"
+                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center justify-center w-6 h-6 rounded-[7px] transition-all duration-150 ${
+              location.pathname === '/student/settings'
+                ? 'bg-[#7A001F] text-white shadow-sm'
+                : 'text-[#9CA3AF] group-hover:text-[#7A001F] group-hover:bg-[rgba(122,0,31,0.08)]'
+            }`}>
+              <Settings size={13} />
+            </span>
+            <span className="relative z-10 flex-1">Settings</span>
+          </Link>
+        </div>
       </nav>
 
       {/* Footer */}

@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleBasedRoute from './components/RoleBasedRoute';
 import ExamLockGuard from './components/ExamLockGuard';
+import StudentAiCenter from './pages/StudentAiCenter';
 
 // Auth Pages
 import Login from './pages/Login';
@@ -27,6 +28,7 @@ import SuperAdminAuditLogs from './pages/SuperAdminAuditLogs';
 import SuperAdminSettings from './pages/SuperAdminSettings';
 import SuperAdminProfile from './pages/SuperAdminProfile';
 import SuperAdminHelp from './pages/SuperAdminHelp';
+import SuperAdminNotifications from './pages/SuperAdminNotifications';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDepartments from './pages/AdminDepartments';
 import AdminCourses from './pages/AdminCourses';
@@ -50,6 +52,8 @@ import AdminReports from './pages/AdminReports';
 import AdminSettings from './pages/AdminSettings';
 import AdminProfile from './pages/AdminProfile';
 import AdminNotifications from './pages/AdminNotifications';
+import AdminStaffSubjectAssignment from './pages/AdminStaffSubjectAssignment';
+import ParticipationMonitor from './pages/ParticipationMonitor';
 import AdminActivityLogs from './pages/AdminActivityLogs';
 import AdminSupportTickets from './pages/AdminSupportTickets';
 
@@ -69,6 +73,7 @@ import StaffQuestionBank from './pages/StaffQuestionBank';
 import StaffExams from './pages/StaffExams';
 import StaffSupportTickets from './pages/StaffSupportTickets';
 import StaffNotifications from './pages/StaffNotifications';
+import StaffAiCenter from './pages/StaffAiCenter';
 import StudentDashboard from './pages/StudentDashboard';
 import StudentUpcoming from './pages/StudentUpcoming';
 import StudentLive from './pages/StudentLive';
@@ -140,6 +145,7 @@ const App = () => {
             <Route path="settings" element={<SuperAdminSettings />} />
             <Route path="profile" element={<SuperAdminProfile />} />
             <Route path="help" element={<SuperAdminHelp />} />
+            <Route path="notifications" element={<SuperAdminNotifications />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
 
@@ -179,6 +185,8 @@ const App = () => {
             <Route path="approval-workflow" element={<Navigate to="/admin/questions/pending" replace />} />
             <Route path="profile" element={<AdminProfile />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="participation-monitor" element={<ParticipationMonitor role="Admin" />} />
+            <Route path="staff-subject-assignment" element={<AdminStaffSubjectAssignment />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
 
@@ -202,6 +210,8 @@ const App = () => {
             <Route path="results" element={<StaffResults />} />
             <Route path="support-tickets" element={<StaffSupportTickets />} />
             <Route path="notifications" element={<StaffNotifications />} />
+            <Route path="ai-center/:feature" element={<StaffAiCenter />} />
+            <Route path="participation-monitor" element={<ParticipationMonitor role="Staff" />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
 
@@ -224,6 +234,7 @@ const App = () => {
               <Route path="notifications" element={<StudentNotifications />} />
               <Route path="profile"       element={<StudentProfile />} />
               <Route path="settings"      element={<StudentSettings />} />
+              <Route path="ai-center/:feature" element={<StudentAiCenter />} />
               <Route index element={<Navigate to="dashboard" replace />} />
             </Route>
 

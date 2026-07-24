@@ -10,7 +10,7 @@ import {
   LogOut, HelpCircle, Search, Zap, Brain, Menu, X, Command,
   AlertCircle, TrendingUp, Shield,
 } from 'lucide-react';
-
+import Avatar from '../components/Avatar';
 /* ─── Nav Structure ───────────────────────────────────────────────── */
 const NAV = [
   {
@@ -24,6 +24,7 @@ const NAV = [
     items: [
       { name: 'Students',    path: '/admin/students',    icon: GraduationCap },
       { name: 'Staff',       path: '/admin/staff',       icon: UserCheck },
+      { name: 'Staff Subject Assignment', path: '/admin/staff-subject-assignment', icon: Layers },
       { name: 'Departments', path: '/admin/departments', icon: Building2 },
       { name: 'Courses',     path: '/admin/courses',     icon: BookOpen },
       { name: 'Semesters',   path: '/admin/semesters',   icon: Calendar },
@@ -46,6 +47,7 @@ const NAV = [
       },
       { name: 'Exam Creation', path: '/admin/exams',   icon: ScrollText },
       { name: 'Exam Results',  path: '/admin/results', icon: TrendingUp },
+      { name: 'Participation Monitor', path: '/admin/participation-monitor', icon: ClipboardList },
     ],
   },
   {
@@ -57,6 +59,7 @@ const NAV = [
   {
     section: 'System',
     items: [
+      { name: 'Profile',         path: '/admin/profile',         icon: User },
       { name: 'Notifications',   path: '/admin/notifications',   icon: Bell },
       { name: 'Activity Logs',   path: '/admin/activity-logs',   icon: History },
       { name: 'Support',         path: '/admin/support-tickets', icon: Headphones },
@@ -214,12 +217,10 @@ const SidebarContent = ({ location, openGroups, onToggle, onClose, user, onLogou
 
       {/* User */}
       <div className="mt-2 flex items-center gap-2.5 px-2.5 py-2 rounded-[12px] bg-[#F9FAFB] border border-[rgba(139,30,63,0.06)]">
-        <div className="w-7 h-7 rounded-[8px] bg-[#8B1E3F] flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
-          {(user?.name || 'A').charAt(0).toUpperCase()}
-        </div>
+        <Avatar photoUrl={user?.photoUrl} name={user?.name} size={7} role="Admin" />
         <div className="min-w-0">
           <p className="text-[12px] font-semibold text-[#111111] truncate">{user?.name || 'Administrator'}</p>
-          <p className="text-[10px] text-[#9CA3AF] truncate font-medium">{user?.email || ''}</p>
+          <p className="text-[10px] text-[#9CA3AF] truncate font-medium">{user?.role || 'Admin'}</p>
         </div>
       </div>
     </div>
@@ -395,11 +396,9 @@ const AdminLayout = () => {
             >
               <div className="hidden sm:block text-right">
                 <p className="text-[12.5px] font-semibold text-[#111111] leading-none">{userName}</p>
-                <p className="text-[10px] text-[#9CA3AF] mt-0.5 leading-none">Admin</p>
+                <p className="text-[10px] text-[#9CA3AF] mt-0.5 leading-none">{user?.role || 'Admin'}</p>
               </div>
-              <div className="w-8 h-8 rounded-[9px] bg-[#8B1E3F] flex items-center justify-center text-[12px] font-bold text-white flex-shrink-0">
-                {userName.charAt(0).toUpperCase()}
-              </div>
+              <Avatar photoUrl={user?.photoUrl} name={user?.name} size={8} role="Admin" />
             </button>
 
             <AnimatePresence>
@@ -415,9 +414,7 @@ const AdminLayout = () => {
                   >
                     <div className="px-4 py-3 border-b border-[rgba(139,30,63,0.06)]">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-[10px] bg-[#8B1E3F] flex items-center justify-center text-[13px] font-bold text-white flex-shrink-0">
-                          {userName.charAt(0).toUpperCase()}
-                        </div>
+                        <Avatar photoUrl={user?.photoUrl} name={user?.name} size={9} role="Admin" />
                         <div className="min-w-0">
                           <p className="text-[13px] font-semibold text-[#111111] truncate">{userName}</p>
                           <p className="text-[11px] text-[#9CA3AF] truncate">{user?.email || ''}</p>

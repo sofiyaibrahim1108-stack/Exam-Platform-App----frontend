@@ -26,6 +26,88 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
+// Subtle floating particles for the hero banner
+const PARTICLES = [
+  { size: 5, top: '15%', left: '8%', duration: 7, delay: 0 },
+  { size: 4, top: '65%', left: '4%', duration: 9, delay: 1.2 },
+  { size: 6, top: '30%', left: '18%', duration: 8, delay: 0.5 },
+  { size: 4, top: '80%', left: '22%', duration: 6.5, delay: 2 },
+  { size: 5, top: '10%', left: '38%', duration: 10, delay: 1.5 },
+  { size: 4, top: '55%', left: '48%', duration: 7.5, delay: 0.8 },
+  { size: 6, top: '25%', left: '60%', duration: 8.5, delay: 3 },
+  { size: 4, top: '75%', left: '70%', duration: 6, delay: 2.5 },
+];
+
+// Decorative animated radar-sweep illustration for the hero banner —
+// a rotating scan beam inside glowing concentric rings with pulsing blips.
+// Clearly visible (unlike the earlier low-opacity version) but sits behind
+// the text content so it never gets in the way of reading.
+const OrbitIllustration = () => (
+  <div className="absolute -right-6 -top-6 lg:-right-2 lg:-top-2 w-[260px] h-[260px] lg:w-[340px] lg:h-[340px] pointer-events-none select-none">
+    <svg viewBox="0 0 400 400" className="w-full h-full overflow-visible">
+      <defs>
+        <radialGradient id="radarGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#F2C6D4" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#F2C6D4" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="sweepGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="white" stopOpacity="0" />
+          <stop offset="100%" stopColor="white" stopOpacity="0.55" />
+        </linearGradient>
+      </defs>
+
+      {/* Soft glow behind everything */}
+      <circle cx="200" cy="200" r="170" fill="url(#radarGlow)" />
+
+      {/* Concentric rings */}
+      <circle cx="200" cy="200" r="170" fill="none" stroke="white" strokeOpacity="0.35" strokeWidth="1.5" />
+      <circle cx="200" cy="200" r="125" fill="none" stroke="white" strokeOpacity="0.30" strokeWidth="1.5" />
+      <circle cx="200" cy="200" r="80" fill="none" stroke="white" strokeOpacity="0.28" strokeWidth="1.5" />
+      <circle cx="200" cy="200" r="35" fill="none" stroke="white" strokeOpacity="0.25" strokeWidth="1.5" />
+
+      {/* Crosshair lines */}
+      <line x1="200" y1="30" x2="200" y2="370" stroke="white" strokeOpacity="0.15" strokeWidth="1" />
+      <line x1="30" y1="200" x2="370" y2="200" stroke="white" strokeOpacity="0.15" strokeWidth="1" />
+
+      {/* Rotating sweep beam */}
+      <motion.g
+        style={{ transformOrigin: '200px 200px' }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+      >
+        <path d="M 200 200 L 200 30 A 170 170 0 0 1 341 115 Z" fill="url(#sweepGrad)" />
+        <line x1="200" y1="200" x2="200" y2="30" stroke="white" strokeOpacity="0.85" strokeWidth="2" />
+      </motion.g>
+
+      {/* Pulsing blips at data-point positions */}
+      {[
+        { cx: 300, cy: 130, r: 5, delay: 0 },
+        { cx: 120, cy: 100, r: 4, delay: 0.6 },
+        { cx: 150, cy: 300, r: 5, delay: 1.2 },
+        { cx: 310, cy: 270, r: 4, delay: 1.8 },
+      ].map((n, i) => (
+        <g key={i}>
+          <motion.circle
+            cx={n.cx}
+            cy={n.cy}
+            r={n.r}
+            fill="none"
+            stroke="#F9D97C"
+            strokeWidth="1.5"
+            animate={{ r: [n.r, n.r + 14, n.r], opacity: [0.8, 0, 0.8] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay: n.delay }}
+          />
+          <circle cx={n.cx} cy={n.cy} r={n.r} fill="#F9D97C" />
+        </g>
+      ))}
+
+      {/* Center core */}
+      <circle cx="200" cy="200" r="9" fill="white" />
+      <circle cx="200" cy="200" r="9" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="8" />
+    </svg>
+  </div>
+);
+
 // Custom lightweight counter animator for numbers
 const AnimatedNumber = ({ value }) => {
   const [displayValue, setDisplayValue] = useState(0);
@@ -133,6 +215,20 @@ const SuperAdminDashboard = () => {
         {/* Subtle geometric pattern overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent opacity-50 pointer-events-none"></div>
         <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-[#8B1538]/30 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
+
+        {/* Animated decorative orbit illustration */}
+        <OrbitIllustration />
+
+        {/* Floating particles */}
+        {PARTICLES.map((p, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-white/70 pointer-events-none shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+            style={{ width: p.size, height: p.size, top: p.top, left: p.left }}
+            animate={{ y: [0, -16, 0], opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        ))}
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="space-y-4">

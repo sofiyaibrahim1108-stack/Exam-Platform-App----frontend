@@ -69,7 +69,7 @@ const CARDS = [
 
 // ─── Mock Responses database for EduAI Simulator ─────────────────
 const MOCK_ANSWERS = {
-  default: `I am **EduAI**, your university academic co-pilot. 
+  default: `I am **ExamoraAI**, your university academic co-pilot. 
 
 Based on your prompt, here is a structured analysis of the topics:
 1. **Curriculum Alignment**: Align assessments directly with unit syllabus objectives.
@@ -296,7 +296,7 @@ const StaffAiCenter = () => {
       }))
     })
     .then(res => {
-      const responseText = res.data && res.data.success && res.data.data ? res.data.data.message : 'No response from EduAI.';
+      const responseText = res.data && res.data.success && res.data.data ? res.data.data.message : 'No response from ExamoraAI.';
       
       let currentLength = 0;
       const textChunks = responseText.split(' ');
@@ -342,7 +342,7 @@ const StaffAiCenter = () => {
     })
     .catch(err => {
       console.error(err);
-      toast.error('Failed to communicate with EduAI.');
+      toast.error('Failed to communicate with ExamoraAI.');
       setIsTyping(false);
     });
   };
@@ -383,7 +383,7 @@ const StaffAiCenter = () => {
 
   // ─── Custom Markdown & Code Blocks Parser ─────────────────────────
   const renderMarkdownMessage = (text) => {
-    if (!text) return <p className="text-xs text-gray-400">EduAI is crafting an answer...</p>;
+    if (!text) return <p className="text-xs text-gray-400">ExamoraAI is crafting an answer...</p>;
     const parts = text.split(/(```[\s\S]*?```)/g);
 
     return parts.map((part, index) => {
@@ -552,7 +552,7 @@ const StaffAiCenter = () => {
     const detail = subFeaturesDetails[feature] || {
       title: 'AI Center Feature',
       description: 'This premium AI feature is currently scheduled for deployment.',
-      points: ['Advanced EduAI-powered optimizations', 'Automated grading assistance integration']
+      points: ['Advanced ExamoraAI-powered optimizations', 'Automated grading assistance integration']
     };
 
     return (
@@ -584,7 +584,7 @@ const StaffAiCenter = () => {
           {/* Details */}
           <div className="flex-1 space-y-4">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8C1D40]/10 border border-[#8C1D40]/25 text-[#8C1D40] text-[10px] font-black uppercase tracking-wider">
-              <Sparkles size={11} /> EduAI Co-Pilot Feature
+              <Sparkles size={11} /> ExamoraAI Co-Pilot Feature
             </div>
             <h3 className="text-lg font-extrabold text-[#111111]">{detail.title} Preview</h3>
             <p className="text-xs text-[#6B7280] leading-relaxed font-semibold">{detail.description}</p>
@@ -760,7 +760,7 @@ const StaffAiCenter = () => {
             <h3 className="text-sm font-extrabold text-[#111111] truncate">{activeChat?.title || 'Chat Assistant'}</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-              <span className="text-[9px] font-mono font-bold text-[#8C1D40] uppercase tracking-wider">EduAI LLM Online Node</span>
+              <span className="text-[9px] font-mono font-bold text-[#8C1D40] uppercase tracking-wider">ExamoraAI LLM Online Node</span>
             </div>
           </div>
 
@@ -933,7 +933,7 @@ const StaffAiCenter = () => {
                         <span className="w-1.5 h-1.5 bg-[#8C1D40] rounded-full animate-bounce [animation-delay:0.2s]"></span>
                         <span className="w-1.5 h-1.5 bg-[#8C1D40] rounded-full animate-bounce [animation-delay:0.4s]"></span>
                       </div>
-                      <span className="text-[10px] text-gray-400 font-mono font-bold">EduAI is streaming draft...</span>
+                      <span className="text-[10px] text-gray-400 font-mono font-bold">ExamoraAI is streaming draft...</span>
                     </div>
                   </div>
                 </div>
@@ -1000,7 +1000,7 @@ const StaffAiCenter = () => {
                   handleSendMessage();
                 }
               }}
-              placeholder="Ask EduAI to draft questions, review syllabus or structure classes..."
+              placeholder="Ask ExamoraAI to draft questions, review syllabus or structure classes..."
               className="flex-1 max-h-24 min-h-[32px] py-1.5 px-2 bg-transparent text-xs font-semibold text-[#111111] focus:outline-none resize-none leading-relaxed"
             />
 
@@ -1031,7 +1031,7 @@ const StaffAiCenter = () => {
 
           {/* Disclaimer details */}
           <p className="text-[9px] text-[#9CA3AF] text-center font-medium">
-            EduAI AI Assistant uses integrated course parameters. Verify crucial syllabus codes independently.
+            ExamoraAI Assistant uses integrated course parameters. Verify crucial syllabus codes independently.
           </p>
         </div>
 

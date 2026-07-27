@@ -182,7 +182,7 @@ const SidebarContent = ({ location, onClose, user, onLogout, unreadCount }) => {
             }`}>
               <Sparkles size={13} />
             </span>
-            <span className="relative z-10 flex-1">Ask EduAI</span>
+            <span className="relative z-10 flex-1">Ask ExamoraAI</span>
           </Link>
 
           {/* Results (Completed Exams) */}

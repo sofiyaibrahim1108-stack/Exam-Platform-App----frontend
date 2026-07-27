@@ -201,126 +201,150 @@ const StaffDashboard = () => {
           </div>
         </div>
 
-        {/* AI Robot Mascot Illustration */}
-        <div className="relative w-64 h-64 flex items-center justify-center shrink-0">
+        {/* AI Engine -> Questions Flow Visualization */}
+        <div className="relative w-72 sm:w-80 h-56 shrink-0 flex items-center justify-center">
 
           {/* Ambient glow */}
-          <div className="absolute w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+          <div className="absolute w-64 h-52 rounded-full bg-white/10 blur-3xl pointer-events-none"></div>
 
-          {/* Faint decorative bar columns flanking the robot */}
-          <div className="absolute left-1 top-12 w-3 h-28 rounded-full bg-white/10 pointer-events-none"></div>
-          <div className="absolute left-8 top-20 w-3 h-20 rounded-full bg-white/[0.07] pointer-events-none"></div>
-          <div className="absolute right-1 top-16 w-3 h-24 rounded-full bg-white/10 pointer-events-none"></div>
-          <div className="absolute right-8 top-24 w-3 h-16 rounded-full bg-white/[0.07] pointer-events-none"></div>
+          <svg viewBox="0 0 340 220" className="w-full h-full overflow-visible">
+            <defs>
+              <linearGradient id="streamGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#F2BFCF" stopOpacity="0" />
+                <stop offset="55%" stopColor="#FFFFFF" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+              </linearGradient>
+              <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.55" />
+                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+              </radialGradient>
+            </defs>
 
-          {/* Sparkles */}
-          <motion.div
-            animate={{ opacity: [0.4, 1, 0.4] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-            className="absolute top-4 left-10"
-          >
-            <Sparkles size={14} className="text-white/70" />
-          </motion.div>
-          <motion.div
-            animate={{ opacity: [0.3, 0.9, 0.3] }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut', delay: 0.6 }}
-            className="absolute bottom-16 right-8"
-          >
-            <Sparkles size={10} className="text-white/60" />
-          </motion.div>
+            {/* Neural cluster connecting lines */}
+            <g stroke="rgba(255,255,255,0.35)" strokeWidth="1">
+              <line x1="70" y1="55" x2="70" y2="108" />
+              <line x1="35" y1="88" x2="70" y2="108" />
+              <line x1="105" y1="88" x2="70" y2="108" />
+              <line x1="25" y1="140" x2="70" y2="108" />
+              <line x1="115" y1="140" x2="70" y2="108" />
+              <line x1="70" y1="172" x2="70" y2="108" />
+              <line x1="35" y1="88" x2="25" y2="140" />
+              <line x1="105" y1="88" x2="115" y2="140" />
+              <line x1="70" y1="55" x2="35" y2="88" />
+              <line x1="70" y1="55" x2="105" y2="88" />
+            </g>
 
-          {/* Robot character — floats gently */}
-          <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-            className="relative w-44 h-44"
-          >
-            <svg viewBox="0 0 240 240" className="w-full h-full drop-shadow-xl">
-              {/* Shadow */}
-              <ellipse cx="120" cy="228" rx="52" ry="8" fill="rgba(0,0,0,0.18)" />
+            {/* Glow behind core node */}
+            <circle cx="70" cy="108" r="34" fill="url(#coreGlow)" />
 
-              {/* Antennae */}
-              <line x1="104" y1="34" x2="98" y2="14" stroke="rgba(255,255,255,0.55)" strokeWidth="3" strokeLinecap="round" />
-              <circle cx="98" cy="12" r="4.5" fill="rgba(255,255,255,0.85)" />
-              <line x1="120" y1="32" x2="120" y2="8" stroke="rgba(255,255,255,0.6)" strokeWidth="3" strokeLinecap="round" />
-              <circle cx="120" cy="6" r="5.5" fill="#fff" />
-              <line x1="136" y1="34" x2="142" y2="14" stroke="rgba(255,255,255,0.55)" strokeWidth="3" strokeLinecap="round" />
-              <circle cx="142" cy="12" r="4.5" fill="rgba(255,255,255,0.85)" />
+            {/* Cluster nodes */}
+            {[
+              [70, 55, 4],
+              [35, 88, 4],
+              [105, 88, 4],
+              [25, 140, 4],
+              [115, 140, 4],
+              [70, 172, 4],
+              [70, 108, 8],
+            ].map(([cx, cy, r], i) => (
+              <motion.circle
+                key={i}
+                cx={cx}
+                cy={cy}
+                r={r}
+                fill={i === 6 ? '#FFFFFF' : '#F2BFCF'}
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ repeat: Infinity, duration: 2 + i * 0.3, ease: 'easeInOut' }}
+              />
+            ))}
 
-              {/* Neck */}
-              <rect x="110" y="102" width="20" height="12" rx="4" fill="rgba(255,255,255,0.25)" />
+            {/* Streaming particle lines toward cards */}
+            {[0, 1, 2, 3, 4].map((i) => {
+              const y = 30 + i * 40;
+              return (
+                <motion.path
+                  key={i}
+                  d={`M78,108 C150,${108 + (y - 108) * 0.35} 200,${y} 248,${y}`}
+                  stroke="url(#streamGrad)"
+                  strokeWidth="1.5"
+                  fill="none"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{
+                    duration: 1.1,
+                    delay: i * 0.15,
+                    repeat: Infinity,
+                    repeatType: 'reverse',
+                    repeatDelay: 1.4,
+                    ease: 'easeInOut',
+                  }}
+                />
+              );
+            })}
 
-              {/* Head */}
-              <circle cx="120" cy="68" r="40" fill="rgba(255,255,255,0.22)" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
-              <circle cx="120" cy="68" r="40" fill="url(#headGloss)" opacity="0.5" />
-
-              {/* Eyes */}
-              <circle cx="106" cy="68" r="6" fill="#4A0A1E" />
-              <circle cx="134" cy="68" r="6" fill="#4A0A1E" />
-              <circle cx="108" cy="65.5" r="1.6" fill="#fff" />
-              <circle cx="136" cy="65.5" r="1.6" fill="#fff" />
-
-              {/* Body */}
-              <rect x="76" y="108" width="88" height="116" rx="44" fill="rgba(255,255,255,0.20)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
-
-              {/* Arms */}
-              <ellipse cx="68" cy="152" rx="12" ry="22" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
-              <ellipse cx="172" cy="152" rx="12" ry="22" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
-              <circle cx="68" cy="178" r="8" fill="rgba(255,255,255,0.28)" />
-              <circle cx="172" cy="178" r="8" fill="rgba(255,255,255,0.28)" />
-
-              {/* AI chest badge */}
-              <rect x="93" y="140" width="54" height="32" rx="8" fill="#4A0A1E" opacity="0.55" />
-              <text x="120" y="162" textAnchor="middle" fontFamily="monospace" fontWeight="800" fontSize="16" fill="#fff">AI</text>
-
-              {/* Readout lines */}
-              <rect x="93" y="182" width="54" height="4" rx="2" fill="rgba(255,255,255,0.3)" />
-              <rect x="93" y="191" width="40" height="4" rx="2" fill="rgba(255,255,255,0.22)" />
-              <rect x="93" y="200" width="30" height="4" rx="2" fill="rgba(255,255,255,0.16)" />
-
-              <defs>
-                <linearGradient id="headGloss" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#fff" stopOpacity="0.35" />
-                  <stop offset="60%" stopColor="#fff" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </motion.div>
-
-          {/* Floating mini chart panel */}
-          <motion.div
-            animate={{ y: [0, -5, 0] }}
-            transition={{ repeat: Infinity, duration: 3.2, ease: 'easeInOut' }}
-            className="absolute top-2 -left-1 w-14 h-11 rounded-xl border border-white/25 flex items-center justify-center shadow-lg"
-            style={{ background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(10px)' }}
-          >
-            <BarChart3 size={16} className="text-white/80" />
-          </motion.div>
-
-          {/* Floating mini database panel */}
-          <motion.div
-            animate={{ y: [0, 5, 0] }}
-            transition={{ repeat: Infinity, duration: 3.6, ease: 'easeInOut', delay: 0.5 }}
-            className="absolute bottom-6 -right-1 w-14 h-11 rounded-xl border border-white/25 flex items-center justify-center shadow-lg"
-            style={{ background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(10px)' }}
-          >
-            <Database size={16} className="text-white/80" />
-          </motion.div>
+            {/* Stacked question-type cards */}
+            {[
+              { y: 12, label: 'check' },
+              { y: 52, label: 'edit' },
+              { y: 92, label: 'grade' },
+              { y: 132, label: 'flow' },
+              { y: 172, label: 'list' },
+            ].map((c, i) => (
+              <motion.g
+                key={i}
+                animate={{ x: [0, 4, 0] }}
+                transition={{ repeat: Infinity, duration: 3 + i * 0.2, ease: 'easeInOut', delay: i * 0.15 }}
+              >
+                <rect
+                  x="248"
+                  y={c.y}
+                  width="80"
+                  height="34"
+                  rx="9"
+                  fill="rgba(255,255,255,0.14)"
+                  stroke="rgba(255,255,255,0.32)"
+                  strokeWidth="1"
+                />
+                <rect x="256" y={c.y + 8} width="18" height="18" rx="5" fill="rgba(255,255,255,0.92)" />
+                {c.label === 'check' && (
+                  <path d={`M261,${c.y + 17} l4,4 l7,-8`} stroke="#8C1D40" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                )}
+                {c.label === 'edit' && (
+                  <path d={`M261,${c.y + 20} l9,-9 l3,3 l-9,9 z`} fill="#8C1D40" />
+                )}
+                {c.label === 'grade' && (
+                  <text x="265" y={c.y + 20} fontFamily="monospace" fontWeight="800" fontSize="9" fill="#8C1D40">A+</text>
+                )}
+                {c.label === 'flow' && (
+                  <path d={`M260,${c.y + 12} h8 M264,${c.y + 8} l4,4 l-4,4`} stroke="#8C1D40" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                )}
+                {c.label === 'list' && (
+                  <>
+                    <rect x="260" y={c.y + 11} width="10" height="2" rx="1" fill="#8C1D40" />
+                    <rect x="260" y={c.y + 15} width="10" height="2" rx="1" fill="#8C1D40" />
+                    <rect x="260" y={c.y + 19} width="6" height="2" rx="1" fill="#8C1D40" />
+                  </>
+                )}
+                <rect x="281" y={c.y + 10} width="38" height="4" rx="2" fill="rgba(255,255,255,0.55)" />
+                <rect x="281" y={c.y + 18} width="26" height="4" rx="2" fill="rgba(255,255,255,0.3)" />
+              </motion.g>
+            ))}
+          </svg>
 
           {/* Floating badge chips */}
           <motion.div
             animate={{ y: [0, -4, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut', delay: 0.2 }}
-            className="absolute top-14 -right-3 bg-[#F8ECEF] border border-[#8C1D40]/20 text-[#8C1D40] text-[8px] font-bold px-2 py-1 rounded-full shadow-lg font-mono"
+            className="absolute top-2 left-1 bg-[#F8ECEF] border border-[#8C1D40]/20 text-[#8C1D40] text-[8px] font-bold px-2 py-1 rounded-full shadow-lg font-mono"
           >
-            MCQ
+            AI ENGINE
           </motion.div>
           <motion.div
             animate={{ y: [0, 4, 0] }}
             transition={{ repeat: Infinity, duration: 3.4, ease: 'easeInOut', delay: 0.8 }}
-            className="absolute bottom-20 -left-3 bg-emerald-50 border border-emerald-500/15 text-emerald-700 text-[8px] font-bold px-2 py-1 rounded-full shadow-lg font-mono"
+            className="absolute bottom-2 right-1 bg-emerald-50 border border-emerald-500/15 text-emerald-700 text-[8px] font-bold px-2 py-1 rounded-full shadow-lg font-mono"
           >
-            ✓ Approved
+            ✓ Synced
           </motion.div>
         </div>
       </div>

@@ -20,15 +20,23 @@ const StaffResults = () => {
 
   const fetchStaffExams = async () => {
     try {
-      // Fetch exams created by this staff member
-      const response = await api.get('/exams/student'); // Student endpoint fetches published/completed exams, wait!
       // To fetch all exams created by this Staff member, we can query `/exams` (which redirects to getMyExams for Staff!).
-      // Let's check backend/src/routes/examRoutes.js:
-      // router.get('/', examController.getMyExams);
-      // Yes! GET /exams fetches the logged-in staff's exams! Let's query that!
       const examsResponse = await api.get('/exams', { params: { limit: 100 } });
       if (examsResponse.data && examsResponse.data.success) {
-        setExamsList(examsResponse.data.data.results || []);
+        const allExams = examsResponse.data.data.results || [];
+        // Deduplicate by title
+        const uniqueExams = [];
+        const seenTitles = new Set();
+        allExams.forEach((ex) => {
+          if (ex && ex.title) {
+            const titleKey = ex.title.trim().toLowerCase();
+            if (!seenTitles.has(titleKey)) {
+              seenTitles.add(titleKey);
+              uniqueExams.push(ex);
+            }
+          }
+        });
+        setExamsList(uniqueExams);
       }
     } catch (error) {
       console.error('Failed to load staff exams list:', error);
@@ -116,11 +124,15 @@ const StaffResults = () => {
               className="p-2.5 bg-white border border-gray-250/80 rounded-xl focus:outline-none text-xs font-bold text-[#1D1D1F] focus:border-[#8C1D40]/30"
             >
               <option value="">-- All My Designed Exams --</option>
-              {examsList.map((ex) => (
-                <option key={ex._id} value={ex._id}>
-                  {ex.title}
-                </option>
-              ))}
+              {examsList.length > 0 ? (
+                examsList.map((ex) => (
+                  <option key={ex._id} value={ex._id}>
+                    {ex.title} {ex.subject ? `(${ex.subject.name})` : ''}
+                  </option>
+                ))
+              ) : (
+                <option disabled>No designed exams found.</option>
+              )}
             </select>
           </div>
 

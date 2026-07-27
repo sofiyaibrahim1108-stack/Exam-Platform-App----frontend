@@ -301,12 +301,12 @@ const SuperAdminLayout = () => {
           <div className="flex items-center gap-6">
             
             {/* Mock Logs Search Field */}
-            <div className="hidden md:flex relative w-60 shrink-0">
-              <Search size={13} className="text-gray-400 absolute left-3 top-2.5" />
+            <div className="hidden md:flex items-center relative w-60 shrink-0">
+              <Search size={13} className="text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search audit trail logs..."
-                className="w-full bg-gray-50 border border-gray-200 rounded-full pl-8.5 pr-4 py-1.5 text-[10px] font-semibold focus:outline-none focus:border-[#8B1538] focus:bg-white transition-colors"
+                className="w-full bg-gray-50 border border-gray-200 rounded-full pl-9 pr-4 py-1.5 text-[10px] font-semibold focus:outline-none focus:border-[#8B1538] focus:bg-white transition-colors"
               />
             </div>
 

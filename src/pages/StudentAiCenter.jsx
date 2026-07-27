@@ -57,7 +57,7 @@ const CARDS = [
 
 // ─── Mock Responses database for student tutor simulator ──────────
 const MOCK_ANSWERS = {
-  default: `Hello! I am **EduAI**, your AI Study Tutor. 
+  default: `Hello! I am **ExamoraAI**, your AI Study Tutor. 
 
 I can help resolve your doubts, summarize notes, or quiz you on topics.
 Here is how we can study together:
@@ -277,7 +277,7 @@ const StudentAiCenter = () => {
       }))
     })
     .then(res => {
-      const responseText = res.data && res.data.success && res.data.data ? res.data.data.message : 'No response from EduAI.';
+      const responseText = res.data && res.data.success && res.data.data ? res.data.data.message : 'No response from ExamoraAI.';
       
       let currentLength = 0;
       const textChunks = responseText.split(' ');
@@ -323,7 +323,7 @@ const StudentAiCenter = () => {
     })
     .catch(err => {
       console.error(err);
-      toast.error('Failed to communicate with EduAI.');
+      toast.error('Failed to communicate with ExamoraAI.');
       setIsTyping(false);
     });
   };
@@ -362,7 +362,7 @@ const StudentAiCenter = () => {
 
   // ─── Custom Markdown Parser ───────────────────────────────────────
   const renderMarkdownMessage = (text) => {
-    if (!text) return <p className="text-xs text-gray-400">EduAI is analyzing concepts...</p>;
+    if (!text) return <p className="text-xs text-gray-400">ExamoraAI is analyzing concepts...</p>;
     const parts = text.split(/(```[\s\S]*?```)/g);
 
     return parts.map((part, index) => {
@@ -511,7 +511,7 @@ const StudentAiCenter = () => {
     const detail = subFeaturesDetails[feature] || {
       title: 'AI Tutor Feature',
       description: 'This premium study assistant capability is scheduled for portal activation.',
-      points: ['EduAI-powered study enhancement modules', 'Direct assessment analytics feedback']
+      points: ['ExamoraAI-powered study enhancement modules', 'Direct assessment analytics feedback']
     };
 
     return (
@@ -718,7 +718,7 @@ const StudentAiCenter = () => {
             <h3 className="text-sm font-extrabold text-[#111111] truncate">{activeChat?.title || 'Study Session'}</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-              <span className="text-[9px] font-mono font-bold text-[#7A001F] uppercase tracking-wider">EduAI Engine Active</span>
+              <span className="text-[9px] font-mono font-bold text-[#7A001F] uppercase tracking-wider">ExamoraAI Engine Active</span>
             </div>
           </div>
 
@@ -742,7 +742,7 @@ const StudentAiCenter = () => {
                   <Sparkles size={24} />
                 </div>
                 <h1 className="text-2xl font-black text-[#7A001F] tracking-tight">
-                  👋 Hello, I'm EduAI
+                  👋 Hello, I'm ExamoraAI
                 </h1>
                 <p className="text-xs font-semibold text-gray-500 max-w-lg mx-auto leading-relaxed">
                   Your intelligent learning assistant for students.
@@ -756,7 +756,7 @@ const StudentAiCenter = () => {
                 <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
                   <Sparkles size={14} className="text-[#7A001F]" />
                   <h2 className="text-[10px] font-extrabold uppercase tracking-wider text-[#7A001F]">
-                    ✨ You can ask EduAI to...
+                    ✨ You can ask ExamoraAI to...
                   </h2>
                 </div>
 
@@ -891,7 +891,7 @@ const StudentAiCenter = () => {
                         <span className="w-1.5 h-1.5 bg-[#7A001F] rounded-full animate-bounce [animation-delay:0.2s]"></span>
                         <span className="w-1.5 h-1.5 bg-[#7A001F] rounded-full animate-bounce [animation-delay:0.4s]"></span>
                       </div>
-                      <span className="text-[10px] text-gray-400 font-mono font-bold">EduAI is composing tutor notes...</span>
+                      <span className="text-[10px] text-gray-400 font-mono font-bold">ExamoraAI is composing tutor notes...</span>
                     </div>
                   </div>
                 </div>
@@ -958,7 +958,7 @@ const StudentAiCenter = () => {
                   handleSendMessage();
                 }
               }}
-              placeholder="Ask EduAI to explain code, solve algebra steps, or create self-quizzes..."
+              placeholder="Ask ExamoraAI to explain code, solve algebra steps, or create self-quizzes..."
               className="flex-1 max-h-24 min-h-[32px] py-1.5 px-2 bg-transparent text-xs font-semibold text-[#111111] focus:outline-none resize-none leading-relaxed"
             />
 
@@ -989,7 +989,7 @@ const StudentAiCenter = () => {
 
           {/* Disclaimer details */}
           <p className="text-[9px] text-[#9CA3AF] text-center font-medium">
-            EduAI Study Assistant. Verify mathematical formulas definitions with course textbooks independently.
+            ExamoraAI Study Assistant. Verify mathematical formulas definitions with course textbooks independently.
           </p>
         </div>
 

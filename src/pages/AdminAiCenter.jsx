@@ -597,6 +597,366 @@ const AdminAiCenter = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* 1. Top Students */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <GraduationCap size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">🏆 Top 10 Students</h3>
+                    </div>
+                    <div className="table-wrap">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th className="w-16 text-center">Rank</th>
+                            <th>Student Name</th>
+                            <th>Roll Number</th>
+                            <th>Department</th>
+                            <th className="text-center">Semester</th>
+                            <th className="text-center">Overall %</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analyticsData.topStudents && analyticsData.topStudents.length > 0 ? (
+                            analyticsData.topStudents.map((s) => (
+                              <tr key={s.rank}>
+                                <td className="text-center font-bold text-[#8B1E3F]">{s.rank}</td>
+                                <td className="font-semibold text-gray-900">{s.name}</td>
+                                <td className="font-mono text-xs">{s.rollNumber}</td>
+                                <td>{s.department}</td>
+                                <td className="text-center font-semibold">{s.semester}</td>
+                                <td className="text-center font-mono font-bold text-emerald-600">{s.percentage}%</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={6} className="text-center text-gray-400 py-4">No top students data available</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 2. Weak Students */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <AlertTriangle size={16} className="text-[#DC2626]" />
+                      <h3 className="text-xs font-extrabold text-[#DC2626] uppercase">📉 Weak Students (At-Risk)</h3>
+                    </div>
+                    <div className="table-wrap">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Student Name</th>
+                            <th>Roll Number</th>
+                            <th>Department</th>
+                            <th className="text-center">Semester</th>
+                            <th className="text-center">Avg Percentage</th>
+                            <th className="text-center">Failed Exams</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analyticsData.weakStudents && analyticsData.weakStudents.length > 0 ? (
+                            analyticsData.weakStudents.map((s, idx) => (
+                              <tr key={idx}>
+                                <td className="font-semibold text-gray-900">{s.name}</td>
+                                <td className="font-mono text-xs">{s.rollNumber}</td>
+                                <td>{s.department}</td>
+                                <td className="text-center">{s.semester}</td>
+                                <td className="text-center font-mono font-bold text-red-600">{s.percentage}%</td>
+                                <td className="text-center font-bold text-[#DC2626]">{s.failedExams}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={6} className="text-center text-gray-400 py-4">No at-risk students identified</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 3. Weak Units */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <FileText size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">📚 Unit-wise Performance Analysis</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {analyticsData.weakUnits && analyticsData.weakUnits.length > 0 ? (
+                        analyticsData.weakUnits.map((u, idx) => (
+                          <div key={idx} className="p-4 rounded-xl border border-[rgba(139,30,63,0.08)] bg-[#FAFAFA] space-y-2">
+                            <span className="text-[12px] font-bold text-[#8B1E3F] block truncate" title={u.name}>{u.name}</span>
+                            <div className="flex justify-between items-center text-xs pt-1">
+                              <span className="text-gray-500">Avg Score:</span>
+                              <span className="font-mono font-bold text-gray-800">{u.avgScore}%</span>
+                            </div>
+                            <div className="flex justify-between items-center text-xs">
+                              <span className="text-gray-500">Weakness:</span>
+                              <span className="font-mono font-bold text-red-600">{u.weaknessPct}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden mt-1">
+                              <div className="bg-[#8B1E3F] h-full" style={{ width: `${u.weaknessPct}%` }} />
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center text-gray-400 py-4">No unit performance data available</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 4. Weak Topics */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <TrendingDown size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">📖 Topic-wise Performance Analysis</h3>
+                    </div>
+                    <div className="table-wrap">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Topic</th>
+                            <th className="text-center">Average Score</th>
+                            <th className="text-center">Correct attempts %</th>
+                            <th className="text-center">Wrong attempts %</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analyticsData.weakTopics && analyticsData.weakTopics.length > 0 ? (
+                            analyticsData.weakTopics.map((t, idx) => (
+                              <tr key={idx}>
+                                <td className="font-semibold text-gray-900">{t.name}</td>
+                                <td className="text-center font-mono font-bold">{t.avgScore}%</td>
+                                <td className="text-center font-mono text-emerald-600 font-semibold">{t.correctPct}%</td>
+                                <td className="text-center font-mono text-red-600 font-bold">{t.wrongPct}%</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={4} className="text-center text-gray-400 py-4">No topic performance data available</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 5. Frequently Wrong Questions */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <HelpCircle size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">❓ Frequently Wrong Questions</h3>
+                    </div>
+                    <div className="table-wrap">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Question</th>
+                            <th>Subject</th>
+                            <th className="text-center">Wrong Attempts</th>
+                            <th className="text-center">Correct Attempts</th>
+                            <th className="text-center">Wrong %</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analyticsData.freqWrongQuestions && analyticsData.freqWrongQuestions.length > 0 ? (
+                            analyticsData.freqWrongQuestions.map((q, idx) => (
+                              <tr key={idx}>
+                                <td className="font-medium text-gray-900 max-w-xs truncate" title={q.questionText}>{q.questionText}</td>
+                                <td>{q.subject}</td>
+                                <td className="text-center font-mono font-semibold text-red-600">{q.wrongAttempts}</td>
+                                <td className="text-center font-mono text-emerald-600">{q.correctAttempts}</td>
+                                <td className="text-center font-mono font-bold text-red-600">{q.wrongPct}%</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={5} className="text-center text-gray-400 py-4">No question-level analysis available</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 6. Question Difficulty */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <Activity size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">🎯 Question Difficulty Insights</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="p-4 rounded-xl border border-emerald-100 bg-emerald-50/30 text-center">
+                        <span className="text-[10px] text-emerald-600 uppercase font-bold block">Easy Questions</span>
+                        <span className="text-2xl font-black text-emerald-700 block mt-1">
+                          {analyticsData.questionDifficulty?.easyCount || 0}
+                        </span>
+                      </div>
+                      <div className="p-4 rounded-xl border border-blue-100 bg-blue-50/30 text-center">
+                        <span className="text-[10px] text-blue-600 uppercase font-bold block">Medium Questions</span>
+                        <span className="text-2xl font-black text-blue-700 block mt-1">
+                          {analyticsData.questionDifficulty?.mediumCount || 0}
+                        </span>
+                      </div>
+                      <div className="p-4 rounded-xl border border-red-100 bg-red-50/30 text-center">
+                        <span className="text-[10px] text-red-600 uppercase font-bold block">Hard Questions</span>
+                        <span className="text-2xl font-black text-red-700 block mt-1">
+                          {analyticsData.questionDifficulty?.hardCount || 0}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="h-56">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={analyticsData.questionDifficulty?.chartData || []} margin={{ left: -25 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
+                          <XAxis dataKey="difficulty" tick={{ fontSize: 10 }} />
+                          <YAxis tick={{ fontSize: 10 }} />
+                          <Tooltip />
+                          <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                            {(analyticsData.questionDifficulty?.chartData || []).map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.difficulty === 'Easy' ? '#10B981' : entry.difficulty === 'Medium' ? '#3B82F6' : '#EF4444'} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* 7. Class Performance */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <Users size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">📊 Class Performance Breakdown</h3>
+                    </div>
+                    <div className="table-wrap">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Class / Cohort</th>
+                            <th className="text-center">Appeared</th>
+                            <th className="text-center">Passed</th>
+                            <th className="text-center">Failed</th>
+                            <th className="text-center">Avg Marks</th>
+                            <th className="text-center">Avg Percentage</th>
+                            <th className="text-center">Pass Rate</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {analyticsData.classPerformance && analyticsData.classPerformance.length > 0 ? (
+                            analyticsData.classPerformance.map((c, idx) => (
+                              <tr key={idx}>
+                                <td className="font-semibold text-gray-900">{c.className}</td>
+                                <td className="text-center font-mono">{c.appeared}</td>
+                                <td className="text-center font-mono text-emerald-600 font-semibold">{c.passed}</td>
+                                <td className="text-center font-mono text-red-600 font-semibold">{c.failed}</td>
+                                <td className="text-center font-mono">{c.avgMarks}</td>
+                                <td className="text-center font-mono font-bold">{c.avgPercentage}%</td>
+                                <td className="text-center">
+                                  <span className={`badge ${c.passPercentage >= 75 ? 'badge-green' : c.passPercentage >= 50 ? 'badge-amber' : 'badge-red'}`}>
+                                    {c.passPercentage}%
+                                  </span>
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan={7} className="text-center text-gray-400 py-4">No class performance records</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 8. Department Performance */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <Building2 size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">🏛 Department Academic Performance</h3>
+                    </div>
+                    
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={analyticsData.departmentPerformanceData || []} margin={{ left: -20, bottom: 20 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
+                          <XAxis dataKey="department" tick={{ fontSize: 10 }} angle={-15} textAnchor="end" interval={0} />
+                          <YAxis tick={{ fontSize: 10 }} unit="%" />
+                          <Tooltip />
+                          <Legend wrapperStyle={{ fontSize: 10 }} />
+                          <Bar dataKey="avgPercentage" name="Average Score %" fill="#C95A7B" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="passPercentage" name="Pass Rate %" fill="#8B1E3F" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* 9. Semester Performance */}
+                  <div className="card-flat p-5 bg-white space-y-4">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <Calendar size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">📅 Semester Performance Analysis</h3>
+                    </div>
+                    
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={analyticsData.semesterPerformanceData || []} margin={{ left: -20, right: 10, bottom: 5 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                          <XAxis dataKey="semester" tick={{ fontSize: 10 }} />
+                          <YAxis tick={{ fontSize: 10 }} unit="%" />
+                          <Tooltip />
+                          <Legend wrapperStyle={{ fontSize: 10 }} />
+                          <Line type="monotone" dataKey="avgPercentage" name="Avg Percentage %" stroke="#C95A7B" strokeWidth={2} activeDot={{ r: 6 }} />
+                          <Line type="monotone" dataKey="passPercentage" name="Pass Rate %" stroke="#8B1E3F" strokeWidth={2} activeDot={{ r: 6 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* 10. AI Recommendations */}
+                  <div className="card-flat p-5 bg-white space-y-4 border-l-4 border-[#8B1E3F]">
+                    <div className="flex items-center gap-2 border-b border-[#F8E9EE] pb-2">
+                      <Sparkles size={16} className="text-[#8B1E3F]" />
+                      <h3 className="text-xs font-extrabold text-[#8B1E3F] uppercase">🤖 AI Academic Recommendations</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {analyticsData.aiRecommendations && analyticsData.aiRecommendations.length > 0 ? (
+                        analyticsData.aiRecommendations.map((rec, idx) => {
+                          let iconColor = 'text-blue-500';
+                          let bgColor = 'bg-blue-50/40 border-blue-100';
+                          let IconComponent = AlertCircle;
+
+                          if (rec.type === 'warning') {
+                            iconColor = 'text-[#F59E0B]';
+                            bgColor = 'bg-amber-50/40 border-amber-100';
+                            IconComponent = AlertTriangle;
+                          } else if (rec.type === 'danger') {
+                            iconColor = 'text-red-500';
+                            bgColor = 'bg-red-50/40 border-red-100';
+                            IconComponent = XCircle;
+                          } else if (rec.type === 'success') {
+                            iconColor = 'text-emerald-500';
+                            bgColor = 'bg-emerald-50/40 border-emerald-100';
+                            IconComponent = CheckCircle;
+                          }
+
+                          return (
+                            <div key={idx} className={`flex items-start gap-3 p-3 rounded-xl border ${bgColor} text-xs leading-relaxed`}>
+                              <IconComponent size={16} className={`${iconColor} shrink-0 mt-0.5`} />
+                              <p className="text-gray-700 font-medium">{rec.text}</p>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-xs text-gray-500 italic">No recommendations could be compiled for the current selection.</p>
+                      )}
+                    </div>
+                  </div>
+
                 </div>
               )}
             </div>

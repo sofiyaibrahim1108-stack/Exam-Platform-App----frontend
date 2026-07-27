@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 import {
@@ -45,6 +45,68 @@ const Counter = ({ to, comma = false }) => {
   }, [inView, to]);
 
   return <span ref={ref}>{comma ? val.toLocaleString() : val}</span>;
+};
+
+/* ─── Network pulse decoration (hero background) ──────────────────
+   Static hub-and-spoke layout — nothing rotates. Small pulses travel
+   from the hub out to each node, and the hub has a soft breathing
+   ring, like a live system quietly pushing data outward. */
+const NetworkPulse = () => {
+  const shouldReduceMotion = useReducedMotion();
+  const hub = { x: 150, y: 95 };
+  const nodes = [
+    { x: 55,  y: 35  },
+    { x: 240, y: 45  },
+    { x: 40,  y: 150 },
+    { x: 220, y: 155 },
+  ];
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <svg className="absolute -right-4 -top-8" width="300" height="220" viewBox="0 0 300 220">
+        {/* connector lines */}
+        {nodes.map((n, i) => (
+          <line key={`l-${i}`} x1={hub.x} y1={hub.y} x2={n.x} y2={n.y}
+            stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        ))}
+
+        {/* outer nodes */}
+        {nodes.map((n, i) => (
+          <circle key={`n-${i}`} cx={n.x} cy={n.y} r="3" fill="rgba(255,255,255,0.45)" />
+        ))}
+
+        {/* pulses travelling from hub to each node */}
+        {!shouldReduceMotion && nodes.map((n, i) => (
+          <motion.circle
+            key={`p-${i}`}
+            r="2.5"
+            fill="#fff"
+            animate={{
+              cx: [hub.x, n.x],
+              cy: [hub.y, n.y],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 1.6,
+              repeat: Infinity,
+              repeatDelay: 1.4,
+              delay: i * 0.55,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+
+        {/* hub — soft breathing ring + solid center */}
+        <motion.circle
+          cx={hub.x} cy={hub.y} r="9" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1"
+          style={{ transformOrigin: `${hub.x}px ${hub.y}px` }}
+          animate={shouldReduceMotion ? {} : { scale: [1, 1.9], opacity: [0.6, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }}
+        />
+        <circle cx={hub.x} cy={hub.y} r="5" fill="#fff" />
+      </svg>
+    </div>
+  );
 };
 
 /* ─── Custom recharts tooltip ─────────────────────────────────────── */
@@ -161,6 +223,9 @@ const AdminDashboard = () => {
           backgroundImage: 'radial-gradient(circle, #FFFFFF 1px, transparent 1px)',
           backgroundSize: '28px 28px',
         }} />
+
+        {/* Network pulse decoration */}
+        <NetworkPulse />
 
         <div className="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
           <div>

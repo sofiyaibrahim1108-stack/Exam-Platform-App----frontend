@@ -301,13 +301,22 @@
   }
 
   .search-bar input {
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 0.875rem;
-    color: #111111;
-    width: 100%;
-    font-family: 'Inter', sans-serif;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+    font: inherit !important;
+    color: inherit !important;
+  }
+
+  .search-bar input:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 
   .search-bar input::placeholder { color: #9CA3AF; }
